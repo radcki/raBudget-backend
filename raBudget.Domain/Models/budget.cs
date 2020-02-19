@@ -1,4 +1,5 @@
 ﻿using System;
+using raBudget.Domain.Common;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
@@ -27,7 +28,6 @@ namespace raBudget.Domain.Models
         #region Properties
 
         public BudgetId BudgetId { get; }
-
         public string Name { get; private set; }
         public DateTime StartingDate { get; private set; }
         public Currency Currency { get; private set; }
@@ -58,7 +58,7 @@ namespace raBudget.Domain.Models
                 throw new BusinessException("Budget starting date is required");
             }
 
-            StartingDate = new DateTime(startingDate.Year, startingDate.Day, 1);
+            StartingDate = DateHelpers.FirstDayOfMonth(startingDate);
         }
 
         private void SetCurrency(Currency currency)
