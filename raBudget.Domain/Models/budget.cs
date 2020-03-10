@@ -1,6 +1,6 @@
 ﻿using System;
+using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Common;
-using raBudget.Domain.Entities;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
 
@@ -10,12 +10,11 @@ namespace raBudget.Domain.Models
     {
         #region Constructors
 
-        private Budget(Currency currency)
+        private Budget()
         {
-            Currency = currency;
         }
 
-        public Budget(BudgetId budgetId, string name, DateTime startingDate, Currency currency)
+        public Budget(Budget.Id budgetId, string name, DateTime startingDate, Currency currency)
         {
             BudgetId = budgetId;
             SetName(name);
@@ -27,12 +26,19 @@ namespace raBudget.Domain.Models
 
         #region Properties
 
-        public BudgetId BudgetId { get; }
+        public Budget.Id BudgetId { get; }
         public string Name { get; private set; }
         public DateTime StartingDate { get; private set; }
         public Currency Currency { get; private set; }
 
         #endregion
+
+        public class Id : IdValueBase<int>
+        {
+            public Id(int value) : base(value)
+            {
+            }
+        }
 
         #region Methods
 

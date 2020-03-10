@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
@@ -16,7 +17,7 @@ namespace raBudget.Domain.Models
             BudgetCategoryType = budgetCategoryType;
         }
 
-        public BudgetCategory(BudgetCategoryId budgetCategoryId, Budget budget, string name, BudgetCategoryIcon icon, IEnumerable<BudgetedAmount> budgetedAmounts, eBudgetCategoryType budgetCategoryType)
+        public BudgetCategory(BudgetCategory.Id budgetCategoryId, Budget budget, string name, BudgetCategoryIcon icon, IEnumerable<BudgetedAmount> budgetedAmounts, eBudgetCategoryType budgetCategoryType)
         {
             BudgetedAmounts = new List<BudgetedAmount>(budgetedAmounts.OrderBy(x => x.ValidFrom));
             BudgetCategoryId = budgetCategoryId;
@@ -30,8 +31,8 @@ namespace raBudget.Domain.Models
 
         #region Properties
 
-        public BudgetCategoryId BudgetCategoryId { get; }
-        public BudgetId BudgetId { get; }
+        public BudgetCategory.Id BudgetCategoryId { get; }
+        public Budget.Id BudgetId { get; }
         public string Name { get; private set; }
         public BudgetCategoryIcon Icon { get; private set; }
         public IList<BudgetedAmount> BudgetedAmounts { get; private set; }
@@ -84,7 +85,25 @@ namespace raBudget.Domain.Models
             BudgetedAmounts.Remove(amountToRemove);
         }
 
+        public void UpdateBudgetedAmount(BudgetedAmount budgetedAmount)
+        {
+            var amountToUpdate = BudgetedAmounts.FirstOrDefault(x => x == budgetedAmount);
+            if (amountToUpdate == null)
+            {
+                throw new NotFoundException("Budgeted amount does not exist");
+            }
+            amountToUpdate.SetValidDate(budgetedAmount.ValidFrom);
+            amountToUpdate.SetAmount(budgetedAmount.Amount);
+        }
+
         #endregion
+
+        public class Id : IdValueBase<int>
+        {
+            public Id(int value) : base(value)
+            {
+            }
+        }
 
         #region Nested type: BudgetedAmount
 
@@ -102,9 +121,34 @@ namespace raBudget.Domain.Models
             #endregion
 
             #region Properties
-            public BudgetCategoryId BudgetCategoryId { get; }
+
+            public BudgetCategory.Id BudgetCategoryId { get; }
             public DateTime ValidFrom { get; private set; }
             public MoneyAmount Amount { get; private set; }
+
+            #endregion
+
+            #region Methods
+
+            public void SetValidDate(DateTime newDate)
+            {
+                if (newDate == default)
+                {
+                    throw new BusinessException("Starting date must be set");
+                }
+
+                ValidFrom = newDate;
+            }
+
+            public void SetAmount(MoneyAmount newAmount)
+            {
+                if (newAmount.Amount < 0)
+                {
+                    throw new BusinessException("Value must be larger than 0");
+                }
+
+                Amount = newAmount;
+            }
 
             #endregion
 

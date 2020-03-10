@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using raBudget.Domain.Enums;
 
-namespace raBudget.Domain.Entities
+namespace raBudget.Domain.Models
 {
     public class Currency
     {

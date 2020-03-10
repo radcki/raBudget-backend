@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
@@ -12,12 +13,14 @@ namespace raBudget.Domain.Models
         private Transaction()
         {
         }
-        public Transaction(TransactionId transactionId, 
-                           string description, 
-                           BudgetCategory budgetCategory, 
-                           MoneyAmount amount, 
-                           DateTime transactionDate, 
-                           DateTime creationDate)
+
+        public Transaction
+        (Transaction.Id transactionId,
+         string description,
+         BudgetCategory budgetCategory,
+         MoneyAmount amount,
+         DateTime transactionDate,
+         DateTime creationDate)
         {
             TransactionId = transactionId;
             Description = description;
@@ -27,9 +30,9 @@ namespace raBudget.Domain.Models
             CreationDateTime = creationDate;
         }
 
-        public TransactionId TransactionId { get; }
+        public Transaction.Id TransactionId { get; }
         public string Description { get; private set; }
-        public BudgetCategoryId BudgetCategoryId { get; private set; }
+        public BudgetCategory.Id BudgetCategoryId { get; private set; }
         public eBudgetCategoryType TransactionType { get; private set; }
         public MoneyAmount Amount { get; private set; }
         public DateTime TransactionDateTime { get; private set; }
@@ -41,6 +44,7 @@ namespace raBudget.Domain.Models
             {
                 throw new BusinessException("New amount must be of same currency");
             }
+
             Amount = newAmount;
         }
 
@@ -55,8 +59,16 @@ namespace raBudget.Domain.Models
             {
                 throw new BusinessException("New budget category must be of same type as old");
             }
+
             BudgetCategoryId = budgetCategory.BudgetCategoryId;
             TransactionType = budgetCategory.BudgetCategoryType;
+        }
+
+        public class Id : IdValueBase<int>
+        {
+            public Id(int value) : base(value)
+            {
+            }
         }
     }
 }

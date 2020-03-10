@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Domain", "raBudget.Domain\raBudget.Domain.csproj", "{08D64EA9-D2F5-408A-B6E2-12B61BFF3144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Domain", "raBudget.Domain\raBudget.Domain.csproj", "{08D64EA9-D2F5-408A-B6E2-12B61BFF3144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Domain.UnitTests", "raBudget.Domain.UnitTests\raBudget.Domain.UnitTests.csproj", "{401A3ED6-D24D-45ED-903F-5EF44BE9BCBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Domain.UnitTests", "raBudget.Domain.UnitTests\raBudget.Domain.UnitTests.csproj", "{401A3ED6-D24D-45ED-903F-5EF44BE9BCBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Infrastructure", "raBudget.Infrastructure\raBudget.Infrastructure.csproj", "{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,18 @@ Global
 		{401A3ED6-D24D-45ED-903F-5EF44BE9BCBC}.Release|x64.Build.0 = Release|Any CPU
 		{401A3ED6-D24D-45ED-903F-5EF44BE9BCBC}.Release|x86.ActiveCfg = Release|Any CPU
 		{401A3ED6-D24D-45ED-903F-5EF44BE9BCBC}.Release|x86.Build.0 = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|x64.Build.0 = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Debug|x86.Build.0 = Debug|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|x64.ActiveCfg = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|x64.Build.0 = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|x86.ActiveCfg = Release|Any CPU
+		{3A58B5FC-A13B-4CF6-9D90-41452A86C1D4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

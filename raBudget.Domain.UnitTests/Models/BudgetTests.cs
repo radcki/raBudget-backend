@@ -1,5 +1,5 @@
 using System;
-using raBudget.Domain.Entities;
+using FluentAssertions;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
@@ -13,29 +13,48 @@ namespace raBudget.Domain.UnitTests.Models
         [Fact]
         public void Throws_WhenCreatedWithoutName()
         {
-            Assert.Throws<BusinessException>(() => { new Budget(new BudgetId(RandomInt()), null, DateTime.Now, new Currency(eCurrencyCode.PLN)); });
-            Assert.Throws<BusinessException>(() => { new Budget(new BudgetId(RandomInt()), "", DateTime.Now, new Currency(eCurrencyCode.PLN)); });
-            Assert.Throws<BusinessException>(() => { new Budget(new BudgetId(RandomInt()), "   ", DateTime.Now, new Currency(eCurrencyCode.PLN)); });
+            // Arrange
+
+            // Act
+            Action act1 = () => { new Budget(new Budget.Id(RandomInt()), null, DateTime.Now, new Currency(eCurrencyCode.PLN)); };
+            Action act2 = () => { new Budget(new Budget.Id(RandomInt()), "", DateTime.Now, new Currency(eCurrencyCode.PLN)); };
+            Action act3 = () => { new Budget(new Budget.Id(RandomInt()), "   ", DateTime.Now, new Currency(eCurrencyCode.PLN)); };
+            
+            // Assert
+            act1.Should().Throw<BusinessException>();
+            act2.Should().Throw<BusinessException>();
+            act3.Should().Throw<BusinessException>();
         }
 
         [Fact]
         public void Throws_WhenCreatedWithTooLongName()
         {
-            Assert.Throws<BusinessException>(() => { new Budget(new BudgetId(RandomInt()), RandomString(61), DateTime.Now, new Currency(eCurrencyCode.PLN)); });
+            // Arrange
+
+            // Act
+            Action act = () => { new Budget(new Budget.Id(RandomInt()), RandomString(61), DateTime.Now, new Currency(eCurrencyCode.PLN)); };
+            
+            // Assert
+            act.Should().Throw<BusinessException>();
         }
 
         [Fact]
         public void Throws_WhenCreatedWithoutDate()
         {
-            Assert.Throws<BusinessException>(() => { new Budget(new BudgetId(RandomInt()), RandomString(10), default, new Currency(eCurrencyCode.PLN)); });
+            // Arrange
 
+            // Act
+            Action act = () => { new Budget(new Budget.Id(RandomInt()), RandomString(10), default, new Currency(eCurrencyCode.PLN)); };
+            
+            // Assert
+            act.Should().Throw<BusinessException>();
         }
 
         [Fact]
         public void StartingDate_Should_BeSetToFirstDayOfMonth()
         {
-            var budget = new Budget(new BudgetId(RandomInt()), RandomString(4), new DateTime(2020,4,4), new Currency(eCurrencyCode.PLN));
-            Assert.Equal(new DateTime(2020,4,1), budget.StartingDate);
+            var budget = new Budget(new Budget.Id(RandomInt()), RandomString(4), new DateTime(2020,4,4), new Currency(eCurrencyCode.PLN));
+            budget.StartingDate.Should().Be(new DateTime(2020, 4, 1));
         }
     }
 }

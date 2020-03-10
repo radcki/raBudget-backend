@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using raBudget.Domain.Entities;
+using raBudget.Domain.Models;
 
 namespace raBudget.Domain.ValueObjects
 {
