@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc.ViewEngines
+@inject IWebHostEnvironment Environment
+@inject ICompositeViewEngine Engine
+@using raBudget.Api.Infrastructure
+<!DOCTYPE html>
+<html class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - raBudget</title>
+
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <% } %>
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+
+</head>
+<body class="h-100 mdc-typography mdc-theme--background">
+    <div class="container h-100">
+        <main role="main" class="pb-3 h-100">
+            @RenderBody()
+        </main>
+    </div>
+    
+    <% for (var chunk in htmlWebpackPlugin.files.js) { %>
+    <script src="<%= htmlWebpackPlugin.files.js[chunk] %>"></script>
+    <% } %>
+    @RenderSection("_script", required: false)
+    @RenderSection("Scripts", required: false)
+    @Html.RenderScripts()
+
+</body>
+</html>

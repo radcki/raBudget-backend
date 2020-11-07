@@ -5,17 +5,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20201011110219_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011110219_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20201011110559_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011110559_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20201011110712_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011110712_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20201011110810_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011110810_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20201011110914_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011110914_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20201011111548_CreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20201011111548_CreateIdentitySchema.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\raBudget.Domain\raBudget.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Database\Configuration\" />
+    <Folder Include="Database\Configuration\Read\" />
     <Folder Include="Database\Dao\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.1" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.2" />
+    <PackageReference Include="SendGrid" Version="9.21.0" />
   </ItemGroup>
 
 </Project>

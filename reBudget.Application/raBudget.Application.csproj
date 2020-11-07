@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\raBudget.Common\raBudget.Common.csproj" />
+    <ProjectReference Include="..\raBudget.Domain\raBudget.Domain.csproj" />
+    <ProjectReference Include="..\raBudget.Infrastructure\raBudget.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Account\Query\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

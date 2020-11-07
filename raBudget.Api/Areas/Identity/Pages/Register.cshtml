@@ -1,0 +1,61 @@
+﻿@page
+@inject IViewLocalizer Localizer
+@using raBudget.Api.Infrastructure
+@using Microsoft.AspNetCore.Mvc.Localization
+@model RegisterModel
+@{
+    ViewData["Title"] = Localizer["Title"];
+}
+<div class="row h-100 justify-content-center">
+    <div class="col align-self-center" style="max-width: 480px">
+        <div class="mdc-card">
+            <div class="card-title py-4 mdc-theme--primary-bg mdc-theme--on-primary">
+                <h2 class="text-center my-auto align-middle">@ViewData["Title"]</h2>
+            </div>
+            <div class="mdc-card-content text-center">
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div class="form-inputs-container">
+                        <div class="mb-2">
+                            @Html.MdcTextBoxFor(m => m.Email)
+                        </div>
+                        <div class="mb-2">
+                            @Html.MdcTextBoxFor(m => m.Password, new {type = "password"})
+                        </div>
+                        <div class="mb-2">
+                            @Html.MdcTextBoxFor(m => m.ConfirmPassword, new {type = "password"})
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        @Html.MdcButton(eButtonType.Submit, Localizer["RegisterButton"].Value)
+                    </div>
+                </form>
+                @{
+                    if (Model.ExternalLogins?.Any() ?? false)
+                    {
+                        <section>
+                            <h4>@Localizer["ExternalLogin"]</h4>
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                <div>
+                                    <p>
+                                        @foreach (var provider in Model.ExternalLogins)
+                                        {
+                                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="@Localizer["LoginWith",@provider.DisplayName]">@provider.DisplayName</button>
+                                        }
+                                    </p>
+                                </div>
+                            </form>
+                        </section>
+                    }
+                }
+                
+
+                <div class="form-group">
+                    <p>
+                        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">@Localizer["BackToLogin"]</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

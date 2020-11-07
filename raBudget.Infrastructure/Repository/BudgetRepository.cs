@@ -12,31 +12,31 @@ namespace raBudget.Infrastructure.Repository
 {
     public class BudgetRepository : IBudgetRepository
     {
-        private readonly ReadDbContext _db;
+        private readonly WriteDbContext _writeDb;
 
-        public BudgetRepository(ReadDbContext db)
+        public BudgetRepository(WriteDbContext writeDb)
         {
-            _db = db;
+            _writeDb = writeDb;
         }
 
         /// <inheritdoc />
         public Task Save(Budget entity, CancellationToken cancellationToken)
         {
-            _db.Budgets.Update(entity);
-            return _db.SaveChangesAsync(cancellationToken);
+            _writeDb.Budgets.Update(entity);
+            return _writeDb.SaveChangesAsync(cancellationToken);
         }
 
 
         /// <inheritdoc />
         public async Task<Budget> GetById(Budget.Id budgetId, CancellationToken cancellationToken)
         {
-            return await _db.Budgets.FindAsync(budgetId, cancellationToken);
+            return await _writeDb.Budgets.FindAsync(budgetId, cancellationToken);
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<Budget>> GetAll(CancellationToken cancellationToken)
         {
-            return await _db.Budgets.ToListAsync(cancellationToken);
+            return await _writeDb.Budgets.ToListAsync(cancellationToken);
         }
     }
 }
