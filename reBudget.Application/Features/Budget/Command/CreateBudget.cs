@@ -22,7 +22,7 @@ namespace raBudget.Application.Features.Budget.Command
 
         public class Result
         {
-             public int BudgetId { get; set; }
+            public Guid BudgetId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result>
@@ -42,6 +42,7 @@ namespace raBudget.Application.Features.Budget.Command
                 budget.SetOwner(_userContext.UserId);
                 _writeDbContext.Budgets.Add(budget);
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
+
                 return new Result()
                        {
                            BudgetId = budget.BudgetId.Value

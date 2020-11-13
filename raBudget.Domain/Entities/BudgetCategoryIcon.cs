@@ -1,4 +1,5 @@
-﻿using raBudget.Domain.BaseTypes;
+﻿using System;
+using raBudget.Domain.BaseTypes;
 
 namespace raBudget.Domain.Models
 {
@@ -14,9 +15,9 @@ namespace raBudget.Domain.Models
         public BudgetCategoryIcon.Id IconId { get; }
         public string IconKey { get; }
 
-        public class Id : IdValueBase<int>
+        public class Id : IdValueBase<Guid>
         {
-            public Id(int value) : base(value)
+            public Id() : base(Guid.NewGuid())
             {
             }
         }

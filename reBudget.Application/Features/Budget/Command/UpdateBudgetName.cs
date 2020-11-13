@@ -11,13 +11,12 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.Budget.Command
 {
-    public class UpdateBudget
+    public class UpdateBudgetName
     {
         public class Command : IRequest<Result>
         {
-            public int BudgetId { get; set; }
+            public Guid BudgetId { get; set; }
             public string Name { get; set; }
-            public DateTime StartingDate { get; set; }
         }
 
         public class Result
@@ -33,7 +32,7 @@ namespace raBudget.Application.Features.Budget.Command
             public Handler
             (
                 IWriteDbContext writeDbContext,
-                IUserContext userContext, 
+                IUserContext userContext,
                 AccessControlService accessControlService)
             {
                 _writeDbContext = writeDbContext;
@@ -43,17 +42,15 @@ namespace raBudget.Application.Features.Budget.Command
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (!await _accessControlService.HasBudgetAccessAsync(request.BudgetId))
+                if (!await _accessControlService.HasBudgetAccessAsync(new Domain.Entities.Budget.Id(request.BudgetId)))
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetNotFound));
                 }
 
-                var entity = await _writeDbContext.Budgets.FirstOrDefaultAsync(x => x.BudgetId == new Domain.Entities.Budget.Id(request.BudgetId) 
+                var stored = await _writeDbContext.Budgets.FirstOrDefaultAsync(x => x.BudgetId.Value == request.BudgetId
                                                                                     && x.OwnerUserId == _userContext.UserId, cancellationToken);
 
-
-                entity.SetName(request.Name);
-                entity.SetStartingDate(request.StartingDate);
+                stored.SetName(request.Name);
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
                 return new Result();
             }

@@ -12,5 +12,14 @@ namespace raBudget.Common.Resources
 
         [Localized(KnownCulture.Polish, "Budżet nie został odnaleziony")]
         public static string BudgetNotFound = "Budget was not found";
+
+        [Localized(KnownCulture.Polish, "")]
+        public static string BudgetCategoryNotFound = "";
+
+        [Localized(KnownCulture.Polish, "")]
+        public static string SameBudgetedAmountDate = "";
+
+        [Localized(KnownCulture.Polish, "")]
+        public static string EndDateBeforeStartDate = "";
     }
 }

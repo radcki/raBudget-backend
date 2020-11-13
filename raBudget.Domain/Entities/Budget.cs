@@ -20,7 +20,10 @@ namespace raBudget.Domain.Entities
 
         public static Budget Create(string name, DateTime startingDate, Currency currency)
         {
-            var budget = new Budget();
+            var budget = new Budget()
+                         {
+                             BudgetId = new Id()
+                         };
             budget.SetName(name);
             budget.SetStartingDate(startingDate);
             budget.SetCurrency(currency);
@@ -31,7 +34,7 @@ namespace raBudget.Domain.Entities
 
         #region Properties
 
-        public Budget.Id BudgetId { get; }
+        public Budget.Id BudgetId { get; private set; }
         public string Name { get; private set; }
         public string OwnerUserId { get; private set; }
         public DateTime StartingDate { get; private set; }
@@ -41,11 +44,10 @@ namespace raBudget.Domain.Entities
 
         #endregion
 
-        public class Id : IdValueBase<int>
+        public class Id : IdValueBase<Guid>
         {
-            public Id(int value) : base(value)
-            {
-            }
+            public Id() : base(Guid.NewGuid()) { }
+            public Id(Guid value) : base(value) { }
         }
 
         #region Methods
@@ -67,7 +69,7 @@ namespace raBudget.Domain.Entities
 
         public void SetStartingDate(DateTime startingDate)
         {
-            if (startingDate == null || startingDate == default)
+            if (startingDate == default)
             {
                 throw new BusinessException("Budget starting date is required");
             }
@@ -84,8 +86,9 @@ namespace raBudget.Domain.Entities
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw  new BusinessException(Localization.For(()=>ErrorMessages.UserRequired));
+                throw new BusinessException(Localization.For(() => ErrorMessages.UserRequired));
             }
+
             OwnerUserId = userId;
         }
 

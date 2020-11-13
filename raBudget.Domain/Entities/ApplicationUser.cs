@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
+﻿
 
-namespace raBudget.Domain.Models
+namespace raBudget.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser
     {
+        public string UserId { get; set; }
     }
 }

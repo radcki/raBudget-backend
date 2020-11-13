@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentAssertions;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
@@ -90,7 +91,7 @@ namespace raBudget.Domain.UnitTests.Models
             var amount = new MoneyAmount(budget.Currency, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
             var amountToUpdate = budgetCategory.BudgetedAmounts.ToList().First();
-            amountToUpdate.SetValidDate(DateTime.Today.AddMonths(-1)); ;
+            amountToUpdate.SetValidFromDate(DateTime.Today.AddMonths(-1)); ;
 
             // Act
             Action act = () => budgetCategory.UpdateBudgetedAmount(amountToUpdate);

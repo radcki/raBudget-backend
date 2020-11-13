@@ -21,7 +21,7 @@ namespace raBudget.Infrastructure.Database
                                                 .Select(x => new Budget()
                                                              {
                                                                  OwnerUserId = x.OwnerUserId,
-                                                                 BudgetId = x.BudgetId.Value,
+                                                                 BudgetId = x.BudgetId,
                                                                  Currency = x.Currency,
                                                                  Name = x.Name,
                                                                  StartingDate = x.StartingDate,
@@ -32,11 +32,21 @@ namespace raBudget.Infrastructure.Database
                                                                  .AsNoTracking()
                                                                  .Select(x=> new BudgetCategory()
                                                                              {
-                                                                                 BudgetCategoryId = x.BudgetCategoryId.Value,
-                                                                                 BudgetId = x.BudgetId.Value,
+                                                                                 BudgetCategoryId = x.BudgetCategoryId,
+                                                                                 BudgetId = x.BudgetId,
                                                                                  Name = x.Name,
                                                                                  BudgetCategoryType = x.BudgetCategoryType
                                                                              });
+
+        /// <inheritdoc />
+        public IQueryable<Transaction> Transactions => _db.Transactions
+                                                          .AsNoTracking()
+                                                          .Select(x => new Transaction()
+                                                                       {
+                                                                           TransactionId = x.TransactionId,
+                                                                           BudgetCategoryId = x.BudgetCategoryId,
+                                                                           Description = x.Description,
+                                                                       });
 
 
         public void Dispose()

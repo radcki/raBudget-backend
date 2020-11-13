@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using raBudget.Domain.Models;
 
-namespace raBudget.Infrastructure.Database.Configuration.Write
+namespace raBudget.Infrastructure.Database.Configuration
 {
     public class CurrencyConfiguration : IEntityTypeConfiguration<Currency>
     {

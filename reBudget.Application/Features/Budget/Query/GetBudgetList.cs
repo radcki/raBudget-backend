@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Interfaces;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Models;
+using raBudget.Domain.Services;
 
 namespace raBudget.Application.Features.Budget.Query
 {
@@ -40,22 +40,25 @@ namespace raBudget.Application.Features.Budget.Query
             }
         }
 
-        
-
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
             private readonly MapperConfiguration _mapperConfiguration;
+            private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration)
+            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
             {
                 _readDb = readDb;
                 _mapperConfiguration = mapperConfiguration;
+                _accessControlService = accessControlService;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
+                var budgetIds = _accessControlService.GetAccessibleBudgetIds();
+
                 var data = _readDb.Budgets
+                                  .Where(x=>budgetIds.Contains(x.BudgetId))
                                   .ProjectTo<BudgetDto>(_mapperConfiguration)
                                   .OrderBy(x=>x.Name);
 

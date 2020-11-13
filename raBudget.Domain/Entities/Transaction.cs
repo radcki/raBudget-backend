@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
 
-namespace raBudget.Domain.Models
+namespace raBudget.Domain.Entities
 {
     public class Transaction
     {
@@ -22,6 +20,7 @@ namespace raBudget.Domain.Models
         {
             var transaction = new Transaction
                               {
+                                  TransactionId = new Id(),
                                   Description = description
                               };
             transaction.SetBudgetCategory(budgetCategory);
@@ -66,11 +65,10 @@ namespace raBudget.Domain.Models
             TransactionType = budgetCategory.BudgetCategoryType;
         }
 
-        public class Id : IdValueBase<int>
+        public class Id : IdValueBase<Guid>
         {
-            public Id(int value) : base(value)
-            {
-            }
+            public Id() : base(Guid.NewGuid()) { }
+            public Id(Guid value) : base(value) { }
         }
     }
 }

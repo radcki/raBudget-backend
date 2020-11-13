@@ -7,7 +7,7 @@ namespace raBudget.Domain.ReadModels
 {
     public class Budget
     {
-        public int BudgetId { get; set; }
+        public Domain.Entities.Budget.Id BudgetId { get; set; }
         public string Name { get; set; }
         public string OwnerUserId { get; set; }
         public DateTime StartingDate { get; set; }

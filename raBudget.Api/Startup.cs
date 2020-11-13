@@ -1,26 +1,20 @@
-using System;
-using System.Globalization;
 using System.Reflection;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using raBudget.Api.Infrastructure;
+using raBudget.Application.Infrastructure;
 using raBudget.Domain.Interfaces;
+using raBudget.Domain.Services;
 using raBudget.Infrastructure.Database;
-using raBudget.Infrastructure.Services;
 
 namespace raBudget.Api
 {
@@ -35,19 +29,26 @@ namespace raBudget.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var apiAssembly = Assembly.Load("raBudget.Api");
             var applicationAssembly = Assembly.Load("raBudget.Application");
 
             services.Configure<ApiConfiguration>(Configuration.GetSection("SystemConfiguration"));
             services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MySql"), builder => { builder.MigrationsAssembly("raBudget.Infrastructure"); }));
+            services.AddTransient<IReadDbContext, ReadDbContext>();
+            services.AddTransient<AccessControlService>();
 
             services.AddIdentityServices(Configuration);
 
             services.AddMediatR(applicationAssembly);
             services.AddTransient<WriteDbContext>();
-            services.AddTransient<IEmailClient, EmailClient>();
-            services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddAutoMapper(applicationAssembly, apiAssembly);
+            var config = new MapperConfiguration(cfg =>
+                                                 {
+                                                     cfg.AddProfile(new ApiAutoMapperProfile());
+                                                     cfg.AddProfile(new ApplicationAutoMapperProfile());
+                                                 });
+            services.AddSingleton(config);
 
             services.Configure<ForwardedHeadersOptions>(options =>
                                                         {
@@ -56,9 +57,12 @@ namespace raBudget.Api
                                                         });
 
             services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                    .AddDataAnnotationsLocalization();
-            
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddSwaggerGen(options =>
+                                   {
+                                       options.SwaggerDoc("v1", new OpenApiInfo() {Title = "raBudgetApi", Version = "v1"});
+                                   });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -73,6 +77,14 @@ namespace raBudget.Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseForwardedHeaders();
+
+
+                app.UseSwagger(options =>
+                               {
+                                   options.RouteTemplate = "swagger/{documentName}/swagger.json";
+                                   options.SerializeAsV2 = true;
+                               });
+                app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
             }
             else
             {
@@ -87,14 +99,13 @@ namespace raBudget.Api
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-
             app.UseIdentityServices();
-            //app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseEndpoints(endpoints =>
-                             {
-                                 endpoints.MapControllerRoute(name: "default",
-                                                              pattern: "{controller=Home}/{action=Index}/{id?}");
-                             });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            //app.UseEndpoints(endpoints =>
+            //                 {
+            //                     endpoints.MapControllerRoute(name: "default",
+            //                                                  pattern: "{controller=Home}/{action=Index}/{id?}");
+            //                 });
 
         }
     }

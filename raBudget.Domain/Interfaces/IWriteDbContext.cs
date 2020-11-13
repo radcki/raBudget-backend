@@ -13,6 +13,7 @@ namespace raBudget.Domain.Interfaces
         DbSet<Budget> Budgets { get; }
         DbSet<BudgetCategory> BudgetCategories { get; }
         DbSet<Transaction> Transactions { get; }
+        DbSet<BudgetCategoryIcon> BudgetCategoryIcons { get; }
 
         DatabaseFacade Database { get; }
         int SaveChanges();

@@ -11,11 +11,12 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.Budget.Command
 {
-    public class RemoveBudget
+    public class UpdateBudgetStartingDate
     {
         public class Command : IRequest<Result>
         {
             public Guid BudgetId { get; set; }
+            public DateTime StartingDate { get; set; }
         }
 
         public class Result
@@ -31,7 +32,8 @@ namespace raBudget.Application.Features.Budget.Command
             public Handler
             (
                 IWriteDbContext writeDbContext,
-                IUserContext userContext, AccessControlService accessControlService)
+                IUserContext userContext,
+                AccessControlService accessControlService)
             {
                 _writeDbContext = writeDbContext;
                 _userContext = userContext;
@@ -45,13 +47,12 @@ namespace raBudget.Application.Features.Budget.Command
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetNotFound));
                 }
 
-                var entity = await _writeDbContext.Budgets
-                                                  .FirstOrDefaultAsync(x => x.BudgetId.Value == request.BudgetId
-                                                                            && x.OwnerUserId == _userContext.UserId, cancellationToken);
+                var stored = await _writeDbContext.Budgets.FirstOrDefaultAsync(x => x.BudgetId.Value == request.BudgetId
+                                                                                    && x.OwnerUserId == _userContext.UserId, cancellationToken);
 
-                _writeDbContext.Budgets.Remove(entity);
+                stored.SetStartingDate(request.StartingDate);
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
-                return new Result(){};
+                return new Result();
             }
         }
     }

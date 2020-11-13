@@ -8,9 +8,8 @@ namespace raBudget.Domain.ReadModels
 {
     public class Transaction
     {
-        public int TransactionId { get; set; }
-        public int BudgetCategoryId { get; set; }
-        public int BudgetId { get; set; }
+        public Domain.Entities.Transaction.Id TransactionId { get; set; }
+        public Domain.Entities.BudgetCategory.Id BudgetCategoryId { get; set; }
         public string Description { get; set; }
     }
 }
