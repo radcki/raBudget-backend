@@ -1,4 +1,4 @@
-﻿using raBudget.Common.Attributes;
+﻿using RLib.Localization.Attributes;
 
 namespace raBudget.Domain.Enums
 {

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Models;
 using raBudget.Domain.Repositories;
 using raBudget.Infrastructure.Database;

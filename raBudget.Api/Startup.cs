@@ -54,26 +54,11 @@ namespace raBudget.Api
                                                             options.ForwardedHeaders =
                                                                 ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                                                         });
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                    .AddRazorPagesOptions(options =>
-                                          {
-                                              //options.AllowAreas = true;
-                                              options.Conventions.AuthorizeAreaFolder("Identity", "/Manage");
-                                              options.Conventions.AuthorizeAreaPage("Identity", "/Logout");
-                                          })
-                    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                     .AddDataAnnotationsLocalization();
             
-            services.ConfigureApplicationCookie(options =>
-                                                {
-                                                    options.LoginPath = $"/Identity/Login";
-                                                    options.LogoutPath = $"/Identity/Logout";
-                                                    options.AccessDeniedPath = $"/Identity/AccessDenied";
-                                                    options.ReturnUrlParameter = "returnUrl";
-                                                    options.Cookie.SameSite = SameSiteMode.Lax;
-                                                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -82,7 +67,6 @@ namespace raBudget.Api
             var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
                                                                       .AddSupportedCultures(supportedCultures)
                                                                       .AddSupportedUICultures(supportedCultures);
-
             app.UseRequestLocalization(localizationOptions);
 
             if (env.IsDevelopment())
@@ -95,10 +79,7 @@ namespace raBudget.Api
                 app.UseForwardedHeaders();
                 app.UseHsts();
             }
-            app.UseCookiePolicy(new CookiePolicyOptions
-                                {
-                                    MinimumSameSitePolicy = SameSiteMode.Lax,
-                                });
+
             app.UseCors(builder => builder.AllowAnyHeader()
                                           .AllowAnyMethod()
                                           .AllowAnyOrigin());
@@ -111,15 +92,10 @@ namespace raBudget.Api
             //app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             app.UseEndpoints(endpoints =>
                              {
-                                 endpoints.MapAreaControllerRoute("identity", "Identity", "{controller=Account}/{action=Login}");
-
-                                 //endpoints.MapControllerRoute(
-                                 //                             name: "default",
-                                 //                             pattern: "{controller=Home}/{action=Index}/{id?}");
-                                 endpoints.MapRazorPages();
+                                 endpoints.MapControllerRoute(name: "default",
+                                                              pattern: "{controller=Home}/{action=Index}/{id?}");
                              });
 
-            app.UseNpmScript("build:dev");
         }
     }
 }

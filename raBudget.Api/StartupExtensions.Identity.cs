@@ -35,157 +35,61 @@ namespace raBudget.Api
     {
         public static void AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-            //                                                       {
-            //                                                           options.SignIn.RequireConfirmedAccount = true;
-            //                                                           options.User.RequireUniqueEmail = true;
+           
+            //var identityService = services.AddIdentity<ApplicationUser, IdentityRole>(o =>
+            //                                                                          {
+            //                                                                              o.Stores.MaxLengthForKeys = 128;
+            //                                                                              o.SignIn.RequireConfirmedAccount = true;
+            //                                                                              o.User.RequireUniqueEmail = true;
 
-            //                                                           options.Password.RequireDigit = true;
-            //                                                           options.Password.RequiredLength = 6;
-            //                                                           options.Password.RequireNonAlphanumeric = false;
-            //                                                           options.Password.RequireUppercase = false;
-            //                                                       })
-            //        .AddRoles<ApplicationRole>()
-            //        .AddEntityFrameworkStores<WriteDbContext>()
-            //        .AddDefaultTokenProviders();
+            //                                                                              o.Password.RequireDigit = true;
+            //                                                                              o.Password.RequiredLength = 6;
+            //                                                                              o.Password.RequireNonAlphanumeric = false;
+            //                                                                              o.Password.RequireUppercase = false;
+            //                                                                          })
+            //                              .AddEntityFrameworkStores<WriteDbContext>()
+            //                              .AddDefaultTokenProviders();
 
-            //services.AddAuthentication(o =>
-            //                           {
-            //                               o.DefaultScheme = IdentityConstants.ApplicationScheme;
-            //                               o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            //                           })
-            //        .AddIdentityCookies(o => { });
+            //identityService.Services.TryAddTransient<IEmailSender, EmailSender>();
 
-            var identityService = services.AddIdentity<ApplicationUser, IdentityRole>(o =>
-                                                                                      {
-                                                                                          o.Stores.MaxLengthForKeys = 128;
-                                                                                          o.SignIn.RequireConfirmedAccount = true;
-                                                                                          o.User.RequireUniqueEmail = true;
-
-                                                                                          o.Password.RequireDigit = true;
-                                                                                          o.Password.RequiredLength = 6;
-                                                                                          o.Password.RequireNonAlphanumeric = false;
-                                                                                          o.Password.RequireUppercase = false;
-                                                                                      })
-                                          .AddEntityFrameworkStores<WriteDbContext>()
-                                          .AddDefaultTokenProviders();
-
-            //identityService.AddSignInManager();
-            identityService.Services.TryAddTransient<IEmailSender, EmailSender>();
-
-            services.AddIdentityServer(options =>
-                                       {
-                                           options.Events.RaiseErrorEvents = true;
-                                           options.Events.RaiseInformationEvents = true;
-                                           options.Events.RaiseFailureEvents = true;
-                                           options.Events.RaiseSuccessEvents = true;
-
-                                           options.EmitStaticAudienceClaim = true;
-
-                                           options.UserInteraction = new UserInteractionOptions()
-                                                                     {
-                                                                         //LogoutUrl = "/Identity/Logout",
-                                                                         //LoginUrl = "/Identity/Login",
-                                                                         //LoginReturnUrlParameter = "returnUrl",
-                                                                         LogoutUrl = "/Identity/Logout",
-                                                                         LoginUrl = "/Identity/Login",
-                                                                         LoginReturnUrlParameter = "returnUrl",
-                                           };
-
-                                           //options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                                       })
-                    .AddInMemoryClients(new[]
-                                        {
-                                            new Client
-                                            {
-                                                ClientId = "rabudget",
-                                                RequireClientSecret = false,
-                                                RequireConsent = false,
-                                                AllowedGrantTypes = GrantTypes.Code,
-
-                                                RedirectUris =
-                                                {
-                                                    "http://localhost:8080/auth/signinwin/main", 
-                                                    "http://localhost:8080/auth/signinpop/main",
-                                                    "https://localhost:8080/auth/signinwin/main", 
-                                                    "https://localhost:8080/auth/signinpop/main"
-                                                },
-                                                PostLogoutRedirectUris = {"http://localhost:8080/"},
-
-                                                AllowOfflineAccess = true,
-                                                AllowedScopes =
-                                                {
-                                                    IdentityServerConstants.StandardScopes.OpenId,
-                                                    IdentityServerConstants.StandardScopes.Profile,
-                                                    IdentityServerConstants.StandardScopes.Email,
-                                                    "rabudget"
-                                                }
-                                            },
-                                        })
-                    .AddInMemoryIdentityResources(new[]
-                                                  {
-                                                      new IdentityResources.OpenId(),
-                                                      new IdentityResources.Profile(),
-                                                      new IdentityResources.Email(),
-                                                      new IdentityResource("rabudget", new[] {JwtClaimTypes.Audience}),
-                                                  })
-                    .AddAspNetIdentity<ApplicationUser>()
-                    .AddDeveloperSigningCredential();
 
             services.AddAuthentication(options =>
                                        {
-                                           //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                                           //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                                           options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                                           options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                                        })
-                    //.AddJwtBearer(ConfigureJwtBearer)
-                    .AddGoogle(options =>
-                               {
-                                   options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-                                   options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-                                   options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
-                                   options.ClaimActions.MapJsonKey(claimType: "role", jsonKey: "role");
-                                   options.SaveTokens = true;
-                                   options.Events.OnCreatingTicket = ctx =>
-                                                                     {
-                                                                         List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
-
-                                                                         tokens.Add(new AuthenticationToken()
-                                                                                    {
-                                                                                        Name = "TicketCreated",
-                                                                                        Value = DateTime.UtcNow.ToString()
-                                                                                    });
-
-                                                                         ctx.Properties.StoreTokens(tokens);
-
-                                                                         return Task.CompletedTask;
-                                                                     };
-                                   IConfigurationSection googleAuthNSection = configuration.GetSection("Authentication:Google");
-                                   options.ClientId = googleAuthNSection["ClientId"];
-                                   options.ClientSecret = googleAuthNSection["ClientSecret"];
-                               });
-
+                    .AddJwtBearer(ConfigureJwtBearer)
+                    .AddOAuth2Introspection("introspection", options =>
+                                                             {
+                                                                 options.Authority = "https://auth.rabt.pl";
+                                                                 options.ClientId = "rabudget";
+                                                             });
+            
+            services.AddHttpContextAccessor();
             services.AddTransient<IUserContext, UserContext>();
         }
 
         public static void UseIdentityServices(this IApplicationBuilder app)
         {
-            app.UseIdentityServer();
+            //app.UseIdentityServer();
+
             app.UseAuthentication();
             app.UseAuthorization();
         }
 
         private static void ConfigureJwtBearer(JwtBearerOptions options)
         {
-            options.Authority = "https://localhost:44393";
-            options.Audience = "https://localhost:44393/resources";
+            options.Authority = "https://auth.rabt.pl";
+            options.Audience = "https://auth.rabt.pl/resources";
             //options.Audience = Configuration["Authentication:Audience"];
 
             options.TokenValidationParameters = new TokenValidationParameters()
                                                 {
-                                                    ValidateLifetime = false,
-                                                    ValidateIssuer = false,
-                                                    ValidateAudience = false,
+                                                    ValidateLifetime = true,
+                                                    ValidateIssuer = true,
+                                                    ValidateAudience = true,
+                                                    ValidateIssuerSigningKey = true,
+                                                    ValidTypes = new[] {"at+jwt"}
                                                 };
 
             options.RequireHttpsMetadata = false;
@@ -227,11 +131,11 @@ namespace raBudget.Api
                                                          }
 
                                                          return Task.CompletedTask;
-                                                     }
+                                                     },
                              };
 
             options.SaveToken = true;
-            options.Validate();
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FluentAssertions;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
@@ -16,24 +17,21 @@ namespace raBudget.Domain.UnitTests.Models
         public void Throws_WhenChangingAmountToDifferentCurrency()
         {
             // Arrange
-            var budget = new Budget(new Budget.Id(RandomInt()),
-                                    RandomString(4),
-                                    DateTime.Now,
-                                    new Currency(eCurrencyCode.PLN));
+            var budget = Budget.Create(RandomString(4),
+                                       DateTime.Now,
+                                       new Currency(eCurrencyCode.PLN));
 
             var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
-            var budgetCategory = new BudgetCategory(new BudgetCategory.Id(RandomInt()),
-                                                    budget,
-                                                    RandomString(4),
-                                                    icon,
-                                                    new List<BudgetCategory.BudgetedAmount>(),
-                                                    eBudgetCategoryType.Income);
+            var budgetCategory = BudgetCategory.Create(budget,
+                                                       RandomString(4),
+                                                       icon,
+                                                       new List<BudgetCategory.BudgetedAmount>(),
+                                                       eBudgetCategoryType.Income);
 
-            var transaction = new Transaction(new Transaction.Id(RandomInt()),
-                                              RandomString(5),
-                                              budgetCategory,
-                                              new MoneyAmount(budget.Currency, RandomInt()),
-                                              DateTime.Now, DateTime.Now);
+            var transaction = Transaction.Create(RandomString(5),
+                                                 budgetCategory,
+                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 DateTime.Now);
             var newAmount = new MoneyAmount(new Currency(eCurrencyCode.AFN), RandomInt());
             // Act
             Action act = () => transaction.SetAmount(newAmount);
@@ -46,26 +44,23 @@ namespace raBudget.Domain.UnitTests.Models
         public void Should_SetTransactionDateWithoutTimePart()
         {
             // Arrange
-            var budget = new Budget(new Budget.Id(RandomInt()),
-                                    RandomString(4),
-                                    DateTime.Now,
-                                    new Currency(eCurrencyCode.PLN));
+            var budget = Budget.Create(RandomString(4),
+                                       DateTime.Now,
+                                       new Currency(eCurrencyCode.PLN));
 
             var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
-            var budgetCategory = new BudgetCategory(new BudgetCategory.Id(RandomInt()),
-                                                    budget,
-                                                    RandomString(4),
-                                                    icon,
-                                                    new List<BudgetCategory.BudgetedAmount>(),
-                                                    eBudgetCategoryType.Income);
+            var budgetCategory = BudgetCategory.Create(budget,
+                                                       RandomString(4),
+                                                       icon,
+                                                       new List<BudgetCategory.BudgetedAmount>(),
+                                                       eBudgetCategoryType.Income);
 
 
             // Act
-            var transaction = new Transaction(new Transaction.Id(RandomInt()),
-                                              RandomString(5),
-                                              budgetCategory,
-                                              new MoneyAmount(budget.Currency, RandomInt()),
-                                              DateTime.Now, DateTime.Now);
+            var transaction = Transaction.Create(RandomString(5),
+                                                 budgetCategory,
+                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 DateTime.Now);
 
 
             // Assert
@@ -76,30 +71,26 @@ namespace raBudget.Domain.UnitTests.Models
         public void Throws_WhenNewBudgetCategoryHasDifferentType()
         {
             // Arrange
-            var budget = new Budget(new Budget.Id(RandomInt()),
-                                    RandomString(4),
-                                    DateTime.Now,
-                                    new Currency(eCurrencyCode.PLN));
+            var budget = Budget.Create(RandomString(4),
+                                       DateTime.Now,
+                                       new Currency(eCurrencyCode.PLN));
 
             var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
-            var budgetCategory1 = new BudgetCategory(new BudgetCategory.Id(RandomInt()),
-                                                    budget,
-                                                    RandomString(4),
-                                                    icon,
-                                                    new List<BudgetCategory.BudgetedAmount>(),
-                                                    eBudgetCategoryType.Income);
-            var budgetCategory2 = new BudgetCategory(new BudgetCategory.Id(RandomInt()),
-                                                    budget,
-                                                    RandomString(4),
-                                                    icon,
-                                                    new List<BudgetCategory.BudgetedAmount>(),
-                                                    eBudgetCategoryType.Saving);
+            var budgetCategory1 = BudgetCategory.Create(budget,
+                                                        RandomString(4),
+                                                        icon,
+                                                        new List<BudgetCategory.BudgetedAmount>(),
+                                                        eBudgetCategoryType.Income);
+            var budgetCategory2 = BudgetCategory.Create(budget,
+                                                        RandomString(4),
+                                                        icon,
+                                                        new List<BudgetCategory.BudgetedAmount>(),
+                                                        eBudgetCategoryType.Saving);
 
-            var transaction = new Transaction(new Transaction.Id(RandomInt()),
-                                              RandomString(5),
-                                              budgetCategory1,
-                                              new MoneyAmount(budget.Currency, RandomInt()),
-                                              DateTime.Now, DateTime.Now);
+            var transaction = Transaction.Create(RandomString(5),
+                                                 budgetCategory1,
+                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 DateTime.Now);
             // Act
             Action act = () => transaction.SetBudgetCategory(budgetCategory2);
 

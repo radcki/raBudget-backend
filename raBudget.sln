@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A2389A55
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{DD72B9B0-2CB2-4877-A17D-1929E3FFA5CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Common", "raBudget.Common\raBudget.Common.csproj", "{6EF6BFFA-48A0-4A1D-BDAE-30BA640D97B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Common", "raBudget.Common\raBudget.Common.csproj", "{6EF6BFFA-48A0-4A1D-BDAE-30BA640D97B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Api", "raBudget.Api\raBudget.Api.csproj", "{1CBA920D-A99C-4EC2-BD8A-33EB2392EF0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Api", "raBudget.Api\raBudget.Api.csproj", "{1CBA920D-A99C-4EC2-BD8A-33EB2392EF0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Application", "reBudget.Application\raBudget.Application.csproj", "{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Application", "reBudget.Application\raBudget.Application.csproj", "{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

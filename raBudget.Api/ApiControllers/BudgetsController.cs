@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using raBudget.Application.Features.Account.Command;
 using raBudget.Application.Features.Budget.Query;
 
 namespace raBudget.Api.ApiControllers
@@ -18,6 +18,12 @@ namespace raBudget.Api.ApiControllers
         public BudgetsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("is-alive")]
+        public string IsAlive()
+        {
+            return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
         [HttpGet("get-budgets-list")] public async Task<GetBudgetList.Result> Register([FromQuery] GetBudgetList.Query query) => await _mediator.Send(query);
