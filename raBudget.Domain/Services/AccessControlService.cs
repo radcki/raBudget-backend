@@ -3,7 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Domain.Entities;
+using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
+using raBudget.Domain.ValueObjects;
+using BudgetId = raBudget.Domain.ValueObjects.BudgetId;
 
 namespace raBudget.Domain.Services
 {
@@ -18,34 +21,39 @@ namespace raBudget.Domain.Services
             _readDbContext = readDbContext;
         }
 
-        public IEnumerable<Budget.Id> GetAccessibleBudgetIds()
+        public IEnumerable<BudgetId> GetAccessibleBudgetIds()
         {
             return _readDbContext.Budgets.Where(x => x.OwnerUserId == _userContext.UserId).Select(x => x.BudgetId);
         }
 
-        public async Task<bool> HasBudgetAccessAsync(Budget.Id budgetId)
+        public async Task<bool> HasBudgetAccessAsync(BudgetId budgetBudgetId)
         {
-            return await _readDbContext.Budgets.AnyAsync(x => x.OwnerUserId == _userContext.UserId && x.BudgetId == budgetId);
+            return await _readDbContext.Budgets.AnyAsync(x => x.OwnerUserId == _userContext.UserId && x.BudgetId == budgetBudgetId);
         }
 
-        public IEnumerable<BudgetCategory.Id> GetAccessibleBudgetCategoryIds()
+        public IEnumerable<BudgetCategoryId> GetAccessibleBudgetCategoryIds(eBudgetCategoryType? budgetCategoryType = null)
         {
-            return _readDbContext.BudgetCategories.Where(x => GetAccessibleBudgetIds().Contains(x.BudgetId)).Select(x => x.BudgetCategoryId);
+            var query = _readDbContext.BudgetCategories.Where(x => GetAccessibleBudgetIds().Contains(x.BudgetId));
+            if (budgetCategoryType != null)
+            {
+                query = query.Where(x => x.BudgetCategoryType == budgetCategoryType);
+            }
+            return query.Select(x => x.BudgetCategoryId);
         }
 
-        public async Task<bool> HasBudgetCategoryAccessAsync(BudgetCategory.Id budgetCategoryId)
+        public async Task<bool> HasBudgetCategoryAccessAsync(BudgetCategoryId budgetCategoryBudgetCategoryId)
         {
             return await _readDbContext.BudgetCategories
-                                       .AnyAsync(x => x.BudgetCategoryId == budgetCategoryId
+                                       .AnyAsync(x => x.BudgetCategoryId == budgetCategoryBudgetCategoryId
                                                       && _readDbContext.Budgets
                                                                        .Any(b => b.BudgetId == x.BudgetId && b.OwnerUserId == _userContext.UserId));
         }
 
 
-        public async Task<bool> HasTransactionAccess(Transaction.Id transactionId)
+        public async Task<bool> HasTransactionAccess(TransactionId transactionTransactionId)
         {
             return await _readDbContext.Transactions
-                                       .AnyAsync(x => x.TransactionId == transactionId
+                                       .AnyAsync(x => x.TransactionId == transactionTransactionId
                                                       && _readDbContext.BudgetCategories
                                                                        .Any(s => x.BudgetCategoryId == s.BudgetCategoryId
                                                                                  && _readDbContext.Budgets

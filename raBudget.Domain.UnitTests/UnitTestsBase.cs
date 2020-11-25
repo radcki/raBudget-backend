@@ -37,7 +37,7 @@ namespace raBudget.Domain.UnitTests
         }
         public BudgetCategory RandomBudgetCategory(Budget budget, eBudgetCategoryType budgetCategoryType)
         {
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
             return BudgetCategory.Create(budget,
                                          RandomString(4),
                                          icon,

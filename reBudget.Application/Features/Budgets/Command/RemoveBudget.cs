@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Resources;
+using raBudget.Common.Response;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 using RLib.Localization;
 
 namespace raBudget.Application.Features.Budget.Command
@@ -15,10 +17,10 @@ namespace raBudget.Application.Features.Budget.Command
     {
         public class Command : IRequest<Result>
         {
-            public Guid BudgetId { get; set; }
+            public BudgetId BudgetId { get; set; }
         }
 
-        public class Result
+        public class Result: BaseResponse
         {
         }
 
@@ -40,13 +42,13 @@ namespace raBudget.Application.Features.Budget.Command
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (!await _accessControlService.HasBudgetAccessAsync(new Domain.Entities.Budget.Id(request.BudgetId)))
+                if (!await _accessControlService.HasBudgetAccessAsync(request.BudgetId))
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetNotFound));
                 }
 
                 var entity = await _writeDbContext.Budgets
-                                                  .FirstOrDefaultAsync(x => x.BudgetId.Value == request.BudgetId
+                                                  .FirstOrDefaultAsync(x => x.BudgetId == request.BudgetId
                                                                             && x.OwnerUserId == _userContext.UserId, cancellationToken);
 
                 _writeDbContext.Budgets.Remove(entity);

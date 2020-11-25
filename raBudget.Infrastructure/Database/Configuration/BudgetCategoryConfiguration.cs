@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using raBudget.Domain.Entities;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Infrastructure.Database.Configuration
 {
@@ -10,8 +11,9 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<BudgetCategory> builder)
         {
             builder.HasKey(x => x.BudgetCategoryId);
-            builder.Property(x => x.BudgetCategoryId).HasConversion<Guid>(x => x.Value, i => new BudgetCategory.Id(i));
-            builder.Property(x => x.BudgetId).HasConversion<Guid>(x => x.Value, i => new Budget.Id(i));
+            builder.Property(x => x.BudgetCategoryIconId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryIconId(i));
+            builder.Property(x => x.BudgetCategoryId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryId(i));
+            builder.Property(x => x.BudgetId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetId(i));
         }
     }
 }

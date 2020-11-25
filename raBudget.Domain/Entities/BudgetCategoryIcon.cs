@@ -1,25 +1,24 @@
-﻿using System;
-using raBudget.Domain.BaseTypes;
+﻿using raBudget.Domain.ValueObjects;
 
-namespace raBudget.Domain.Models
+namespace raBudget.Domain.Entities
 {
     public class BudgetCategoryIcon
     {
         private BudgetCategoryIcon() { }
-        public BudgetCategoryIcon(BudgetCategoryIcon.Id iconId, string iconKey)
+
+        public static BudgetCategoryIcon Create(string iconKey)
         {
-            IconId = iconId;
+            return new BudgetCategoryIcon(new BudgetCategoryIconId(), iconKey);
+        }
+        public BudgetCategoryIcon(BudgetCategoryIconId budgetCategoryIconId, string iconKey)
+        {
+            BudgetCategoryIconId = budgetCategoryIconId;
             IconKey = iconKey;
         }
 
-        public BudgetCategoryIcon.Id IconId { get; }
-        public string IconKey { get; }
+        public BudgetCategoryIconId BudgetCategoryIconId { get; private set; }
+        public string IconKey { get; private set; }
 
-        public class Id : IdValueBase<Guid>
-        {
-            public Id() : base(Guid.NewGuid())
-            {
-            }
-        }
+        
     }
 }

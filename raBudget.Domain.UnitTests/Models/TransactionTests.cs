@@ -21,7 +21,7 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
             var budgetCategory = BudgetCategory.Create(budget,
                                                        RandomString(4),
                                                        icon,
@@ -48,7 +48,7 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
             var budgetCategory = BudgetCategory.Create(budget,
                                                        RandomString(4),
                                                        icon,
@@ -64,7 +64,7 @@ namespace raBudget.Domain.UnitTests.Models
 
 
             // Assert
-            transaction.TransactionDateTime.Should().Be(DateTime.Today);
+            transaction.TransactionDate.Should().Be(DateTime.Today);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.Id(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
             var budgetCategory1 = BudgetCategory.Create(budget,
                                                         RandomString(4),
                                                         icon,

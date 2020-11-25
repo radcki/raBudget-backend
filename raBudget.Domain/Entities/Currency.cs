@@ -22,11 +22,11 @@ namespace raBudget.Domain.Models
         /// <summary>
         /// Constructs a currency object with a NumberFormatInfo.
         /// </summary>
-        /// <param name="currencyCodeCode"></param>
-        public Currency(eCurrencyCode currencyCodeCode)
+        /// <param name="currencyCode"></param>
+        public Currency(eCurrencyCode currencyCode)
         {
-            CurrencyCodeCode = currencyCodeCode;
-            Code = Enum.GetName(typeof(eCurrencyCode), CurrencyCodeCode);
+            CurrencyCode = currencyCode;
+            Code = Enum.GetName(typeof(eCurrencyCode), CurrencyCode);
             var cultureInfo = CultureInfoFromCurrencyISO(Code);
             NumberFormat = cultureInfo.NumberFormat;
             var region = new RegionInfo(cultureInfo.LCID);
@@ -39,7 +39,7 @@ namespace raBudget.Domain.Models
 
         #region Properties
 
-        public eCurrencyCode CurrencyCodeCode { get; private set; }
+        public eCurrencyCode CurrencyCode { get; private set; }
         public string Code { get; private set; }
         public NumberFormatInfo NumberFormat { get; private set; }
         public string Symbol { get; private set; }
@@ -48,7 +48,7 @@ namespace raBudget.Domain.Models
 
         public static Dictionary<eCurrencyCode, Currency> CurrencyDictionary
         {
-            get { return _currencyDictionary ?? (_currencyDictionary = CreateCurrencyDictionary()); }
+            get { return _currencyDictionary ??= CreateCurrencyDictionary(); }
         }
 
         #endregion

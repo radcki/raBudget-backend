@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Resources;
-using raBudget.Domain.Entities;
+using raBudget.Common.Response;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 using RLib.Localization;
 
 namespace raBudget.Application.Features.BudgetCategories.Command
@@ -16,13 +17,12 @@ namespace raBudget.Application.Features.BudgetCategories.Command
     {
         public class Command : IRequest<Result>
         {
-            public Guid BudgetCategoryId { get; set; }
+            public BudgetCategoryId BudgetCategoryId { get; set; }
             public string Name { get; set; }
         }
 
-        public class Result
+        public class Result: SingleResponse<string>
         {
-            public string Name { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result>
@@ -38,13 +38,13 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (!await _accessControlService.HasBudgetCategoryAccessAsync(new BudgetCategory.Id(request.BudgetCategoryId)))
+                if (!await _accessControlService.HasBudgetCategoryAccessAsync(request.BudgetCategoryId))
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
                 var budgetCategory = await _writeDbContext.BudgetCategories
-                                                          .FirstOrDefaultAsync(x => x.BudgetCategoryId.Value == request.BudgetCategoryId, cancellationToken);
+                                                          .FirstOrDefaultAsync(x => x.BudgetCategoryId == request.BudgetCategoryId, cancellationToken);
 
                 budgetCategory.SetName(request.Name);
 
@@ -52,7 +52,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           Name = budgetCategory.Name
+                           Data = budgetCategory.Name
                        };
             }
         }

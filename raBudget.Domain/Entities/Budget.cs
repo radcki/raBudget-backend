@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using raBudget.Common.Resources;
-using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Common;
+using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
+using raBudget.Domain.ValueObjects;
 using RLib.Localization;
 
 namespace raBudget.Domain.Entities
@@ -15,14 +15,14 @@ namespace raBudget.Domain.Entities
 
         private Budget()
         {
-            BudgetCategories = new List<BudgetCategory>();
+            BudgetCategories = new BudgetCategoryCollection();
         }
 
         public static Budget Create(string name, DateTime startingDate, Currency currency)
         {
             var budget = new Budget()
                          {
-                             BudgetId = new Id()
+                             BudgetId = new BudgetId()
                          };
             budget.SetName(name);
             budget.SetStartingDate(startingDate);
@@ -34,22 +34,17 @@ namespace raBudget.Domain.Entities
 
         #region Properties
 
-        public Budget.Id BudgetId { get; private set; }
+        public BudgetId BudgetId { get; private set; }
         public string Name { get; private set; }
         public string OwnerUserId { get; private set; }
         public DateTime StartingDate { get; private set; }
-        public Currency Currency { get; private set; }
+        public eCurrencyCode CurrencyCode { get; set; }
+        public Currency Currency => new Currency(CurrencyCode);
 
-        public List<BudgetCategory> BudgetCategories { get; private set; }
+        public BudgetCategoryCollection BudgetCategories { get; private set; }
 
         #endregion
-
-        public class Id : IdValueBase<Guid>
-        {
-            public Id() : base(Guid.NewGuid()) { }
-            public Id(Guid value) : base(value) { }
-        }
-
+        
         #region Methods
 
         public void SetName(string name)
@@ -79,7 +74,7 @@ namespace raBudget.Domain.Entities
 
         private void SetCurrency(Currency currency)
         {
-            Currency = currency ?? throw new BusinessException("Budget currency is required");
+            CurrencyCode = currency?.CurrencyCode ?? throw new BusinessException("Budget currency is required");
         }
 
         public void SetOwner(string userId)

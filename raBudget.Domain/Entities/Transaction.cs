@@ -1,8 +1,10 @@
 ﻿using System;
-using raBudget.Domain.BaseTypes;
+using System.Collections.Generic;
+using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
+using RLib.Localization;
 
 namespace raBudget.Domain.Entities
 {
@@ -10,6 +12,7 @@ namespace raBudget.Domain.Entities
     {
         private Transaction()
         {
+            SubTransactions = new List<SubTransaction>();
         }
 
         public static Transaction Create
@@ -20,23 +23,22 @@ namespace raBudget.Domain.Entities
         {
             var transaction = new Transaction
                               {
-                                  TransactionId = new Id(),
+                                  TransactionId = new TransactionId(),
                                   Description = description
                               };
             transaction.SetBudgetCategory(budgetCategory);
             transaction.SetAmount(amount);
-            transaction.SetTransactionDateTime(transactionDate);
+            transaction.SetTransactionDate(transactionDate);
             transaction.CreationDateTime = DateTime.Now;
-
             return transaction;
         }
 
-        public Transaction.Id TransactionId { get; private set; }
+        public TransactionId TransactionId { get; private set; }
         public string Description { get; private set; }
-        public BudgetCategory.Id BudgetCategoryId { get; private set; }
-        public eBudgetCategoryType TransactionType { get; private set; }
+        public BudgetCategoryId BudgetCategoryId { get; private set; }
         public MoneyAmount Amount { get; private set; }
-        public DateTime TransactionDateTime { get; private set; }
+        public List<SubTransaction> SubTransactions { get; set; }
+        public DateTime TransactionDate { get; private set; }
         public DateTime CreationDateTime { get; private set; }
 
         public void SetAmount(MoneyAmount newAmount)
@@ -49,26 +51,41 @@ namespace raBudget.Domain.Entities
             Amount = newAmount;
         }
 
-        public void SetTransactionDateTime(DateTime newTransactionDate)
+        public void SetTransactionDate(DateTime newTransactionDate)
         {
-            TransactionDateTime = newTransactionDate.Date;
+            TransactionDate = newTransactionDate.Date;
+        }
+
+        public void SetDescription(string description)
+        {
+            description = description.Trim();
+            if (string.IsNullOrEmpty(description))
+            {
+                throw new BusinessException(Localization.For(()=>ErrorMessages.TransactionDescriptionEmpty));
+            }
+
+            Description = description;
         }
 
         public void SetBudgetCategory(BudgetCategory budgetCategory)
         {
-            if (TransactionType != default && budgetCategory.BudgetCategoryType != TransactionType)
+            if (budgetCategory == default)
             {
-                throw new BusinessException("New budget category must be of same type as old");
+                throw new BusinessException(Localization.For(() => ErrorMessages.BudgetCategoryEmpty));
             }
-
             BudgetCategoryId = budgetCategory.BudgetCategoryId;
-            TransactionType = budgetCategory.BudgetCategoryType;
         }
 
-        public class Id : IdValueBase<Guid>
+        public SubTransaction AddSubTransaction
+        (string description,
+         MoneyAmount amount,
+         DateTime transactionDate)
         {
-            public Id() : base(Guid.NewGuid()) { }
-            public Id(Guid value) : base(value) { }
+            var subTransaction = SubTransaction.Create(this, description, amount, transactionDate);
+            SubTransactions.Add(subTransaction);
+            return subTransaction;
         }
+
+        
     }
 }

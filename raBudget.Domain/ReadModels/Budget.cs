@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using raBudget.Domain.Models;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels
 {
     public class Budget
     {
-        public Domain.Entities.Budget.Id BudgetId { get; set; }
+        public BudgetId BudgetId { get; set; }
         public string Name { get; set; }
         public string OwnerUserId { get; set; }
         public DateTime StartingDate { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,27 +7,28 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Interfaces;
+using raBudget.Common.Response;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 
-namespace raBudget.Application.Features.Budget.Query
+namespace raBudget.Application.Features.BudgetCategories.Query
 {
-    public class GetBudgetList
+    public class GetBudgetCategoryList
     {
         public class Query : IRequest<Result>
         {
+            public BudgetId BudgetId { get; set; }
         }
 
-        public class Result
+        public class Result : CollectionResponse<BudgetCategoryDto>
         {
-            public List<BudgetDto> Data { get; set; }
-            public int Total { get; set; }
         }
 
-        public class BudgetDto
+        public class BudgetCategoryDto
         {
-            public int BudgetId { get; set; }
+            public BudgetId BudgetId { get; set; }
+            public int Order { get; set; }
             public string Name { get; set; }
         }
 
@@ -36,7 +36,7 @@ namespace raBudget.Application.Features.Budget.Query
         {
             public void CreateMappings(Profile configuration)
             {
-                configuration.CreateMap<Domain.ReadModels.Budget, BudgetDto>();
+                configuration.CreateMap<Domain.ReadModels.BudgetCategory, BudgetCategoryDto>();
             }
         }
 
@@ -55,20 +55,19 @@ namespace raBudget.Application.Features.Budget.Query
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var budgetIds = _accessControlService.GetAccessibleBudgetIds();
+                var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds();
 
-                var data = _readDb.Budgets
-                                  .Where(x=>budgetIds.Contains(x.BudgetId))
-                                  .ProjectTo<BudgetDto>(_mapperConfiguration)
-                                  .OrderBy(x=>x.Name);
+                var data = _readDb.BudgetCategories
+                                  .Where(x => budgetCategoryIds.Contains(x.BudgetCategoryId) && x.BudgetId == request.BudgetId)
+                                  .ProjectTo<BudgetCategoryDto>(_mapperConfiguration)
+                                  .OrderBy(x => x.Order);
 
                 return new Result()
                        {
-                           Data = await data.ToListAsync(cancellationToken), 
+                           Data = await data.ToListAsync(cancellationToken),
                            Total = data.Count()
                        };
             }
-
         }
     }
 }

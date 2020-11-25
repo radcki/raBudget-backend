@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Models;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels
 {
     public class Transaction
     {
-        public Domain.Entities.Transaction.Id TransactionId { get; set; }
-        public Domain.Entities.BudgetCategory.Id BudgetCategoryId { get; set; }
+        public TransactionId TransactionId { get; set; }
         public string Description { get; set; }
+        public BudgetCategoryId BudgetCategoryId { get; set; }
+        public MoneyAmount Amount { get; set; }
+        public List<SubTransaction> SubTransactions { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public DateTime CreationDateTime { get; set; }
     }
 }

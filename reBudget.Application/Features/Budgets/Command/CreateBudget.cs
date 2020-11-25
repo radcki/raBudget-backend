@@ -4,10 +4,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Models;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Application.Features.Budget.Command
 {
@@ -20,9 +22,8 @@ namespace raBudget.Application.Features.Budget.Command
             public eCurrencyCode CurrencyCode { get; set; }
         }
 
-        public class Result
+        public class Result: IdResponse<BudgetId>
         {
-            public Guid BudgetId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result>
@@ -45,7 +46,7 @@ namespace raBudget.Application.Features.Budget.Command
 
                 return new Result()
                        {
-                           BudgetId = budget.BudgetId.Value
+                           Id = budget.BudgetId
                        };
             }
         }

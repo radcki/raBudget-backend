@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Resources;
-using raBudget.Domain.Entities;
+using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;
@@ -20,9 +19,9 @@ namespace raBudget.Application.Features.BudgetCategories.Command
     {
         public class Command : IRequest<Result>
         {
-            public Guid BudgetId { get; set; }
+            public BudgetId BudgetId { get; set; }
             public string Name { get; set; }
-            public Guid BudgetCategoryIconId { get; set; }
+            public BudgetCategoryIconId BudgetCategoryIconId { get; set; }
             public eBudgetCategoryType BudgetCategoryType { get; set; }
             public List<BudgetedAmount> BudgetedAmounts { get; set; }
         }
@@ -33,9 +32,8 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public DateTime ValidFrom { get; set; }
         }
 
-        public class Result
+        public class Result : IdResponse<Guid>
         {
-            public Guid BudgetCategoryId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result>
@@ -53,7 +51,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                var budgetId = new Domain.Entities.Budget.Id(request.BudgetId);
+                var budgetId = request.BudgetId;
                 if (!await _accessControlService.HasBudgetAccessAsync(budgetId))
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetNotFound));
@@ -64,9 +62,9 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                                                                             && x.OwnerUserId == _userContext.UserId, cancellationToken);
 
                 var icon = await _writeDbContext.BudgetCategoryIcons
-                                                .FirstOrDefaultAsync(x => x.IconId.Value == request.BudgetCategoryIconId, cancellationToken);
+                                                .FirstOrDefaultAsync(x => x.BudgetCategoryIconId == request.BudgetCategoryIconId, cancellationToken);
 
-                var budgetCategory = BudgetCategory.Create(budget, request.Name, icon, request.BudgetCategoryType);
+                var budgetCategory = Domain.Entities.BudgetCategory.Create(budget, request.Name, icon, request.BudgetCategoryType);
                 foreach (var requestBudgetedAmount in request.BudgetedAmounts)
                 {
                     budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency, requestBudgetedAmount.Amount), requestBudgetedAmount.ValidFrom);
@@ -77,7 +75,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           BudgetCategoryId = budgetCategory.BudgetCategoryId.Value
+                           Id = budgetCategory.BudgetCategoryId.Value
                        };
             }
         }

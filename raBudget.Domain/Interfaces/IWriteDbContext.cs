@@ -8,12 +8,13 @@ using raBudget.Domain.Models;
 
 namespace raBudget.Domain.Interfaces
 {
-    public interface IWriteDbContext: IDisposable
+    public interface IWriteDbContext : IDisposable
     {
         DbSet<Budget> Budgets { get; }
         DbSet<BudgetCategory> BudgetCategories { get; }
         DbSet<Transaction> Transactions { get; }
         DbSet<BudgetCategoryIcon> BudgetCategoryIcons { get; }
+        DbSet<Currency> Currencies { get; }
 
         DatabaseFacade Database { get; }
         int SaveChanges();

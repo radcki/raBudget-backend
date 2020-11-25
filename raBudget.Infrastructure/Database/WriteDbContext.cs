@@ -3,6 +3,8 @@ using Microsoft.Extensions.Options;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Models;
+using raBudget.Domain.ValueObjects;
+using raBudget.Infrastructure.Database.Configuration;
 
 namespace raBudget.Infrastructure.Database
 {
@@ -16,12 +18,13 @@ namespace raBudget.Infrastructure.Database
         public DbSet<BudgetCategory> BudgetCategories { get; private set; }
         public DbSet<Transaction> Transactions { get; private set; }
         public DbSet<BudgetCategoryIcon> BudgetCategoryIcons { get; private set; }
+        public DbSet<Currency> Currencies { get; private set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(WriteDbContext).Assembly, type => type.FullName != null && type.FullName.Contains("Configuration"));
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BudgetCategoryIconConfiguration).Assembly);
         }
     }
 }

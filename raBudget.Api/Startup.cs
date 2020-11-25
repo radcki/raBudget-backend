@@ -33,7 +33,13 @@ namespace raBudget.Api
             var applicationAssembly = Assembly.Load("raBudget.Application");
 
             services.Configure<ApiConfiguration>(Configuration.GetSection("SystemConfiguration"));
-            services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MySql"), builder => { builder.MigrationsAssembly("raBudget.Infrastructure"); }));
+            var mysqlConnectionString = Configuration.GetConnectionString("MySql");
+            services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(mysqlConnectionString, 
+                                                                                               MariaDbServerVersion.LatestSupportedServerVersion,
+                                                                                               builder =>
+                                                                                               {
+                                                                                                   builder.MigrationsAssembly("raBudget.Api");
+                                                                                               }));
             services.AddTransient<IReadDbContext, ReadDbContext>();
             services.AddTransient<AccessControlService>();
 
@@ -62,12 +68,13 @@ namespace raBudget.Api
             services.AddSwaggerGen(options =>
                                    {
                                        options.SwaggerDoc("v1", new OpenApiInfo() {Title = "raBudgetApi", Version = "v1"});
+                                       options.CustomSchemaIds(x => x.FullName);
                                    });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var supportedCultures = new[] { "pl", "en" };
+            var supportedCultures = new[] {"pl", "en"};
             var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
                                                                       .AddSupportedCultures(supportedCultures)
                                                                       .AddSupportedUICultures(supportedCultures);
@@ -106,7 +113,6 @@ namespace raBudget.Api
             //                     endpoints.MapControllerRoute(name: "default",
             //                                                  pattern: "{controller=Home}/{action=Index}/{id?}");
             //                 });
-
         }
     }
 }

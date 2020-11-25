@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using raBudget.Domain.Enums;
 using raBudget.Domain.Models;
 
 namespace raBudget.Domain.ValueObjects
 {
     public class MoneyAmount : IEquatable<MoneyAmount>
     {
+        private MoneyAmount(){}
         public MoneyAmount(Currency currency, decimal amount)
         {
-            this.Currency = currency;
+            this.CurrencyCode = currency.CurrencyCode;
             this.Amount = amount;
         }
 
-        public Currency Currency { get; private set; }
+        public eCurrencyCode CurrencyCode { get; set; }
+        public Currency Currency => new Currency(CurrencyCode);
         public decimal Amount { get; private set; }
 
         public bool Equals(MoneyAmount other)

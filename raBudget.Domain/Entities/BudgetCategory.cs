@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using raBudget.Common.Resources;
-using raBudget.Domain.BaseTypes;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
@@ -27,7 +26,7 @@ namespace raBudget.Domain.Entities
         {
             var category = new BudgetCategory()
                            {
-                               BudgetCategoryId = new Id(),
+                               BudgetCategoryId = new BudgetCategoryId(),
                                BudgetCategoryType = budgetCategoryType,
                                BudgetId = budget.BudgetId
                            };
@@ -41,10 +40,11 @@ namespace raBudget.Domain.Entities
 
         #region Properties
 
-        public Id BudgetCategoryId { get; private set; }
-        public Budget.Id BudgetId { get; private set; }
+        public BudgetCategoryId BudgetCategoryId { get; private set; }
+        public BudgetId BudgetId { get; private set; }
         public string Name { get; private set; }
-        public BudgetCategoryIcon.Id IconId { get; private set; }
+        public int Order { get; private set; }
+        public BudgetCategoryIconId BudgetCategoryIconId { get; private set; }
         public BudgetedAmountCollection BudgetedAmounts { get; private set; }
         public eBudgetCategoryType BudgetCategoryType { get; private set; }
 
@@ -69,7 +69,12 @@ namespace raBudget.Domain.Entities
 
         public void SetIcon(BudgetCategoryIcon icon)
         {
-            IconId = icon?.IconId;
+            BudgetCategoryIconId = icon?.BudgetCategoryIconId;
+        }
+
+        internal void SetOrder(int order)
+        {
+            Order = order;
         }
 
         public BudgetedAmount AddBudgetedAmount(MoneyAmount amount, DateTime validFrom)
@@ -114,12 +119,6 @@ namespace raBudget.Domain.Entities
 
         #endregion
 
-        public class Id : IdValueBase<Guid>
-        {
-            public Id() : base(Guid.NewGuid()) { }
-            public Id(Guid value) : base(value) { }
-        }
-
         #region Nested type: BudgetedAmount
 
         public class BudgetedAmount
@@ -147,8 +146,8 @@ namespace raBudget.Domain.Entities
 
             #region Properties
 
-            public Id BudgetedAmountId { get; private set; }
-            public BudgetCategory.Id BudgetCategoryId { get; private set; }
+            public BudgetedAmountId BudgetedAmountId { get; private set; }
+            public BudgetCategoryId BudgetCategoryId { get; private set; }
 
             public DateTime ValidFrom
             {
@@ -201,11 +200,7 @@ namespace raBudget.Domain.Entities
 
             #endregion
 
-            public class Id : IdValueBase<Guid>
-            {
-                public Id() : base(Guid.NewGuid()) { }
-                public Id(Guid value) : base(value) { }
-            }
+            
         }
 
         public sealed class BudgetedAmountCollection : ObservableCollection<BudgetedAmount>
@@ -232,6 +227,11 @@ namespace raBudget.Domain.Entities
             public new void Add(BudgetedAmount item)
             {
                 base.Add(item);
+                SetValidToDates();
+            }
+            public new void Remove(BudgetedAmount item)
+            {
+                base.Remove(item);
                 SetValidToDates();
             }
 

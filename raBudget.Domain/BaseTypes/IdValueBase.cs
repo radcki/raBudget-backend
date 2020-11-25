@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Globalization;
+using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using raBudget.Domain.Models;
 
 namespace raBudget.Domain.BaseTypes
 {
-    public abstract class IdValueBase<T> : IEquatable<IdValueBase<T>>
+    [JsonConverter(typeof(IdValueBaseConverter))]
+    public class IdValueBase<T> : IEquatable<IdValueBase<T>>
     {
         #region Constructors
 
-        protected IdValueBase(T value)
+        public IdValueBase(T value)
         {
             Value = value;
         }
@@ -31,6 +37,7 @@ namespace raBudget.Domain.BaseTypes
         {
             return Value.GetHashCode();
         }
+
 
         public bool Equals(IdValueBase<T> other)
         {
@@ -57,6 +64,24 @@ namespace raBudget.Domain.BaseTypes
             return !(x == y);
         }
 
+        #endregion
+    }
+
+    public class IdValueBaseConverter : JsonConverter<IdValueBase<Guid>>
+    {
+        /// <inheritdoc />
+        public override IdValueBase<Guid>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new IdValueBase<Guid>(Guid.ParseExact(reader.GetString(), "N"));
+        }
+
+        #region Overrides of JsonConverter<IdValueBase<Guid>>
+
+        /// <inheritdoc />
+        public override void Write(Utf8JsonWriter writer, IdValueBase<Guid> value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.Value.ToString("N"));
+        }
         #endregion
     }
 }
