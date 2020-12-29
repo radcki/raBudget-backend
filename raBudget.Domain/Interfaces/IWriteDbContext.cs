@@ -16,6 +16,8 @@ namespace raBudget.Domain.Interfaces
         DbSet<BudgetCategoryIcon> BudgetCategoryIcons { get; }
         DbSet<Currency> Currencies { get; }
 
+        DbSet<BudgetBalance> BudgetBalances { get; }
+
         DatabaseFacade Database { get; }
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

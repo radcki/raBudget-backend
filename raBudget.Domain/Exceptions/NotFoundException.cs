@@ -6,8 +6,10 @@ namespace raBudget.Domain.Exceptions
     {
         #region Constructors
 
+        public readonly string Details;
         public NotFoundException(string message)
         {
+            Details = message;
         }
 
         #endregion

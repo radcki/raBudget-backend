@@ -22,10 +22,10 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Command : IRequest<Result>
         {
             public TransactionId TransactionId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
         }
 
-        public class Result : IdResponse<Guid>
+        public class Result : SingleResponse<MoneyAmount>
         {
         }
 
@@ -51,13 +51,13 @@ namespace raBudget.Application.Features.Transactions.Command
                                                        .FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId, cancellationToken: cancellationToken)
                                   ?? throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
 
-                transaction.SetAmount(new MoneyAmount(transaction.Amount.Currency, request.Amount));
+                transaction.SetAmount(request.Amount);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
                 return new Result()
                        {
-                           Id = transaction.TransactionId.Value
+                           Data = transaction.Amount
                        };
             }
         }

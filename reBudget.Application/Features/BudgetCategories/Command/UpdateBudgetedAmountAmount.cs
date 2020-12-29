@@ -51,7 +51,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                 var budgetedAmount = budgetCategory.BudgetedAmounts.FirstOrDefault(x => x.BudgetedAmountId == request.BudgetedAmountId)
                                      ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetedAmountNotFound));
 
-                budgetedAmount.SetAmount(new MoneyAmount(budgetedAmount.Amount.Currency, request.Amount));
+                budgetedAmount.SetAmount(new MoneyAmount(budgetedAmount.Amount.CurrencyCode, request.Amount));
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
                 return new Result()

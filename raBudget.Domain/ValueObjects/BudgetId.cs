@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using raBudget.Domain.BaseTypes;
@@ -6,6 +8,7 @@ using raBudget.Domain.BaseTypes;
 namespace raBudget.Domain.ValueObjects
 {
     [JsonConverter(typeof(BudgetIdConverter))]
+    [TypeConverter(typeof(BudgetIdTypeConverter))]
     public class BudgetId : IdValueBase<Guid>
     {
         public BudgetId() : base(Guid.NewGuid())
@@ -33,5 +36,25 @@ namespace raBudget.Domain.ValueObjects
             writer.WriteStringValue(value.Value.ToString("N"));
         }
         #endregion
+    }
+    public class BudgetIdTypeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            if (sourceType == typeof(string))
+            {
+                return true;
+            }
+            return base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            if (value is string stringValue)
+            {
+                return new BudgetId(Guid.ParseExact(stringValue, "N"));
+            }
+            return base.ConvertFrom(context, culture, value);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using MediatR;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using raBudget.Api.Infrastructure;
 using raBudget.Application.Infrastructure;
+using raBudget.Common;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Infrastructure.Database;
@@ -42,6 +45,7 @@ namespace raBudget.Api
                                                                                                }));
             services.AddTransient<IReadDbContext, ReadDbContext>();
             services.AddTransient<AccessControlService>();
+            services.AddTransient<BalanceService>();
 
             services.AddIdentityServices(Configuration);
 
@@ -70,22 +74,35 @@ namespace raBudget.Api
                                        options.SwaggerDoc("v1", new OpenApiInfo() {Title = "raBudgetApi", Version = "v1"});
                                        options.CustomSchemaIds(x => x.FullName);
                                    });
+
+            services.AddTransient<ProblemDetailsFactory, CustomProblemDetailsFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var supportedCultures = new[] {"pl", "en"};
-            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
-                                                                      .AddSupportedCultures(supportedCultures)
-                                                                      .AddSupportedUICultures(supportedCultures);
-            app.UseRequestLocalization(localizationOptions);
+            var supportedCultures = KnownCulture.SupportedCultures().ToList();
+            app.UseRequestLocalization(new RequestLocalizationOptions
+                                       {
+                                           SupportedCultures = supportedCultures,
+                                           SupportedUICultures = supportedCultures,
+                                           FallBackToParentCultures = true,
+                                           FallBackToParentUICultures = true,
+                                       });
+
+            var forwardOptions = new ForwardedHeadersOptions
+                                 {
+                                     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                                     RequireHeaderSymmetry = false
+                                 };
+
+            forwardOptions.KnownNetworks.Clear();
+            forwardOptions.KnownProxies.Clear();
+
+            app.UseForwardedHeaders(forwardOptions);
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
                 app.UseForwardedHeaders();
-
-
                 app.UseSwagger(options =>
                                {
                                    options.RouteTemplate = "swagger/{documentName}/swagger.json";
@@ -99,6 +116,7 @@ namespace raBudget.Api
                 app.UseHsts();
             }
 
+            app.UseExceptionHandler("/error");
             app.UseCors(builder => builder.AllowAnyHeader()
                                           .AllowAnyMethod()
                                           .AllowAnyOrigin());

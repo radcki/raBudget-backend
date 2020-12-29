@@ -16,6 +16,7 @@ namespace raBudget.Domain.Entities
 
         private BudgetCategory()
         {
+            BudgetedAmounts = new BudgetedAmountCollection();
         }
 
         public static BudgetCategory Create
@@ -32,7 +33,6 @@ namespace raBudget.Domain.Entities
                            };
             category.SetIcon(icon);
             category.SetName(name);
-            category.SetIcon(icon);
             return category;
         }
 
@@ -44,6 +44,7 @@ namespace raBudget.Domain.Entities
         public BudgetId BudgetId { get; private set; }
         public string Name { get; private set; }
         public int Order { get; private set; }
+        public BudgetCategoryIcon BudgetCategoryIcon { get; private set; }
         public BudgetCategoryIconId BudgetCategoryIconId { get; private set; }
         public BudgetedAmountCollection BudgetedAmounts { get; private set; }
         public eBudgetCategoryType BudgetCategoryType { get; private set; }
@@ -69,6 +70,7 @@ namespace raBudget.Domain.Entities
 
         public void SetIcon(BudgetCategoryIcon icon)
         {
+            BudgetCategoryIcon = icon;
             BudgetCategoryIconId = icon?.BudgetCategoryIconId;
         }
 
@@ -135,6 +137,7 @@ namespace raBudget.Domain.Entities
             {
                 var instance = new BudgetedAmount()
                                {
+                                   BudgetedAmountId = new BudgetedAmountId(),
                                    BudgetCategoryId = budgetCategory.BudgetCategoryId
                                };
                 instance.SetAmount(amount);

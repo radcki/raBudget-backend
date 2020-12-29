@@ -5,7 +5,7 @@ using raBudget.Domain.Enums;
 
 namespace raBudget.Domain.Models
 {
-    public class Currency
+    public class Currency : IEquatable<Currency>
     {
         #region Consts
 
@@ -100,6 +100,48 @@ namespace raBudget.Domain.Models
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Equality members
+
+        /// <inheritdoc />
+        public bool Equals(Currency other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return CurrencyCode == other.CurrencyCode;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != this.GetType())
+                return false;
+            return Equals((Currency) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return (int) CurrencyCode;
+        }
+
+        public static bool operator ==(Currency left, Currency right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Currency left, Currency right)
+        {
+            return !Equals(left, right);
         }
 
         #endregion

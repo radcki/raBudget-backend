@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using raBudget.Application.Features.Transactions.Command;
+using raBudget.Application.Features.Transactions.Query;
 
 namespace raBudget.Api.ApiControllers
 {
@@ -27,7 +28,7 @@ namespace raBudget.Api.ApiControllers
             return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
-        //[HttpGet("get-list")] public async Task<GetBudgetList.Result> GetBudgetList([FromQuery] GetBudgetList.Query query) => await _mediator.Send(query);
+        [HttpGet("get-list")] public async Task<GetTransactionList.Result> GetTransactionList([FromQuery] GetTransactionList.Query query) => await _mediator.Send(query);
         [HttpPost("create")] public async Task<CreateTransaction.Result> CreateTransaction([FromBody] CreateTransaction.Command command) => await _mediator.Send(command);
         [HttpPost("remove")] public async Task<RemoveTransaction.Result> RemoveTransaction([FromBody] RemoveTransaction.Command command) => await _mediator.Send(command);
         [HttpPatch("update/description")] public async Task<UpdateTransactionDescription.Result> UpdateTransactionDescription([FromBody] UpdateTransactionDescription.Command command) => await _mediator.Send(command);

@@ -53,7 +53,7 @@ namespace raBudget.Application.Features.Transactions.Command
                     throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
                 }
 
-                subTransaction.SetAmount(new MoneyAmount(subTransaction.Amount.Currency, request.Amount));
+                subTransaction.SetAmount(new MoneyAmount(subTransaction.Amount.CurrencyCode, request.Amount));
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

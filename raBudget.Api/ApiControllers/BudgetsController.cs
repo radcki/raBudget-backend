@@ -31,6 +31,7 @@ namespace raBudget.Api.ApiControllers
         }
 
         [HttpGet("get-list")] public async Task<GetBudgetList.Response> GetBudgetList([FromQuery] GetBudgetList.Query query) => await _mediator.Send(query);
+        [HttpGet("balance")] public async Task<GetBudgetBalance.Response> GetBudgetBalance([FromQuery] GetBudgetBalance.Query query) => await _mediator.Send(query);
 
         [HttpPost("create")] public async Task<CreateBudget.Result> CreateBudget([FromBody] CreateBudget.Command command) => await _mediator.Send(command);
         [HttpPost("remove")] public async Task<RemoveBudget.Result> RemoveBudget([FromBody] RemoveBudget.Command command) => await _mediator.Send(command);

@@ -28,7 +28,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
         public class BudgetedAmount
         {
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
             public DateTime ValidFrom { get; set; }
         }
 
@@ -67,7 +67,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                 var budgetCategory = Domain.Entities.BudgetCategory.Create(budget, request.Name, icon, request.BudgetCategoryType);
                 foreach (var requestBudgetedAmount in request.BudgetedAmounts)
                 {
-                    budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency, requestBudgetedAmount.Amount), requestBudgetedAmount.ValidFrom);
+                    budgetCategory.AddBudgetedAmount(requestBudgetedAmount.Amount, requestBudgetedAmount.ValidFrom);
                 }
                 _writeDbContext.BudgetCategories.Add(budgetCategory);
 

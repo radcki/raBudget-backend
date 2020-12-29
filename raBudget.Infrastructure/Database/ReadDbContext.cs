@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Models;
 using raBudget.Domain.ReadModels;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Infrastructure.Database
 {
@@ -30,13 +31,29 @@ namespace raBudget.Infrastructure.Database
 
         /// <inheritdoc />
         public IQueryable<BudgetCategory> BudgetCategories => _db.BudgetCategories
+                                                                 .Include(x => x.BudgetedAmounts)
+                                                                 .Include(x => x.BudgetCategoryIcon)
                                                                  .AsNoTracking()
                                                                  .Select(x => new BudgetCategory()
                                                                               {
                                                                                   BudgetCategoryId = x.BudgetCategoryId,
                                                                                   BudgetId = x.BudgetId,
                                                                                   Name = x.Name,
-                                                                                  BudgetCategoryType = x.BudgetCategoryType
+                                                                                  Order = x.Order,
+                                                                                  BudgetCategoryIconId = x.BudgetCategoryIconId,
+                                                                                  BudgetCategoryIconKey = x.BudgetCategoryIcon != null
+                                                                                                              ? x.BudgetCategoryIcon.IconKey
+                                                                                                              : null,
+                                                                                  BudgetCategoryType = x.BudgetCategoryType,
+                                                                                  BudgetedAmounts = x.BudgetedAmounts
+                                                                                                     .Select(s => new BudgetCategory.BudgetedAmount()
+                                                                                                                  {
+                                                                                                                      Amount = s.Amount,
+                                                                                                                      BudgetedAmountId = s.BudgetedAmountId,
+                                                                                                                      ValidFrom = s.ValidFrom,
+                                                                                                                      ValidTo = s.ValidTo
+                                                                                                                  })
+                                                                                                     .ToList()
                                                                               });
 
         /// <inheritdoc />
@@ -76,6 +93,18 @@ namespace raBudget.Infrastructure.Database
                                                                                          IconKey = x.IconKey,
                                                                                          BudgetCategoryIconId = x.BudgetCategoryIconId
                                                                                      });
+
+        /// <inheritdoc />
+        public IQueryable<BudgetBalance> BudgetBalances => _db.BudgetBalances
+                                                              .AsNoTracking()
+                                                              .Select(x => new BudgetBalance()
+                                                                           {
+                                                                               IncomeTotal = x.IncomeTotal,
+                                                                               SavingTotal = x.SavingTotal,
+                                                                               SpendingTotal = x.SpendingTotal,
+                                                                               TotalBalance = x.TotalBalance,
+                                                                               BudgetId = x.BudgetId
+                                                                           });
 
         public void Dispose()
         {

@@ -22,7 +22,7 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Command : IRequest<Result>
         {
             public BudgetCategoryId BudgetCategoryId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
             public string Description { get; set; }
             public DateTime TransactionDate { get; set; }
         }
@@ -57,7 +57,7 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 var transaction = Transaction.Create(request.Description, 
                                                      budgetCategory, 
-                                                     new MoneyAmount(budget.Currency, request.Amount), 
+                                                     request.Amount, 
                                                      request.TransactionDate);
                 _writeDbContext.Transactions.Add(transaction);
 

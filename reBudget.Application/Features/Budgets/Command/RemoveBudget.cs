@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -20,7 +21,7 @@ namespace raBudget.Application.Features.Budget.Command
             public BudgetId BudgetId { get; set; }
         }
 
-        public class Result: BaseResponse
+        public class Result : BaseResponse
         {
         }
 
@@ -53,7 +54,7 @@ namespace raBudget.Application.Features.Budget.Command
 
                 _writeDbContext.Budgets.Remove(entity);
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
-                return new Result(){};
+                return new Result() { };
             }
         }
     }

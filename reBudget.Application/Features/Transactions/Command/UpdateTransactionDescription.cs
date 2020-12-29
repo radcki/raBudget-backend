@@ -25,7 +25,7 @@ namespace raBudget.Application.Features.Transactions.Command
             public string Description { get; set; }
         }
 
-        public class Result : IdResponse<string>
+        public class Result : SingleResponse<string>
         {
         }
 
@@ -56,7 +56,7 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 return new Result()
                        {
-                           Id = transaction.Description
+                           Data = transaction.Description
                        };
             }
         }

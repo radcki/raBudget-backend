@@ -94,7 +94,7 @@ namespace raBudget.Common.Extensions
             Expression expr = arg;
             foreach (string prop in props)
             {
-                PropertyInfo pi = type.GetProperty(prop);
+                PropertyInfo pi = type.GetProperty(prop, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                 expr = Expression.Property(expr, pi);
                 type = pi.PropertyType;
             }

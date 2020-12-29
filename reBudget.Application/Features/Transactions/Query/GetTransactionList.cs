@@ -80,10 +80,10 @@ namespace raBudget.Application.Features.Transactions.Query
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetCategoryType);
+                var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                 if (request.BudgetCategoryIds != null && request.BudgetCategoryIds.Any())
                 {
-                    budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Contains(x));
+                    budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s=>s == x));
                 }
                 var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
 

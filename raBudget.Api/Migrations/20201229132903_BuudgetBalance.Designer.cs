@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using raBudget.Infrastructure.Database;
 
 namespace raBudget.Api.Migrations
 {
     [DbContext(typeof(WriteDbContext))]
-    partial class WriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201229132903_BuudgetBalance")]
+    partial class BuudgetBalance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +47,6 @@ namespace raBudget.Api.Migrations
                 {
                     b.Property<Guid>("BudgetId")
                         .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("UpdateTime")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("BudgetId");
 
@@ -119,212 +118,212 @@ namespace raBudget.Api.Migrations
                     b.HasData(
                         new
                         {
-                            BudgetCategoryIconId = new Guid("fd663b2c-5681-49d0-8a64-002730b3db81"),
+                            BudgetCategoryIconId = new Guid("25277fbd-0df9-4270-8cfe-0d726a875285"),
                             IconKey = "mdi-car"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("103d4df7-ad2d-4f1a-bc74-c071e3122d6b"),
+                            BudgetCategoryIconId = new Guid("21c5cc32-4e00-4cb0-9262-daff0c048131"),
                             IconKey = "mdi-cart"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("4dde2768-2002-4d83-bd8d-338297dbd944"),
+                            BudgetCategoryIconId = new Guid("107c74fc-a6a4-405a-98ad-e18d32e98cf9"),
                             IconKey = "mdi-train-car"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("455a7555-9d7a-4942-b356-cf9310fdc3a0"),
+                            BudgetCategoryIconId = new Guid("6eeddb9c-3824-4c64-9655-2b810e698fe4"),
                             IconKey = "mdi-wallet-travel"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("72aed05e-a0de-42ae-9648-82c621a2b480"),
+                            BudgetCategoryIconId = new Guid("66bd1af1-fc63-4b24-8089-d5f14b2d5701"),
                             IconKey = "mdi-wrench"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("5e7557ca-508d-410d-9337-b5142a1aa9b3"),
+                            BudgetCategoryIconId = new Guid("ab9160b2-c8a9-4e7a-bc4e-ea13109ee991"),
                             IconKey = "mdi-basket"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("b8d279fd-8cbf-4ee4-91e0-e7f3b37e02c0"),
+                            BudgetCategoryIconId = new Guid("c46d7085-9b2a-4e69-9ab8-830403e95803"),
                             IconKey = "mdi-gamepad"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("352073ec-ec62-4bad-b6a1-0765613f5cf2"),
+                            BudgetCategoryIconId = new Guid("47ca4ec9-08bf-4270-b839-5770b2f0b09b"),
                             IconKey = "mdi-phone"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("3bd660b1-da2f-4a02-8314-f5e9b9db744c"),
+                            BudgetCategoryIconId = new Guid("f415705e-d951-4e65-b6fe-c274e5cdc222"),
                             IconKey = "mdi-airplane"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("10036d5e-b5f7-4b07-a003-1e253ba1284a"),
+                            BudgetCategoryIconId = new Guid("c64fb617-7333-49ba-9eb6-19121f7eebb9"),
                             IconKey = "mdi-currency-usd-circle-outline"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("d4ba9894-3340-40e9-bd51-c66ed205f2cb"),
+                            BudgetCategoryIconId = new Guid("4d529f43-bb5d-4f38-90bf-6df39afbce0b"),
                             IconKey = "mdi-format-paint"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("8f685fe6-256d-49f5-85cb-b6f654ec1dff"),
+                            BudgetCategoryIconId = new Guid("3a56e12e-88a0-442b-909e-419bdacbf720"),
                             IconKey = "mdi-gamepad-square"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("3b386577-b735-4865-b8b6-4ceba240cb06"),
+                            BudgetCategoryIconId = new Guid("02236f38-183d-43fc-93ff-66f2380ff6be"),
                             IconKey = "mdi-laptop"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ca6ef496-6b7b-4efd-9ea6-31260e5cdbb3"),
+                            BudgetCategoryIconId = new Guid("43319ec7-300d-4a75-a35f-929e46b10f90"),
                             IconKey = "mdi-camera"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("12fdffbd-174c-496d-885e-945998c76483"),
+                            BudgetCategoryIconId = new Guid("a03604b8-e9ee-40d5-aafb-c8495f81c888"),
                             IconKey = "mdi-city"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("b40b5c91-b5b7-4dee-8094-053d55b5ba06"),
+                            BudgetCategoryIconId = new Guid("d4c11c9b-6293-4312-9672-5600f545d07f"),
                             IconKey = "mdi-fire"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("bc56fd81-9b1a-44ee-ac58-83f00630e0b2"),
+                            BudgetCategoryIconId = new Guid("8f0cd281-5388-4a92-a66f-10530aa0a2b2"),
                             IconKey = "mdi-dumbbell"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("9adb902a-055b-4e22-8865-baf11a520fde"),
+                            BudgetCategoryIconId = new Guid("48055bfa-e46e-46ff-acc0-67434f4d5aea"),
                             IconKey = "mdi-coffee"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("3f903a15-ad29-419d-8d66-8edab0093f0a"),
+                            BudgetCategoryIconId = new Guid("188de7c2-ca71-45ae-82bb-26e27490492c"),
                             IconKey = "mdi-dice-5"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("fffce917-53a0-4b34-b541-fe0cf4147fbf"),
+                            BudgetCategoryIconId = new Guid("0cf4ffa0-2643-441b-98ac-2f0f0ff9f68a"),
                             IconKey = "mdi-beach"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ee3ce367-f5b1-420b-96e0-639e2963e120"),
+                            BudgetCategoryIconId = new Guid("496df917-3698-4ecd-a39a-123dba6e3d29"),
                             IconKey = "mdi-bus-articulated-front"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("7bba5790-0d79-4e72-afa8-de83df360d7a"),
+                            BudgetCategoryIconId = new Guid("24ef9a86-7bcd-4b74-9d63-25c9a9a5c028"),
                             IconKey = "mdi-smoking"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("6490022e-3e3c-4e1b-b56b-a7c2852b5732"),
+                            BudgetCategoryIconId = new Guid("9d2dbb44-a54a-4697-b38a-de5bcdf71d4d"),
                             IconKey = "mdi-fridge"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("43b17e01-a739-49fe-ba18-a1ac2a5177d0"),
+                            BudgetCategoryIconId = new Guid("70efd24b-facf-4dff-9900-b62230b22729"),
                             IconKey = "mdi-baby-face"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("801f3f62-5800-4717-8c2c-2d0f1ad70f80"),
+                            BudgetCategoryIconId = new Guid("97f8395d-d468-4874-9f5b-b4a74b737726"),
                             IconKey = "mdi-paw"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("978b4ecb-7aa0-44a3-b132-bd663c749ff0"),
+                            BudgetCategoryIconId = new Guid("ae52a618-a4f6-40ed-b948-f6cde469a023"),
                             IconKey = "mdi-bandage"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("43b1237f-fcb2-41e6-8d9c-654d4a70a9ec"),
+                            BudgetCategoryIconId = new Guid("9cbe8f8b-4210-494e-b9ea-ffb2c053eb56"),
                             IconKey = "mdi-human"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("9254cd52-6459-4617-a24b-a5c40bded3b5"),
+                            BudgetCategoryIconId = new Guid("643e4a6f-600e-41fe-b65a-658ae181297e"),
                             IconKey = "mdi-sofa"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("73b81678-f1a1-4918-9237-6c5dc771027c"),
+                            BudgetCategoryIconId = new Guid("f162ca17-b457-486d-b64c-a1945277efc6"),
                             IconKey = "mdi-memory"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("a1d77525-d3f2-4390-869a-690e06ccf5ec"),
+                            BudgetCategoryIconId = new Guid("604c67e7-30be-43fa-8698-ad68c82f9c05"),
                             IconKey = "mdi-cellphone-android"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("e649888b-b567-4604-bc18-634ed36e929c"),
+                            BudgetCategoryIconId = new Guid("1959dfe2-e57b-45f6-b846-0f3de86f7c93"),
                             IconKey = "mdi-speaker"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("9d9bc6ed-fd32-49a6-ad21-3730b3dc1480"),
+                            BudgetCategoryIconId = new Guid("eb83ecb2-62ce-4ffe-9002-933935409b1d"),
                             IconKey = "mdi-sim"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("60099806-dfda-4f0e-8d84-95994cb5cace"),
+                            BudgetCategoryIconId = new Guid("3a795476-9de4-4df8-a1e7-b1d68b283d41"),
                             IconKey = "mdi-silverware-fork-knife"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("efaa40dc-b468-49b3-8923-e24740720b9d"),
+                            BudgetCategoryIconId = new Guid("a3084dfb-82bf-490f-9908-d992cb9aa3f1"),
                             IconKey = "mdi-food"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("d9ce1a30-79e9-4c49-a08f-6fb6ab0515be"),
+                            BudgetCategoryIconId = new Guid("829ca796-4aff-41ea-aae5-7dfbb8835a6b"),
                             IconKey = "mdi-gas-station"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("7ae437a8-ab10-4593-8d85-7eda3fcea083"),
+                            BudgetCategoryIconId = new Guid("76b1215f-c0ab-4bd7-901d-d188158a224d"),
                             IconKey = "mdi-hospital-building"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("e8aeb56a-d14c-47c8-90a5-7fd658695ca6"),
+                            BudgetCategoryIconId = new Guid("f4dce2da-6f89-418c-9f95-4d99cc9c481b"),
                             IconKey = "mdi-shopping"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("70d6ca9e-b85e-45af-8f7f-5c10a6439518"),
+                            BudgetCategoryIconId = new Guid("fcc9ce3b-8e2f-4e69-a389-b19c5a462ede"),
                             IconKey = "mdi-glass-cocktail"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("5e59e08e-b1d3-44bb-8c20-7afb9c223cc9"),
+                            BudgetCategoryIconId = new Guid("a5aeb250-4a47-40de-88ec-699ce8e469da"),
                             IconKey = "mdi-filmstrip"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("fec64dcb-5504-4486-8b2d-fb3077532d4e"),
+                            BudgetCategoryIconId = new Guid("afdb4441-7789-4985-ba42-7e19aa2174c8"),
                             IconKey = "mdi-bike"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("018872e6-2030-4854-b7a4-3ccaab83f19f"),
+                            BudgetCategoryIconId = new Guid("3751c312-65dc-4339-80e2-55d0f8c24a24"),
                             IconKey = "mdi-motorbike"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ef3575f3-0687-4f81-bfb0-4528f0499b6d"),
+                            BudgetCategoryIconId = new Guid("1f6ffd84-833a-4b1b-937e-d9cc54a74a44"),
                             IconKey = "mdi-wallet-giftcard"
                         });
                 });

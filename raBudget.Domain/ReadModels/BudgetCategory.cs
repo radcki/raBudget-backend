@@ -12,8 +12,19 @@ namespace raBudget.Domain.ReadModels
         public BudgetCategoryId BudgetCategoryId { get; set; }
         public BudgetId BudgetId { get; set; }
         public string Name { get; set; }
-        public string Icon { get; set; }
         public int Order { get; set; }
+        public string BudgetCategoryIconKey { get; set; }
+        public BudgetCategoryIconId BudgetCategoryIconId { get; set; }
+        public List<BudgetedAmount> BudgetedAmounts { get; set; }
         public eBudgetCategoryType BudgetCategoryType { get; set; }
+
+        public class BudgetedAmount
+        {
+            public BudgetedAmountId BudgetedAmountId { get; set; }
+            public DateTime ValidFrom { get; set; }
+            public DateTime? ValidTo { get; set; }
+            public MoneyAmount Amount { get; set; }
+        }
     }
+
 }

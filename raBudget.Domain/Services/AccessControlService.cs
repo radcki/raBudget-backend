@@ -31,9 +31,9 @@ namespace raBudget.Domain.Services
             return await _readDbContext.Budgets.AnyAsync(x => x.OwnerUserId == _userContext.UserId && x.BudgetId == budgetBudgetId);
         }
 
-        public IEnumerable<BudgetCategoryId> GetAccessibleBudgetCategoryIds(eBudgetCategoryType? budgetCategoryType = null)
+        public IEnumerable<BudgetCategoryId> GetAccessibleBudgetCategoryIds(BudgetId budgetId, eBudgetCategoryType? budgetCategoryType = null)
         {
-            var query = _readDbContext.BudgetCategories.Where(x => GetAccessibleBudgetIds().Contains(x.BudgetId));
+            var query = _readDbContext.BudgetCategories.Where(x => x.BudgetId == budgetId && GetAccessibleBudgetIds().Any(s=>s == x.BudgetId));
             if (budgetCategoryType != null)
             {
                 query = query.Where(x => x.BudgetCategoryType == budgetCategoryType);

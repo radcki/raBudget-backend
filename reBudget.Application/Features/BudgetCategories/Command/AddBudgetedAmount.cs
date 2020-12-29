@@ -49,7 +49,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                                                           .FirstOrDefaultAsync(x => x.BudgetCategoryId == request.BudgetCategoryId, cancellationToken);
                 var budget = _writeDbContext.Budgets.First(x => x.BudgetId == budgetCategory.BudgetId);
 
-                var budgetedAmount = budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency, request.Amount), request.ValidFrom);
+                var budgetedAmount = budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.CurrencyCode, request.Amount), request.ValidFrom);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

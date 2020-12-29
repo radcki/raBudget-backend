@@ -54,7 +54,7 @@ namespace raBudget.Application.Features.Transactions.Command
                 }
 
                 var subTransaction = transaction.AddSubTransaction(request.Description,
-                                                                   new MoneyAmount(transaction.Amount.Currency, request.Amount),
+                                                                   new MoneyAmount(transaction.Amount.CurrencyCode, request.Amount),
                                                                    request.TransactionDate);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
