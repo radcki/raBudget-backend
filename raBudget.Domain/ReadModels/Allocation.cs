@@ -7,14 +7,14 @@ using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels
 {
-    public class Transaction
+    public class Allocation
     {
-        public TransactionId TransactionId { get; set; }
+        public AllocationId AllocationId { get; set; }
         public string Description { get; set; }
-        public BudgetCategoryId BudgetCategoryId { get; set; }
+        public BudgetCategoryId TargetBudgetCategoryId { get; set; }
+        public BudgetCategoryId? SourceBudgetCategoryId { get; set; }
         public MoneyAmount Amount { get; set; }
-        public List<SubTransaction> SubTransactions { get; set; }
-        public DateTime TransactionDate { get; set; }
+        public DateTime AllocationDate { get; set; }
         public DateTime CreationDateTime { get; set; }
     }
 }

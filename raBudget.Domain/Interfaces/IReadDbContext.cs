@@ -13,8 +13,10 @@ namespace raBudget.Domain.Interfaces
         IQueryable<Budget> Budgets { get; }
         IQueryable<BudgetCategory> BudgetCategories { get; }
         IQueryable<Transaction> Transactions { get; }
+        IQueryable<Allocation> Allocations { get; }
         IQueryable<Currency> Currencies { get; }
         IQueryable<BudgetCategoryIcon> BudgetCategoryIcons { get; }
         IQueryable<BudgetBalance> BudgetBalances { get; }
+        IQueryable<BudgetCategoryBalance> BudgetCategoryBalances { get; }
     }
 }
