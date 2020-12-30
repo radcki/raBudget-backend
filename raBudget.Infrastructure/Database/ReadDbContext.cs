@@ -124,6 +124,7 @@ namespace raBudget.Infrastructure.Database
 				   SavingTotal = x.SavingTotal,
 				   SpendingTotal = x.SpendingTotal,
 				   TotalBalance = x.TotalBalance,
+				   UnassignedFunds = x.UnassignedFunds,
 				   BudgetId = x.BudgetId
 			   });
 

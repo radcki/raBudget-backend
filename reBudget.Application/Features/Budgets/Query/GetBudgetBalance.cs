@@ -13,6 +13,7 @@ using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Models;
+using raBudget.Domain.ReadModels;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;
@@ -26,20 +27,43 @@ namespace raBudget.Application.Features.Budgets.Query
             public BudgetId BudgetId { get; set; }
         }
 
-        public class Response : SingleResponse<MoneyAmount>
+        public class Response : SingleResponse<BudgetBalanceDto>
         {
         }
 
+        public class BudgetBalanceDto
+        {
+            public MoneyAmount TotalBalance { get; set; }
+            public MoneyAmount UnassignedFunds { get; set; }
+            public MoneyAmount SpendingTotal { get; set; }
+            public MoneyAmount IncomeTotal { get; set; }
+            public MoneyAmount SavingTotal { get; set; }
+        }
+
+        public class Mapper : IHaveCustomMapping
+        {
+            #region Implementation of IHaveCustomMapping
+
+            /// <inheritdoc />
+            public void CreateMappings(Profile configuration)
+            {
+                configuration.CreateMap<BudgetBalance, BudgetBalanceDto>();
+            }
+
+            #endregion
+        }
 
         public class Handler : IRequestHandler<Query, Response>
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
+            private readonly IMapper _mapper;
 
-            public Handler(AccessControlService accessControlService, BalanceService balanceService)
+            public Handler(AccessControlService accessControlService, BalanceService balanceService, IMapper mapper)
             {
                 _accessControlService = accessControlService;
                 _balanceService = balanceService;
+                _mapper = mapper;
             }
 
             public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
@@ -53,7 +77,7 @@ namespace raBudget.Application.Features.Budgets.Query
 
                 return new Response()
                        {
-                           Data = balance
+                           Data = _mapper.Map<BudgetBalanceDto>(balance)
                        };
             }
         }
