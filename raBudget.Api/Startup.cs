@@ -116,7 +116,7 @@ namespace raBudget.Api
                 app.UseHsts();
             }
 
-            app.UseExceptionHandler("/error");
+            //app.UseExceptionHandler("/error");
             app.UseCors(builder => builder.AllowAnyHeader()
                                           .AllowAnyMethod()
                                           .AllowAnyOrigin());

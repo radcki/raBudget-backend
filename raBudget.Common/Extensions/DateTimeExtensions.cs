@@ -11,7 +11,7 @@ namespace raBudget.Common.Extensions
 		public static IEnumerable<DateTime> MonthRange(DateTime from, DateTime to)
 		{
 			var current = from;
-			while (current < to)
+			while (current < to || current.StartOfMonth() == from.StartOfMonth())
 			{
 				yield return current.StartOfMonth();
 				current = current.AddMonths(1);

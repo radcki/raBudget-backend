@@ -81,7 +81,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 													Order = budgetCategory.Order
 												};
 
-												await foreach (var budgetCategoryBalance in _balanceService.GetCategoryBalances(budgetCategory.BudgetCategoryId, null, endDate, cancellationToken))
+												foreach (var budgetCategoryBalance in _balanceService.GetCategoryBalances(budgetCategory.BudgetCategoryId, null, endDate))
 												{
 													if (dto.TotalCategoryBalance == null)
 													{
