@@ -4,8 +4,11 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
+using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
+using raBudget.Domain.Exceptions;
 using raBudget.Domain.Models;
+using RLib.Localization;
 
 namespace raBudget.Domain.ValueObjects
 {
@@ -38,5 +41,23 @@ namespace raBudget.Domain.ValueObjects
         {
             return this.Amount.GetHashCode();
         }
+
+		public static MoneyAmount operator +(MoneyAmount a, MoneyAmount b)
+		{
+			if (a.CurrencyCode != b.CurrencyCode)
+			{
+                throw new BusinessException(Localization.For(()=>ErrorMessages.NotMatchingCurrencies));
+			}
+			return new MoneyAmount(a.CurrencyCode, a.Amount + b.Amount);
+		}
+
+		public static MoneyAmount operator -(MoneyAmount a, MoneyAmount b)
+		{
+			if (a.CurrencyCode != b.CurrencyCode)
+			{
+				throw new BusinessException(Localization.For(() => ErrorMessages.NotMatchingCurrencies));
+			}
+			return new MoneyAmount(a.CurrencyCode, a.Amount - b.Amount);
+		}
     }
 }

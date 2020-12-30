@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace raBudget.Domain.Services
 									  .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
 									  .Select(x => x.BudgetCategoryId)
 									  .ToList()
-									  .Select(x => GetBudgetedAmount(x, null, null, cancellationToken))
+									  .Select(x => GetCategoryBudgetedAmount(x, null, null, cancellationToken))
 									  .ToArray();
 
 			var categoriesBudgetedTotal = (await Task.WhenAll(balanceTasks)).Sum(x => x.Amount);
@@ -150,20 +151,33 @@ namespace raBudget.Domain.Services
 			await _writeDb.SaveChangesAsync(cancellationToken);
 		}
 
-		public async Task<MoneyAmount> GetBudgetedAmount(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to, CancellationToken cancellationToken)
+		public async Task<MoneyAmount> GetCategoryBudgetedAmount(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to, CancellationToken cancellationToken)
 		{
 			var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
 								 ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
 			var currency = (await _readDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetCategory.BudgetId, cancellationToken: cancellationToken)).Currency;
 
-			if (!budgetCategory.BudgetedAmounts.Any())
+			var amount = 0m;
+			await foreach (var balance in GetCategoryBalances(budgetCategoryId, from, to, cancellationToken))
 			{
-				return new MoneyAmount(currency.CurrencyCode, 0);
+				amount += balance.BudgetedAmount.Amount;
+			}
+
+			return new MoneyAmount(currency.CurrencyCode, amount);
+		}
+
+		public async IAsyncEnumerable<ReadModels.BudgetCategoryBalance> GetCategoryBalances(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to, [EnumeratorCancellation] CancellationToken cancellationToken)
+		{
+			var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
+								 ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
+
+			if (!budgetCategory.BudgetedAmounts.Any())
+			{ 
+				yield break;
 			}
 
 			from ??= budgetCategory.BudgetedAmounts.Min(x => x.ValidFrom);
 			to ??= DateTime.Today;
-			decimal amount = 0;
 
 			var fromYear = from.Value.Year;
 			var fromMonth = from.Value.Month;
@@ -186,11 +200,9 @@ namespace raBudget.Domain.Services
 
 				if (categoryBalance != null)
 				{
-					amount += categoryBalance.BudgetedAmount.Amount + categoryBalance.AllocationsTotal.Amount;
+					yield return categoryBalance;
 				}
 			}
-
-			return new MoneyAmount(currency.CurrencyCode, amount);
 		}
 	}
 }

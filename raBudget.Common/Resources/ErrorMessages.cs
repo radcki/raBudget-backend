@@ -22,6 +22,9 @@ namespace raBudget.Common.Resources
         [Localized(KnownCulture.Polish, "")]
         public static string TransactionNotFound = "";
 
+		[Localized(KnownCulture.Polish, "")]
+		public static string AllocationNotFound = "";
+
         [Localized(KnownCulture.Polish, "")]
         public static string TransactionDescriptionEmpty = "";
 
@@ -36,5 +39,8 @@ namespace raBudget.Common.Resources
 
         [Localized(KnownCulture.Polish, "")]
         public static string EndDateBeforeStartDate = "";
+
+		[Localized(KnownCulture.Polish, "")]
+		public static string NotMatchingCurrencies = "";
     }
 }
