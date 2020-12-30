@@ -53,8 +53,6 @@ namespace raBudget.Application.Features.Transactions.Command
                 var budgetCategory = _writeDbContext.BudgetCategories
                                                     .First(x => x.BudgetCategoryId == request.BudgetCategoryId);
 
-                var budget = _writeDbContext.Budgets.First(x => x.BudgetId == budgetCategory.BudgetId);
-
                 var transaction = Transaction.Create(request.Description, 
                                                      budgetCategory, 
                                                      request.Amount, 

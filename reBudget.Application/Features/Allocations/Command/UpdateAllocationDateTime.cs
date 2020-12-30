@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
-using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;
 
-namespace raBudget.Application.Features.Transactions.Command
+namespace raBudget.Application.Features.Allocations.Command
 {
-    public class UpdateTransactionDateTime
+    public class UpdateAllocationDateTime
     {
         public class Command : IRequest<Result>
         {
-            public TransactionId TransactionId { get; set; }
-            public DateTime TransactionDate { get; set; }
+            public AllocationId AllocationId { get; set; }
+            public DateTime AllocationDate { get; set; }
         }
 
         public class Result : SingleResponse<DateTime>
@@ -43,20 +39,20 @@ namespace raBudget.Application.Features.Transactions.Command
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
                 
-                if (!await _accessControlService.HasTransactionAccess(request.TransactionId))
+                if (!await _accessControlService.HasAllocationAccess(request.AllocationId))
                 {
-                    throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
+                    throw new NotFoundException(Localization.For(() => ErrorMessages.AllocationNotFound));
                 }
-                var transaction = await _writeDbContext.Transactions
-                                                       .FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId, cancellationToken: cancellationToken)
+                var transaction = await _writeDbContext.Allocations
+                                                       .FirstOrDefaultAsync(x => x.AllocationId == request.AllocationId, cancellationToken: cancellationToken)
                                   ?? throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
-                transaction.SetTransactionDate(request.TransactionDate);
+                transaction.SetAllocationDate(request.AllocationDate);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
                 return new Result()
                        {
-                           Data = transaction.TransactionDate
+                           Data = transaction.AllocationDate
                        };
             }
         }

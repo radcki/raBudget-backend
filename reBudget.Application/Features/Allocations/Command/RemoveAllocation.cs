@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +10,13 @@ using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;
 
-namespace raBudget.Application.Features.Transactions.Command
+namespace raBudget.Application.Features.Allocations.Command
 {
-    public class RemoveTransaction
+    public class RemoveAllocation
     {
         public class Command : IRequest<Result>
         {
-            public TransactionId TransactionId { get; set; }
+            public AllocationId AllocationId { get; set; }
         }
 
         public class Result : BaseResponse
@@ -37,16 +36,16 @@ namespace raBudget.Application.Features.Transactions.Command
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                var transaction = await _writeDbContext.Transactions
-                                                       .FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId, cancellationToken: cancellationToken)
+                var allocation = await _writeDbContext.Allocations
+                                                       .FirstOrDefaultAsync(x => x.AllocationId == request.AllocationId, cancellationToken: cancellationToken)
                                   ?? throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
 
-                if (!await _accessControlService.HasTransactionAccess(transaction.TransactionId))
+                if (!await _accessControlService.HasAllocationAccess(allocation.AllocationId))
                 {
-                    throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
+                    throw new NotFoundException(Localization.For(() => ErrorMessages.AllocationNotFound));
                 }
 
-                _writeDbContext.Transactions.Remove(transaction);
+                _writeDbContext.Allocations.Remove(allocation);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
