@@ -35,7 +35,7 @@ namespace raBudget.Api.ApiControllers
         [HttpPatch("update/name")] public async Task<UpdateBudgetCategoryName.Result> UpdateBudgetCategoryName([FromBody] UpdateBudgetCategoryName.Command command) => await _mediator.Send(command);
         [HttpPatch("update/icon")] public async Task<UpdateBudgetCategoryIcon.Result> UpdateBudgetCategoryIcon([FromBody] UpdateBudgetCategoryIcon.Command command) => await _mediator.Send(command);
 
-        [HttpGet("balance")] public async Task<GetBudgetCategoriesBalance.Result> GetBudgetCategoriesBalance([FromQuery] GetBudgetCategoriesBalance.Query query) => await _mediator.Send(query);
+        [HttpGet("balance")] public async Task<GetBudgetCategoryBalance.Result> GetBudgetCategoryBalance([FromQuery] GetBudgetCategoryBalance.Query query) => await _mediator.Send(query);
 
 
         [HttpPost("budgeted-amount/add")] public async Task<AddBudgetedAmount.Result> AddBudgetedAmount([FromBody] AddBudgetedAmount.Command command) => await _mediator.Send(command);
