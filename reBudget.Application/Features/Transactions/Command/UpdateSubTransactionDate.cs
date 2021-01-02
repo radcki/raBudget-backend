@@ -18,7 +18,7 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.Transactions.Command
 {
-    public class UpdateSubTransactionDateTime
+    public class UpdateSubTransactionDate
     {
         public class Command : IRequest<Result>
         {
@@ -29,6 +29,14 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Result : SingleResponse<DateTime>
         {
         }
+
+		public class Notification : INotification
+		{
+			public Transaction Transaction { get; set; }
+			public SubTransaction SubTransaction { get; set; }
+			public DateTime OldSubTransactionDate { get; set; }
+			public DateTime NewSubTransactionDate { get; set; }
+		}
 
         public class Handler : IRequestHandler<Command, Result>
         {
@@ -61,13 +69,15 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
+				var transaction = _writeDbContext.Transactions.FirstOrDefault(x => x.TransactionId == subTransaction.ParentTransactionId);
 
-                _ = _mediator.Publish(new TransactionDateChanged.Notification()
+                _ = _mediator.Publish(new Notification()
                                       {
-                                          OldDate = oldDate,
-                                          NewDate = subTransaction.TransactionDate,
-                                          ReferenceTransactionId = subTransaction.ParentTransactionId
-                                      }, cancellationToken);
+                                          OldSubTransactionDate = oldDate,
+                                          NewSubTransactionDate = subTransaction.TransactionDate,
+                                          SubTransaction = subTransaction,
+                                          Transaction = transaction
+									  }, cancellationToken);
 
                 return new Result() { Data = subTransaction.TransactionDate};
             }

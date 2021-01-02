@@ -30,6 +30,11 @@ namespace raBudget.Application.Features.Transactions.Command
         {
         }
 
+		public class Notification : INotification
+		{
+			public Transaction Transaction { get; set; }
+		}
+
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
@@ -58,9 +63,9 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-                _ = _mediator.Publish(new TransactionsTotalAmountChanged.Notification()
+                _ = _mediator.Publish(new Notification()
                                       {
-                                          ReferenceTransaction = transaction
+                                          Transaction = transaction
                                       }, cancellationToken);
 
                 return new Result()

@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -24,17 +25,23 @@ namespace raBudget.Application.Features.BudgetCategories.Command
         public class Result : BaseResponse
         {
         }
+		public class Notification : INotification
+		{
+			public BudgetCategory ReferenceBudgetCategory { get; set; }
+		}
 
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
+			private readonly IMediator _mediator;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
-            }
+				_mediator = mediator;
+			}
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
@@ -46,10 +53,15 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                 var budget = await _writeDbContext.Budgets
                                                   .Include(x=>x.BudgetCategories)
                                                   .FirstAsync(x => x.BudgetCategories.Any(s=>s.BudgetCategoryId == request.BudgetCategoryId), cancellationToken);
-
-                budget.BudgetCategories.MoveDown(budget.BudgetCategories.First(x=>x.BudgetCategoryId == request.BudgetCategoryId));
+				var budgetCategory = budget.BudgetCategories.First(x => x.BudgetCategoryId == request.BudgetCategoryId);
+                budget.BudgetCategories.MoveDown(budgetCategory);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
+
+				_ = _mediator.Publish(new Notification()
+				{
+					ReferenceBudgetCategory = budgetCategory,
+				}, cancellationToken);
 
                 return new Result() { };
             }

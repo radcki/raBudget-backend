@@ -28,17 +28,26 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Result : IdResponse<BudgetCategoryId>
         {
         }
+        
+        public class Notification: INotification
+		{
+			public Transaction Transaction { get; set; }
+            public BudgetCategoryId OldBudgetCategoryId { get; set; }
+            public BudgetCategoryId NewBudgetCategoryId { get; set; }
+		}
 
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
+			private readonly IMediator _mediator;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
-            }
+				_mediator = mediator;
+			}
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
@@ -69,6 +78,13 @@ namespace raBudget.Application.Features.Transactions.Command
                 transaction.SetBudgetCategory(newBudgetCategory);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
+
+				_ = _mediator.Publish(new Notification()
+				{
+					NewBudgetCategoryId = newBudgetCategory.BudgetCategoryId,
+					OldBudgetCategoryId = oldBudgetCategory.BudgetCategoryId,
+					Transaction = transaction
+				}, cancellationToken);
 
                 return new Result()
                        {

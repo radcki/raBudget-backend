@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using raBudget.Application.Features.Transactions.Notification;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -24,6 +25,11 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Result : BaseResponse
         {
         }
+
+        public class Notification : INotification
+		{
+			public Transaction Transaction { get; set; }
+		}
 
         public class Handler : IRequestHandler<Command, Result>
         {
@@ -54,9 +60,9 @@ namespace raBudget.Application.Features.Transactions.Command
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
 
-                _ = _mediator.Publish(new TransactionsTotalAmountChanged.Notification()
+                _ = _mediator.Publish(new Notification()
                                       {
-                                          ReferenceTransaction = transaction
+                                          Transaction = transaction
                                       }, cancellationToken);
 
                 return new Result() { };

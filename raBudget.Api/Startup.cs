@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
 using raBudget.Application.Infrastructure;
 using raBudget.Common;
@@ -49,8 +50,10 @@ namespace raBudget.Api
 
             services.AddIdentityServices(Configuration);
 
-            services.AddMediatR(applicationAssembly);
+            services.AddMediatR(applicationAssembly, apiAssembly);
             services.AddTransient<WriteDbContext>();
+
+			services.AddSignalR();
 
             services.AddAutoMapper(applicationAssembly, apiAssembly);
             var config = new MapperConfiguration(cfg =>
@@ -116,7 +119,7 @@ namespace raBudget.Api
                 app.UseHsts();
             }
 
-            //app.UseExceptionHandler("/error");
+            app.UseExceptionHandler("/error");
             app.UseCors(builder => builder.AllowAnyHeader()
                                           .AllowAnyMethod()
                                           .AllowAnyOrigin());
@@ -125,12 +128,11 @@ namespace raBudget.Api
             app.UseStaticFiles();
             app.UseRouting();
             app.UseIdentityServices();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            //app.UseEndpoints(endpoints =>
-            //                 {
-            //                     endpoints.MapControllerRoute(name: "default",
-            //                                                  pattern: "{controller=Home}/{action=Index}/{id?}");
-            //                 });
+            app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+				endpoints.MapHub<BalanceNotificationsHub>("/balance-notifications-hub");
+			});
         }
     }
 }

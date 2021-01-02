@@ -6,6 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using raBudget.Application.Features.BudgetCategories.Notification;
+using raBudget.Application.Features.Budgets.Notification;
+using raBudget.Application.Features.Transactions.Command;
 using raBudget.Common.Extensions;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
@@ -17,6 +20,69 @@ namespace raBudget.Application.Features.Transactions.Notification
 {
     public class TransactionsTotalAmountChanged
     {
+		public class Listener : INotificationHandler<CreateTransaction.Notification>, 
+								INotificationHandler<RemoveTransaction.Notification>,
+                                INotificationHandler<AddSubTransaction.Notification>,
+                                INotificationHandler<RemoveSubTransaction.Notification>,
+                                INotificationHandler<UpdateSubTransactionAmount.Notification>,
+                                INotificationHandler<UpdateTransactionAmount.Notification> 
+		{
+			private readonly IMediator _mediator;
+
+			public Listener(IMediator mediator)
+			{
+				_mediator = mediator;
+			}
+
+			public async Task Handle(CreateTransaction.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+			}
+
+			public async Task Handle(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+            }
+
+			public async Task Handle(AddSubTransaction.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+            }
+
+			public async Task Handle(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+            }
+
+			public async Task Handle(UpdateSubTransactionAmount.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+            }
+
+			public async Task Handle(UpdateTransactionAmount.Notification notification, CancellationToken cancellationToken)
+			{
+				await _mediator.Send(new TransactionsTotalAmountChanged.Notification
+				{
+					ReferenceTransaction = notification.Transaction
+				}, cancellationToken);
+            }
+		}
+
         public class Notification : INotification
         {
             public Transaction ReferenceTransaction { get; set; }
@@ -26,15 +92,16 @@ namespace raBudget.Application.Features.Transactions.Notification
         {
             private readonly BalanceService _balanceService;
             private readonly IReadDbContext _readDb;
+			private readonly IMediator _mediator;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory)
+            public Handler(IServiceScopeFactory serviceScopeFactory, IMediator mediator)
             {
-                var serviceScope = serviceScopeFactory.CreateScope();
+				_mediator = mediator;
+				var serviceScope = serviceScopeFactory.CreateScope();
                 _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
                 _readDb = serviceScope.ServiceProvider.GetService<IReadDbContext>();
             }
 
-            #region Implementation of INotificationHandler<in Notification>
 
             /// <inheritdoc />
             public async Task Handle(Notification notification, CancellationToken cancellationToken)
@@ -62,10 +129,17 @@ namespace raBudget.Application.Features.Transactions.Notification
                                                                            dateTime.Month,
                                                                            cancellationToken);
                 }
-                
-            }
+				_ = _mediator.Publish(new BudgetCategoryBalanceChanged()
+				{
+					BudgetCategoryId = notification.ReferenceTransaction.BudgetCategoryId
+				}, cancellationToken);
 
-            #endregion
+				_ = _mediator.Publish(new BudgetBalanceChanged()
+				{
+					BudgetId = category.BudgetId
+				}, cancellationToken);
+			}
+
         }
     }
 }

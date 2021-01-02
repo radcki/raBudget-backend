@@ -30,6 +30,12 @@ namespace raBudget.Application.Features.Transactions.Command
         {
         }
 
+		public class Notification : INotification
+		{
+			public Transaction Transaction { get; set; }
+			public SubTransaction SubTransaction { get; set; }
+		}
+
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
@@ -63,9 +69,10 @@ namespace raBudget.Application.Features.Transactions.Command
                 var transaction = await _writeDbContext.Transactions
                                                        .Include(x => x.SubTransactions)
                                                        .FirstOrDefaultAsync(x=>x.TransactionId == subTransaction.ParentTransactionId, cancellationToken: cancellationToken);
-                _ = _mediator.Publish(new TransactionsTotalAmountChanged.Notification()
+                _ = _mediator.Publish(new Notification()
                                       {
-                                          ReferenceTransaction = transaction
+                                          Transaction = transaction,
+                                          SubTransaction = subTransaction
                                       }, cancellationToken);
 
                 return new Result() {Data = subTransaction.Amount};

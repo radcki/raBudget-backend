@@ -97,6 +97,29 @@ namespace raBudget.Domain.Services
             return storedBalance;
         }
 
+		public async Task CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, CancellationToken cancellationToken)
+		{
+			if (_writeDb.BudgetCategoryBalances.Any(x => x.BudgetCategoryId == budgetCategoryId))
+			{
+				_writeDb.BudgetCategoryBalances.RemoveRange(_writeDb.BudgetCategoryBalances.Where(x => x.BudgetCategoryId == budgetCategoryId));
+				await _writeDb.SaveChangesAsync(cancellationToken);
+			}
+
+			var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
+								 ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
+
+            if (!budgetCategory.BudgetedAmounts.Any())
+			{
+				return;
+			}
+			var from = budgetCategory.BudgetedAmounts.Min(x => x.ValidFrom);
+			var to = new DateTime(DateTime.Today.Year, 12, 1);
+
+			foreach (var month in DateTimeExtensions.MonthRange(from, to))
+			{
+				await CalculateBudgetedCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None);
+			}
+        }
         public async Task CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, int year, int month, CancellationToken cancellationToken)
         {
             var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
