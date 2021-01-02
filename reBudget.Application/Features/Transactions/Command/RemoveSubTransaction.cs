@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Application.Features.Transactions.Notification;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
@@ -32,11 +33,13 @@ namespace raBudget.Application.Features.Transactions.Command
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
+            private readonly IMediator _mediator;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
+                _mediator = mediator;
             }
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
@@ -54,6 +57,11 @@ namespace raBudget.Application.Features.Transactions.Command
                 transaction.SubTransactions.Remove(transaction.SubTransactions.First(x => x.SubTransactionId == request.SubTransactionId));
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
+
+                _ = _mediator.Publish(new TransactionsTotalAmountChanged.Notification()
+                                      {
+                                          ReferenceTransaction = transaction
+                                      }, cancellationToken);
 
                 return new Result() { };
             }
