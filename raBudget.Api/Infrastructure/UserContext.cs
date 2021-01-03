@@ -10,13 +10,23 @@ namespace raBudget.Api.Infrastructure
 {
     public class UserContext : IUserContext
     {
-        private readonly IHttpContextAccessor _httpContext;
-
         public UserContext(IHttpContextAccessor httpContext)
         {
-            _httpContext = httpContext;
+            UserId = httpContext.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
-        public string UserId => _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        public string UserId { get; private set; }
+        
+        public void SetFromAuthenticationResult(ClaimsPrincipal claimsPrincipal)
+        {
+            try
+            {
+                UserId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
     }
 }

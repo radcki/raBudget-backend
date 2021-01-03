@@ -10,7 +10,7 @@ using raBudget.Application.Features.Transactions.Query;
 namespace raBudget.Api.ApiControllers
 {
     [ApiController]
-    [Route("api/transaction")]
+    [Route("transaction")]
     [Authorize]
     public class TransactionsController : ControllerBase
     {

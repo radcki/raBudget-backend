@@ -38,12 +38,9 @@ namespace raBudget.Api
 
             services.Configure<ApiConfiguration>(Configuration.GetSection("SystemConfiguration"));
             var mysqlConnectionString = Configuration.GetConnectionString("MySql");
-            services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(mysqlConnectionString, 
+            services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(mysqlConnectionString,
                                                                                                MariaDbServerVersion.LatestSupportedServerVersion,
-                                                                                               builder =>
-                                                                                               {
-                                                                                                   builder.MigrationsAssembly("raBudget.Api");
-                                                                                               }));
+                                                                                               builder => { builder.MigrationsAssembly("raBudget.Api"); }));
             services.AddTransient<IReadDbContext, ReadDbContext>();
             services.AddTransient<AccessControlService>();
             services.AddTransient<BalanceService>();
@@ -53,7 +50,9 @@ namespace raBudget.Api
             services.AddMediatR(applicationAssembly, apiAssembly);
             services.AddTransient<WriteDbContext>();
 
-			services.AddSignalR();
+            services.AddSignalR();
+            services.AddTransient<TransactionNotificationsHub>();
+            services.AddTransient<BalanceNotificationsHub>();
 
             services.AddAutoMapper(applicationAssembly, apiAssembly);
             var config = new MapperConfiguration(cfg =>
@@ -102,6 +101,7 @@ namespace raBudget.Api
             forwardOptions.KnownProxies.Clear();
 
             app.UseForwardedHeaders(forwardOptions);
+            app.UsePathBase("/api");
 
             if (env.IsDevelopment())
             {
@@ -120,19 +120,21 @@ namespace raBudget.Api
             }
 
             app.UseExceptionHandler("/error");
-            app.UseCors(builder => builder.AllowAnyHeader()
+            app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
+                                          .AllowAnyHeader()
                                           .AllowAnyMethod()
-                                          .AllowAnyOrigin());
+                                          .AllowCredentials());
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseIdentityServices();
             app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-				endpoints.MapHub<BalanceNotificationsHub>("/balance-notifications-hub");
-			});
+                             {
+                                 endpoints.MapControllers();
+                                 endpoints.MapHub<BalanceNotificationsHub>("hubs/balance-notifications");
+                                 endpoints.MapHub<TransactionNotificationsHub>("hubs/transaction-notifications");
+                             });
         }
     }
 }

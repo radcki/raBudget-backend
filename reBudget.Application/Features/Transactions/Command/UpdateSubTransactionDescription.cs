@@ -29,15 +29,23 @@ namespace raBudget.Application.Features.Transactions.Command
         {
         }
 
+        public class Notification : INotification
+        {
+            public Transaction Transaction { get; set; }
+            public SubTransaction SubTransaction { get; set; }
+        }
+
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
+            private readonly IMediator _mediator;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
+                _mediator = mediator;
             }
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
@@ -57,7 +65,14 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-                return new Result() { Data = subTransaction.Description};
+                var transaction = _writeDbContext.Transactions.FirstOrDefault(x => x.TransactionId == subTransaction.ParentTransactionId);
+
+                _ = _mediator.Publish(new Notification()
+                                      {
+                                          Transaction = transaction,
+                                          SubTransaction = subTransaction
+                                      }, cancellationToken);
+                return new Result() {Data = subTransaction.Description};
             }
         }
     }

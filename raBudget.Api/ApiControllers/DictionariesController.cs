@@ -14,7 +14,7 @@ using raBudget.Domain.Models;
 namespace raBudget.Api.ApiControllers
 {
     [ApiController]
-    [Route("api/dictionary")]
+    [Route("dictionary")]
     [Authorize]
     public class DictionariesController : ControllerBase
     {

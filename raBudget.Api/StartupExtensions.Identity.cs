@@ -27,7 +27,7 @@ namespace raBudget.Api
                                                              });
 
             services.AddHttpContextAccessor();
-            services.AddTransient<IUserContext, UserContext>();
+            services.AddScoped<IUserContext, UserContext>();
         }
 
         public static void UseIdentityServices(this IApplicationBuilder app)
@@ -53,6 +53,18 @@ namespace raBudget.Api
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
+                                 OnTokenValidated = async c =>
+                                                    {
+                                                        await Task.Run(() =>
+                                                                       {
+                                                                           // Update user context with authentication result - required for signalr
+                                                                           var userContext = c.HttpContext
+                                                                                               .RequestServices
+                                                                                               .GetRequiredService<IUserContext>();
+
+                                                                           userContext.SetFromAuthenticationResult(c.Principal);
+                                                                       });
+                                                    },
                                  OnAuthenticationFailed = c =>
                                                           {
                                                               //ProblemDetails problem;

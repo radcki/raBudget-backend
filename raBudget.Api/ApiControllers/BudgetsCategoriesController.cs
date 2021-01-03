@@ -11,7 +11,7 @@ using raBudget.Application.Features.BudgetCategories.Query;
 namespace raBudget.Api.ApiControllers
 {
     [ApiController]
-    [Route("api/budget-categories")]
+    [Route("budget-categories")]
     [Authorize]
     public class BudgetCategoriesController : ControllerBase
     {

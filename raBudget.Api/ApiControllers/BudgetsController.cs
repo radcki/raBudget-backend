@@ -12,7 +12,7 @@ using raBudget.Domain.Interfaces;
 namespace raBudget.Api.ApiControllers
 {
     [ApiController]
-    [Route("api/budget")]
+    [Route("budget")]
     [Authorize]
     public class BudgetsController : ControllerBase
     {
