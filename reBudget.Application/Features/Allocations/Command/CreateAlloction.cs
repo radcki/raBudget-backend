@@ -29,16 +29,23 @@ namespace raBudget.Application.Features.Allocations.Command
 		{
 		}
 
+        public class Notification : INotification
+        {
+            public Allocation Allocation { get; set; }
+        }
+
 		public class Handler : IRequestHandler<Command, Result>
 		{
 			private readonly IWriteDbContext _writeDbContext;
 			private readonly AccessControlService _accessControlService;
+            private readonly IMediator _mediator;
 
-			public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService)
+			public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
 			{
 				_writeDbContext = writeDbContext;
 				_accessControlService = accessControlService;
-			}
+                _mediator = mediator;
+            }
 
 			public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
 			{
@@ -61,8 +68,6 @@ namespace raBudget.Application.Features.Allocations.Command
 									 .First(x => x.BudgetCategoryId == request.SourceBudgetCategoryId)
 					: null;
 
-				var budget = _writeDbContext.Budgets.First(x => x.BudgetId == targetBudgetCategory.BudgetId);
-
 				var allocation = Allocation.Create(request.Description,
 												   targetBudgetCategory,
 												   sourceBudgetCategory,
@@ -71,6 +76,8 @@ namespace raBudget.Application.Features.Allocations.Command
 				_writeDbContext.Allocations.Add(allocation);
 
 				await _writeDbContext.SaveChangesAsync(cancellationToken);
+
+                _ = _mediator.Publish(new Notification(){Allocation = allocation }, cancellationToken);
 
 				return new Result()
 				{
