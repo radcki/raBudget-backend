@@ -14,7 +14,7 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.Allocations.Command
 {
-    public class UpdateAllocationDateTime
+    public class UpdateAllocationDate
     {
         public class Command : IRequest<Result>
         {

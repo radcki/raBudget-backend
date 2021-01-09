@@ -25,7 +25,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
                                 INotificationHandler<RemoveBudgetedAmount.Notification>,
                                 INotificationHandler<UpdateBudgetedAmountAmount.Notification>,
                                 INotificationHandler<UpdateBudgetedAmountValidFrom.Notification>,
-                                INotificationHandler<CreateAlloction.Notification>,
+                                INotificationHandler<CreateAllocation.Notification>,
                                 INotificationHandler<RemoveAllocation.Notification>,
                                 INotificationHandler<UpdateAllocationAmount.Notification>,
                                 INotificationHandler<UpdateAllocationSourceCategory.Notification>,
@@ -92,7 +92,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             }
 
             /// <inheritdoc />
-            public async Task Handle(CreateAlloction.Notification notification, CancellationToken cancellationToken)
+            public async Task Handle(CreateAllocation.Notification notification, CancellationToken cancellationToken)
             {
                 var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.TargetBudgetCategoryId);
                 await _mediator.Publish(new Notification()

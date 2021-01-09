@@ -20,7 +20,10 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override BudgetCategoryId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new BudgetCategoryId(Guid.ParseExact(reader.GetString(), "N"));
+            var value = reader.GetString();
+            return string.IsNullOrWhiteSpace(value) 
+                       ? null 
+                       : new BudgetCategoryId(Guid.ParseExact(value, "N"));
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>

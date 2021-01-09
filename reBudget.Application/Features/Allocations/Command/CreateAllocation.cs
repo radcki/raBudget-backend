@@ -14,7 +14,7 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.Allocations.Command
 {
-	public class CreateAlloction
+	public class CreateAllocation
 	{
 		public class Command : IRequest<Result>
 		{
@@ -22,7 +22,7 @@ namespace raBudget.Application.Features.Allocations.Command
 			public BudgetCategoryId SourceBudgetCategoryId { get; set; }
 			public MoneyAmount Amount { get; set; }
 			public string Description { get; set; }
-			public DateTime TransactionDate { get; set; }
+			public DateTime AllocationDate { get; set; }
 		}
 
 		public class Result : IdResponse<AllocationId>
@@ -72,7 +72,7 @@ namespace raBudget.Application.Features.Allocations.Command
 												   targetBudgetCategory,
 												   sourceBudgetCategory,
 												   request.Amount,
-												   request.TransactionDate);
+												   request.AllocationDate);
 				_writeDbContext.Allocations.Add(allocation);
 
 				await _writeDbContext.SaveChangesAsync(cancellationToken);
