@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -37,9 +39,24 @@ namespace raBudget.Common.Query
                 else
                 {
                     var converter = TypeDescriptor.GetConverter(property.PropertyType);
-                    foreach (var value in valueProviderResult)
+                    if (converter is CollectionConverter)
                     {
-                        property.SetValue(model, converter.ConvertFrom(value));
+                        var emptyCollection = (IList) Activator.CreateInstance(property.PropertyType);
+                        var listElementType = property.PropertyType.GetGenericArguments().Single();
+                        var rowConverter = TypeDescriptor.GetConverter(listElementType);
+                        foreach (var value in valueProviderResult)
+                        {
+                            emptyCollection.Add(rowConverter.ConvertFrom(value));
+                        }
+
+                        property.SetValue(model, emptyCollection);
+                    }
+                    else
+                    {
+                        foreach (var value in valueProviderResult)
+                        {
+                            property.SetValue(model, converter.ConvertFrom(value));
+                        }
                     }
                 }
             }

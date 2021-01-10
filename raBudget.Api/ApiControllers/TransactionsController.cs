@@ -42,5 +42,7 @@ namespace raBudget.Api.ApiControllers
         [HttpPatch("sub-transaction/update/description")] public async Task<UpdateSubTransactionDescription.Result> UpdateSubTransactionDescription([FromBody] UpdateSubTransactionDescription.Command command) => await _mediator.Send(command);
         [HttpPatch("sub-transaction/update/transaction-date")] public async Task<UpdateSubTransactionDate.Result> UpdateSubTransactionDateTime([FromBody] UpdateSubTransactionDate.Command command) => await _mediator.Send(command);
         [HttpPatch("sub-transaction/update/amount")] public async Task<UpdateSubTransactionAmount.Result> UpdateSubTransactionAmount([FromBody] UpdateSubTransactionAmount.Command command) => await _mediator.Send(command);
+        
+        [HttpGet("get-dates-range")] public async Task<GetTransactionsDatesRange.Result> GetTransactionsDatesRange([FromQuery] GetTransactionsDatesRange.Query query) => await _mediator.Send(query);
     }
 }
