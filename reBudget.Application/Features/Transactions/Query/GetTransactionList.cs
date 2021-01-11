@@ -111,7 +111,7 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
-
+                
                 var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);
