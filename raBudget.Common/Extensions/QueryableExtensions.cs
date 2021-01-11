@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using raBudget.Common.Interfaces;
 using raBudget.Common.Query;
 
 namespace raBudget.Common.Extensions
@@ -17,6 +18,7 @@ namespace raBudget.Common.Extensions
             {
                 return source.ApplyOrder(options.DataOrder).TakePage(options.Page, options.PageSize);
             }
+
             return source.TakePage(options.Page, options.PageSize);
         }
 
@@ -95,8 +97,30 @@ namespace raBudget.Common.Extensions
             foreach (string prop in props)
             {
                 PropertyInfo pi = type.GetProperty(prop, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (pi == null)
+                {
+                    continue;
+                }
                 expr = Expression.Property(expr, pi);
                 type = pi.PropertyType;
+
+                if (pi.PropertyType.GetInterfaces().Any(x => x == typeof(ISortable)))
+                {
+                    var t = (ISortable) Activator.CreateInstance(pi.PropertyType, true);
+                    var sortField = t?.SortProperty;
+                    if (sortField != null)
+                    {
+                        var subPi = pi.PropertyType.GetProperty(sortField, 
+                                                                BindingFlags.IgnoreCase 
+                                                                | BindingFlags.Public 
+                                                                | BindingFlags.Instance);
+                        if (subPi != null)
+                        {
+                            expr = Expression.Property(expr, subPi);
+                            type = subPi.PropertyType;
+                        }
+                    }
+                }
             }
 
             Type delegateType = typeof(Func<,>).MakeGenericType(typeof(T), type);
