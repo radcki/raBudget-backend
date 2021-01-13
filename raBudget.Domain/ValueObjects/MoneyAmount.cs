@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
+using raBudget.Common.Attributes;
 using raBudget.Common.Interfaces;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
@@ -14,7 +15,8 @@ using RLib.Localization;
 
 namespace raBudget.Domain.ValueObjects
 {
-    public class MoneyAmount : IEquatable<MoneyAmount>, ISortable
+    [SortableClass(nameof(Amount))]
+    public class MoneyAmount : IEquatable<MoneyAmount>
     {
         private MoneyAmount(){}
         public MoneyAmount(eCurrencyCode currencyCode, decimal amount)
@@ -43,10 +45,7 @@ namespace raBudget.Domain.ValueObjects
         {
             return this.Amount.GetHashCode();
         }
-
-        /// <inheritdoc />
-        public string GetSortProperty => nameof(Amount);
-
+        
         public static MoneyAmount operator +(MoneyAmount a, MoneyAmount b)
 		{
 			if (a.CurrencyCode != b.CurrencyCode)
