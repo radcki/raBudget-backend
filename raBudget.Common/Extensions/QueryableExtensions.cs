@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using raBudget.Common.Attributes;
 using raBudget.Common.Interfaces;
 using raBudget.Common.Query;
 
@@ -104,21 +105,18 @@ namespace raBudget.Common.Extensions
                 expr = Expression.Property(expr, pi);
                 type = pi.PropertyType;
 
-                if (pi.PropertyType.GetInterfaces().Any(x => x == typeof(ISortable)))
+                var sortableClassAttribute = pi.PropertyType.GetCustomAttribute<SortableClassAttribute>();
+                var sortField = sortableClassAttribute?.SortProperty;
+                if (sortField != null)
                 {
-                    var t = (ISortable) Activator.CreateInstance(pi.PropertyType, true);
-                    var sortField = t?.SortProperty;
-                    if (sortField != null)
+                    var subPi = pi.PropertyType.GetProperty(sortField, 
+                                                            BindingFlags.IgnoreCase 
+                                                            | BindingFlags.Public 
+                                                            | BindingFlags.Instance);
+                    if (subPi != null)
                     {
-                        var subPi = pi.PropertyType.GetProperty(sortField, 
-                                                                BindingFlags.IgnoreCase 
-                                                                | BindingFlags.Public 
-                                                                | BindingFlags.Instance);
-                        if (subPi != null)
-                        {
-                            expr = Expression.Property(expr, subPi);
-                            type = subPi.PropertyType;
-                        }
+                        expr = Expression.Property(expr, subPi);
+                        type = subPi.PropertyType;
                     }
                 }
             }
