@@ -13,8 +13,8 @@ namespace raBudget.Common.Resources
         [Localized(KnownCulture.Polish, "Budżet nie został odnaleziony")]
         public static string BudgetNotFound = "Budget was not found";
 
-        [Localized(KnownCulture.Polish, "")]
-        public static string NotSameBudgetCategoryType = "";
+        [Localized(KnownCulture.Polish, "Kategoria budżetowa musi być tego samego typu")]
+        public static string NotSameBudgetCategoryType = "Budget category must be of same type";
 
         [Localized(KnownCulture.Polish, "")]
         public static string BudgetCategoryNotFound = "";

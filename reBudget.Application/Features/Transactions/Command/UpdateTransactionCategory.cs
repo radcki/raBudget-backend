@@ -25,7 +25,7 @@ namespace raBudget.Application.Features.Transactions.Command
             public BudgetCategoryId BudgetCategoryId { get; set; }
         }
 
-        public class Result : IdResponse<BudgetCategoryId>
+        public class Result : SingleResponse<BudgetCategoryId>
         {
         }
         
@@ -88,7 +88,7 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 return new Result()
                        {
-                           Id = transaction.BudgetCategoryId
+                           Data = transaction.BudgetCategoryId
                        };
             }
         }
