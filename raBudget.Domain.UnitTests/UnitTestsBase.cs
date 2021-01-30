@@ -5,6 +5,7 @@ using System.Text;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Models;
+using raBudget.Domain.ValueObjects;
 using Xunit.Sdk;
 
 namespace raBudget.Domain.UnitTests
@@ -37,11 +38,10 @@ namespace raBudget.Domain.UnitTests
         }
         public BudgetCategory RandomBudgetCategory(Budget budget, eBudgetCategoryType budgetCategoryType)
         {
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIconId(), RandomString(4));
             return BudgetCategory.Create(budget,
                                          RandomString(4),
                                          icon,
-                                         new List<BudgetCategory.BudgetedAmount>(),
                                          budgetCategoryType);
         }
     }

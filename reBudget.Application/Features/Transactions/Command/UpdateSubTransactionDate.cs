@@ -23,7 +23,7 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Command : IRequest<Result>
         {
             public SubTransactionId SubTransactionId { get; set; }
-            public DateTime TransactionDateTime { get; set; }
+            public DateTime TransactionDate { get; set; }
         }
 
         public class Result : SingleResponse<DateTime>
@@ -65,7 +65,7 @@ namespace raBudget.Application.Features.Transactions.Command
                 }
 
                 var oldDate = subTransaction.TransactionDate;
-                subTransaction.SetTransactionDateTime(request.TransactionDateTime);
+                subTransaction.SetTransactionDate(request.TransactionDate);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

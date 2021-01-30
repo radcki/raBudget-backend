@@ -53,15 +53,23 @@ namespace raBudget.Domain.ValueObjects
                 throw new BusinessException(Localization.For(()=>ErrorMessages.NotMatchingCurrencies));
 			}
 			return new MoneyAmount(a.CurrencyCode, a.Amount + b.Amount);
-		}
+        }
+        public static MoneyAmount operator +(MoneyAmount a, decimal b)
+        {
+            return new MoneyAmount(a.CurrencyCode, a.Amount + b);
+        }
 
-		public static MoneyAmount operator -(MoneyAmount a, MoneyAmount b)
+        public static MoneyAmount operator -(MoneyAmount a, MoneyAmount b)
 		{
 			if (a.CurrencyCode != b.CurrencyCode)
 			{
 				throw new BusinessException(Localization.For(() => ErrorMessages.NotMatchingCurrencies));
 			}
 			return new MoneyAmount(a.CurrencyCode, a.Amount - b.Amount);
-		}
+        }
+        public static MoneyAmount operator -(MoneyAmount a, decimal b)
+        {
+            return new MoneyAmount(a.CurrencyCode, a.Amount - b);
+        }
     }
 }

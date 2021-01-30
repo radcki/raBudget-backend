@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using raBudget.Common.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;

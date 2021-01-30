@@ -55,7 +55,7 @@ namespace raBudget.Application.Features.Transactions.Command
                     throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
                 }
 
-                _writeDbContext.Transactions.Remove(transaction);
+                transaction.SoftDelete();
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
