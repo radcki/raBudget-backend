@@ -1,4 +1,5 @@
 ﻿using System;
+using raBudget.Common.Entities;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
@@ -7,7 +8,7 @@ using RLib.Localization;
 
 namespace raBudget.Domain.Entities
 {
-    public class SubTransaction
+    public class SubTransaction : BaseEntity
     {
         private SubTransaction()
         {
@@ -27,7 +28,7 @@ namespace raBudget.Domain.Entities
                                      Description = description
                                  };
             subTransaction.SetAmount(amount);
-            subTransaction.SetTransactionDateTime(transactionDate);
+            subTransaction.SetTransactionDate(transactionDate);
             subTransaction.CreationDateTime = DateTime.Now;
 
             return subTransaction;
@@ -61,7 +62,7 @@ namespace raBudget.Domain.Entities
             Description = description;
         }
 
-        public void SetTransactionDateTime(DateTime newTransactionDate)
+        public void SetTransactionDate(DateTime newTransactionDate)
         {
             TransactionDate = newTransactionDate.Date;
         }

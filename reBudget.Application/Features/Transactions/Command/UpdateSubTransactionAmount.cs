@@ -23,7 +23,7 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Command : IRequest<Result>
         {
             public SubTransactionId SubTransactionId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
         }
 
         public class Result : SingleResponse<MoneyAmount>
@@ -62,7 +62,7 @@ namespace raBudget.Application.Features.Transactions.Command
                     throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
                 }
 
-                subTransaction.SetAmount(new MoneyAmount(subTransaction.Amount.CurrencyCode, request.Amount));
+                subTransaction.SetAmount(request.Amount);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

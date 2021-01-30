@@ -46,6 +46,7 @@ namespace raBudget.Application.Features.Transactions.Query
             public string Description { get; set; }
             public DateTime TransactionDate { get; set; }
             public List<SubTransactionDto> SubTransactions { get; set; }
+            public MoneyAmount TotalAmount => Amount + SubTransactions.Sum(x => x.Amount.Amount);
         }
 
         public class SubTransactionDto

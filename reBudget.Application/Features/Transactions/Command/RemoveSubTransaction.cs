@@ -61,8 +61,7 @@ namespace raBudget.Application.Features.Transactions.Command
                 }
 
 				var subTransaction = transaction.SubTransactions.First(x => x.SubTransactionId == request.SubTransactionId);
-
-                transaction.SubTransactions.Remove(subTransaction);
+                subTransaction.SoftDelete();
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

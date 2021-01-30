@@ -23,7 +23,7 @@ namespace raBudget.Application.Features.Transactions.Command
         public class Command : IRequest<Result>
         {
             public TransactionId TransactionId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
             public string Description { get; set; }
             public DateTime TransactionDate { get; set; }
         }
@@ -63,7 +63,7 @@ namespace raBudget.Application.Features.Transactions.Command
                 }
 
                 var subTransaction = transaction.AddSubTransaction(request.Description,
-                                                                   new MoneyAmount(transaction.Amount.CurrencyCode, request.Amount),
+                                                                   request.Amount,
                                                                    request.TransactionDate);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
