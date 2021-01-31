@@ -41,6 +41,7 @@ namespace raBudget.Domain.BaseTypes
 
         public bool Equals(IdValueBase<T> other)
         {
+            if (ReferenceEquals(null, other)) return false;
             return Equals(Value, other.Value);
         }
 

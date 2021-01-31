@@ -43,7 +43,7 @@ namespace raBudget.Application.Features.Allocations.Query
 
 		public class AllocationDto
 		{
-			public TransactionId AllocationId { get; set; }
+			public AllocationId AllocationId { get; set; }
 			public BudgetCategoryId TargetBudgetCategoryId { get; set; }
 			public BudgetCategoryId SourceBudgetCategoryId { get; set; }
 			public MoneyAmount Amount { get; set; }
@@ -55,7 +55,7 @@ namespace raBudget.Application.Features.Allocations.Query
 		{
 			public void CreateMappings(Profile configuration)
 			{
-				configuration.CreateMap<Domain.ReadModels.Transaction, AllocationDto>();
+				configuration.CreateMap<Domain.ReadModels.Allocation, AllocationDto>();
 			}
 		}
 
