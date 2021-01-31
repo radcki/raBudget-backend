@@ -125,7 +125,8 @@ namespace raBudget.Infrastructure.Database
 				   SpendingTotal = x.SpendingTotal,
 				   TotalBalance = x.TotalBalance,
 				   UnassignedFunds = x.UnassignedFunds,
-				   BudgetId = x.BudgetId
+				   BudgetId = x.BudgetId,
+				   UpdateTime = x.UpdateTime
 			   });
 
 		public IQueryable<BudgetCategoryBalance> BudgetCategoryBalances =>

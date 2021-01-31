@@ -25,7 +25,7 @@ namespace raBudget.Common.Extensions
 
 		public static DateTime EndOfMonth(this DateTime value)
 		{
-			return value.StartOfMonth().AddMonths(1).AddDays(-1);
+			return value.StartOfMonth().AddMonths(1).AddMilliseconds(-1);
 		}
     }
 

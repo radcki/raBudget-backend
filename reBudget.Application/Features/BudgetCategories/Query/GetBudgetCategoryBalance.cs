@@ -70,21 +70,21 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 {
                     if (dto.TotalCategoryBalance == null)
                     {
-                        dto.TotalCategoryBalance = budgetCategoryBalance.BudgetedAmount - budgetCategoryBalance.TransactionsTotal;
+                        dto.TotalCategoryBalance = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
                     }
                     else if (budgetCategoryBalance.Year < DateTime.Today.Year
                              || (budgetCategoryBalance.Year == DateTime.Today.Year && budgetCategoryBalance.Month <= DateTime.Today.Month))
                     {
-                        dto.TotalCategoryBalance += budgetCategoryBalance.BudgetedAmount - budgetCategoryBalance.TransactionsTotal;
+                        dto.TotalCategoryBalance += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
                     }
 
                     if (dto.BudgetLeftToEndOfYear == null)
                     {
-                        dto.BudgetLeftToEndOfYear = budgetCategoryBalance.BudgetedAmount - budgetCategoryBalance.TransactionsTotal;
+                        dto.BudgetLeftToEndOfYear = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
                     }
                     else
                     {
-                        dto.BudgetLeftToEndOfYear += budgetCategoryBalance.BudgetedAmount - budgetCategoryBalance.TransactionsTotal;
+                        dto.BudgetLeftToEndOfYear += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
                     }
 
                     if (budgetCategoryBalance.Month == DateTime.Today.Month && budgetCategoryBalance.Year == DateTime.Today.Year)
