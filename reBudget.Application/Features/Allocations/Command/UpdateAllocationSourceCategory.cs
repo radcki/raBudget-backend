@@ -68,7 +68,7 @@ namespace raBudget.Application.Features.Allocations.Command
 					? await _writeDbContext.BudgetCategories.FirstAsync(x => x.BudgetCategoryId == request.SourceBudgetCategoryId, cancellationToken: cancellationToken)
 					: null;
 
-				if (oldBudgetCategory?.BudgetCategoryType != newBudgetCategory?.BudgetCategoryType)
+				if (oldBudgetCategory!= null && newBudgetCategory != null && oldBudgetCategory?.BudgetCategoryType != newBudgetCategory?.BudgetCategoryType)
 				{
 					throw new BusinessException(Localization.For(() => ErrorMessages.NotSameBudgetCategoryType));
 				}
