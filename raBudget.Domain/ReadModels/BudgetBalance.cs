@@ -1,4 +1,5 @@
-﻿using raBudget.Domain.ValueObjects;
+﻿using System;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels
 {
@@ -10,5 +11,6 @@ namespace raBudget.Domain.ReadModels
         public MoneyAmount SpendingTotal { get; set; }
         public MoneyAmount IncomeTotal { get; set; }
         public MoneyAmount SavingTotal { get; set; }
+        public DateTime UpdateTime { get; set; }
     }
 }

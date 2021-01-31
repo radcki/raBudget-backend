@@ -9,23 +9,25 @@ namespace raBudget.Domain.Entities
     public class BudgetCategoryCollection: List<BudgetCategory>{
         public void MoveUp(BudgetCategory category)
         {
-            var ordered = this.OrderBy(x => x.Order).ToList();
+            var ordered = this.Where(x=>x.BudgetCategoryType == category.BudgetCategoryType)
+                              .OrderBy(x => x.Order)
+                              .ToList();
             var itemIndex = ordered.IndexOf(category);
             if (itemIndex < 0)
             {
                 throw new NotFoundException(Localization.For(()=>ErrorMessages.BudgetCategoryNotFound));
             }
 
-            if (itemIndex == ordered.Count - 1)
+            var previous = ordered.ElementAtOrDefault(itemIndex - 1);
+            if (previous != null)
             {
-                return;
+                ordered[itemIndex - 1] = category;
+                ordered[itemIndex] = previous;
             }
 
-            var previous = ordered.ElementAtOrDefault(itemIndex - 1);
-            category.SetOrder((previous?.Order??0)+1);
-            for (var i = itemIndex+1; i < ordered.Count; i++)
+            for (var i = 0; i < ordered.Count; i++)
             {
-                ordered[i].SetOrder(ordered[i-1].Order+1);
+                ordered[i].SetOrder(i);
             }
         }
 
@@ -40,23 +42,25 @@ namespace raBudget.Domain.Entities
 
         public void MoveDown(BudgetCategory category)
         {
-            var ordered = this.OrderBy(x => x.Order).ToList();
+            var ordered = this.Where(x => x.BudgetCategoryType == category.BudgetCategoryType)
+                              .OrderBy(x => x.Order)
+                              .ToList();
             var itemIndex = ordered.IndexOf(category);
             if (itemIndex < 0)
             {
                 throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
             }
 
-            if (itemIndex == 0 || ordered.Count == 1)
+            var next = ordered.ElementAtOrDefault(itemIndex + 1);
+            if (next != null)
             {
-                return;
+                ordered[itemIndex + 1] = category;
+                ordered[itemIndex] = next;
             }
 
-            var next = ordered.ElementAtOrDefault(itemIndex + 1);
-            category.SetOrder((next?.Order ?? ordered.Count+1) - 1);
-            for (var i = itemIndex - 1; i >= 0; i--)
+            for (var i = 0; i < ordered.Count; i++)
             {
-                ordered[i].SetOrder(ordered[i + 1].Order - 1);
+                ordered[i].SetOrder(i);
             }
         }
     }
