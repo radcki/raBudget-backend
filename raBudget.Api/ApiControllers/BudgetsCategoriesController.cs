@@ -29,7 +29,7 @@ namespace raBudget.Api.ApiControllers
             return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
-        [HttpGet("get-list")] public async Task<GetBudgetCategoryList.Result> GetBudgetCategoryList([FromQuery] GetBudgetCategoryList.Query query) => await _mediator.Send(query);
+        [HttpGet("get-list")] public async Task<GetBudgetCategoryList.Result> OnGetGetBudgetCategoryList([FromQuery] GetBudgetCategoryList.Query query) => await _mediator.Send(query);
         [HttpPost("create")] public async Task<CreateBudgetCategory.Result> CreateBudgetCategory([FromBody] CreateBudgetCategory.Command command) => await _mediator.Send(command);
         [HttpPost("remove")] public async Task<RemoveBudgetCategory.Result> RemoveBudget([FromBody] RemoveBudgetCategory.Command command) => await _mediator.Send(command);
         [HttpPatch("update/name")] public async Task<UpdateBudgetCategoryName.Result> UpdateBudgetCategoryName([FromBody] UpdateBudgetCategoryName.Command command) => await _mediator.Send(command);

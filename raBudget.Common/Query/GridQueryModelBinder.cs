@@ -44,9 +44,16 @@ namespace raBudget.Common.Query
                         var emptyCollection = (IList) Activator.CreateInstance(property.PropertyType);
                         var listElementType = property.PropertyType.GetGenericArguments().Single();
                         var rowConverter = TypeDescriptor.GetConverter(listElementType);
-                        foreach (var value in valueProviderResult)
+                        foreach (var values in valueProviderResult)
                         {
-                            emptyCollection.Add(rowConverter.ConvertFrom(value));
+                            foreach (var value in values.Split(","))
+                            {
+                                if (string.IsNullOrEmpty(value))
+                                {
+                                    continue;
+                                }
+                                emptyCollection.Add(rowConverter.ConvertFrom(value));
+                            }
                         }
 
                         property.SetValue(model, emptyCollection);

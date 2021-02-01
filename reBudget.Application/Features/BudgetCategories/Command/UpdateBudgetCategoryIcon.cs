@@ -28,7 +28,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
         public class IconDto
         {
-            public Guid IconId { get; set; }
+            public BudgetCategoryIconId IconId { get; set; }
             public string IconKey { get; set; }
         }
 
@@ -74,7 +74,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                        {
                            Data = new IconDto()
                                   {
-                                      IconId = icon.BudgetCategoryIconId.Value,
+                                      IconId = icon.BudgetCategoryIconId,
                                       IconKey = icon.IconKey
                                   }
                        };
