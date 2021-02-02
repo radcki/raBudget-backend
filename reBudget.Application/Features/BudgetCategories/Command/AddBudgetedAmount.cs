@@ -20,12 +20,20 @@ namespace raBudget.Application.Features.BudgetCategories.Command
         public class Command : IRequest<Result>
         {
             public BudgetCategoryId BudgetCategoryId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
             public DateTime ValidFrom { get; set; }
         }
 
-        public class Result : IdResponse<BudgetedAmountId>
+        public class Result : SingleResponse<BudgetedAmountDto>
         {
+        }
+
+        public class BudgetedAmountDto
+        {
+            public BudgetedAmountId BudgetedAmountId { get; set; }
+            public DateTime ValidFrom { get; set; }
+            public DateTime? ValidTo { get; set; }
+            public MoneyAmount Amount { get; set; }
         }
 
         public class Notification : INotification
@@ -56,9 +64,8 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 var budgetCategory = await _writeDbContext.BudgetCategories
                                                           .FirstOrDefaultAsync(x => x.BudgetCategoryId == request.BudgetCategoryId, cancellationToken);
-                var budget = _writeDbContext.Budgets.First(x => x.BudgetId == budgetCategory.BudgetId);
 
-                var budgetedAmount = budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.CurrencyCode, request.Amount), request.ValidFrom);
+                var budgetedAmount = budgetCategory.AddBudgetedAmount(request.Amount, request.ValidFrom);
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
@@ -70,7 +77,13 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           Id = budgetedAmount.BudgetedAmountId
+                           Data = new BudgetedAmountDto()
+                                  {
+                                      Amount = budgetedAmount.Amount,
+                                      BudgetedAmountId = budgetedAmount.BudgetedAmountId,
+                                      ValidFrom = budgetedAmount.ValidFrom,
+                                      ValidTo = budgetedAmount.ValidTo
+                                  }
                        };
             }
         }

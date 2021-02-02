@@ -20,7 +20,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
         public class Command : IRequest<Result>
         {
             public BudgetedAmountId BudgetedAmountId { get; set; }
-            public decimal Amount { get; set; }
+            public MoneyAmount Amount { get; set; }
         }
 
         public class Result: SingleResponse<MoneyAmount>
@@ -60,7 +60,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                 var budgetedAmount = budgetCategory.BudgetedAmounts.FirstOrDefault(x => x.BudgetedAmountId == request.BudgetedAmountId)
                                      ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetedAmountNotFound));
 
-                budgetedAmount.SetAmount(new MoneyAmount(budgetedAmount.Amount.CurrencyCode, request.Amount));
+                budgetedAmount.SetAmount(request.Amount);
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 				_ = _mediator.Publish(new Notification()
 				{

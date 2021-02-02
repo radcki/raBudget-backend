@@ -45,12 +45,12 @@ namespace raBudget.Domain.Services
                                              .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
                                              .Select(x => x.BudgetCategoryId);
 
-            var allocatedSum = _readDb.Allocations
-                                      .Where(x => spendingCategoryIds.Any(s => s == x.TargetBudgetCategoryId))
-                                      .Sum(x => x.Amount.Amount)
-                               - _readDb.Allocations
-                                        .Where(x => spendingCategoryIds.Any(s => s == x.SourceBudgetCategoryId))
-                                        .Sum(x => x.Amount.Amount);
+            //var allocatedSum = _readDb.Allocations
+            //                          .Where(x => spendingCategoryIds.Any(s => s == x.TargetBudgetCategoryId))
+            //                          .Sum(x => x.Amount.Amount)
+            //                   - _readDb.Allocations
+            //                            .Where(x => spendingCategoryIds.Any(s => s == x.SourceBudgetCategoryId))
+            //                            .Sum(x => x.Amount.Amount);
 
             var spendingSum = _readDb.Transactions
                                      .Where(x => spendingCategoryIds.Any(s => s == x.BudgetCategoryId))
@@ -231,6 +231,7 @@ namespace raBudget.Domain.Services
             foreach (var month in DateTimeExtensions.MonthRange(from.Value, to.Value))
             {
                 var categoryBalance = balances.FirstOrDefault(x => x.Year == month.Year && x.Month == month.Month);
+                
                 if (categoryBalance == null)
                 {
                     CalculateBudgetedCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None).GetAwaiter().GetResult();
