@@ -49,6 +49,14 @@ namespace raBudget.Domain.Services
                                                                        .Any(b => b.BudgetId == x.BudgetId && b.OwnerUserId == _userContext.UserId));
         }
 
+        public async Task<bool> HasBudgetCategoriesAccessAsync(IEnumerable<BudgetCategoryId> budgetCategoryBudgetCategoryIds)
+        {
+            return await _readDbContext.BudgetCategories
+                                       .AnyAsync(x => budgetCategoryBudgetCategoryIds.Any(s=>s==x.BudgetCategoryId)
+                                                      && _readDbContext.Budgets
+                                                                       .Any(b => b.BudgetId == x.BudgetId && b.OwnerUserId == _userContext.UserId));
+        }
+
 
         public async Task<bool> HasTransactionAccess(TransactionId transactionTransactionId)
         {

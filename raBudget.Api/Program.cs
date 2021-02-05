@@ -18,6 +18,7 @@ namespace raBudget.Api
             Log.Logger = new LoggerConfiguration()
                         .MinimumLevel.Debug()
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+                        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
                         .Enrich.FromLogContext()
                         .WriteTo.Console()
                         .CreateLogger();

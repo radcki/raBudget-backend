@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Extensions;
 using raBudget.Common.Resources;
-using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
+using raBudget.Domain.ReadModels;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;
+using BudgetBalance = raBudget.Domain.Entities.BudgetBalance;
+using BudgetCategoryBalance = raBudget.Domain.Entities.BudgetCategoryBalance;
 
 namespace raBudget.Domain.Services
 {
@@ -155,7 +157,7 @@ namespace raBudget.Domain.Services
 
             var transactionsSum = _readDb.Transactions
                                          .Where(x => x.BudgetCategoryId == budgetCategoryId && x.TransactionDate >= date && x.TransactionDate <= endOfMonth)
-                                         .Sum(x => x.Amount.Amount);
+                                         .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s=>s.Amount.Amount));
 
             var targetAllocationsSum = _readDb.Allocations
                                               .Where(x => x.TargetBudgetCategoryId == budgetCategoryId
@@ -203,6 +205,44 @@ namespace raBudget.Domain.Services
             }
 
             return new MoneyAmount(currency.CurrencyCode, amount);
+        }
+
+        public ReadModels.TotalBudgetCategoryBalance GetTotalCategoryBalance(BudgetCategoryId budgetCategoryId)
+        {
+            var endDate = new DateTime(DateTime.Today.Year, 12, 1);
+            var categoryBalance = new TotalBudgetCategoryBalance()
+                      {
+                          BudgetCategoryId = budgetCategoryId
+            };
+
+            foreach (var budgetCategoryBalance in GetCategoryBalances(budgetCategoryId, null, endDate))
+            {
+                if (categoryBalance.TotalCategoryBalance == null)
+                {
+                    categoryBalance.TotalCategoryBalance = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                }
+                else if (budgetCategoryBalance.Year < DateTime.Today.Year
+                         || (budgetCategoryBalance.Year == DateTime.Today.Year && budgetCategoryBalance.Month <= DateTime.Today.Month))
+                {
+                    categoryBalance.TotalCategoryBalance += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                }
+
+                if (categoryBalance.BudgetLeftToEndOfYear == null)
+                {
+                    categoryBalance.BudgetLeftToEndOfYear = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                }
+                else
+                {
+                    categoryBalance.BudgetLeftToEndOfYear += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                }
+
+                if (budgetCategoryBalance.Month == DateTime.Today.Month && budgetCategoryBalance.Year == DateTime.Today.Year)
+                {
+                    categoryBalance.ThisMonthTransactionsTotal = budgetCategoryBalance.TransactionsTotal;
+                }
+            }
+
+            return categoryBalance;
         }
 
         public IEnumerable<ReadModels.BudgetCategoryBalance> GetCategoryBalances(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to)
