@@ -16,6 +16,7 @@ using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
 using raBudget.Application.Infrastructure;
 using raBudget.Common;
+using raBudget.Common.Query;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Infrastructure.Database;

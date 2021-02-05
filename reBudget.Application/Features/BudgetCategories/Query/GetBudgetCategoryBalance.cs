@@ -8,6 +8,7 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Interfaces;
+using raBudget.Common.Query;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
@@ -21,12 +22,12 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetBudgetCategoryBalance
     {
-        public class Query : IRequest<Result>
+        public class Query : GridQuery, IRequest<Result>
         {
-            public BudgetCategoryId BudgetCategoryId { get; set; }
+            public List<BudgetCategoryId> BudgetCategoryIds { get; set; }
         }
 
-        public class Result : SingleResponse<BudgetCategoryBalanceDto>
+        public class Result : CollectionResponse<BudgetCategoryBalanceDto>
         {
         }
 
@@ -41,61 +42,71 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 
         public class Handler : IRequestHandler<Query, Result>
         {
-            private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
 
-            public Handler(IReadDbContext readDb, AccessControlService accessControlService, BalanceService balanceService)
+            public Handler(AccessControlService accessControlService, BalanceService balanceService)
             {
-                _readDb = readDb;
                 _accessControlService = accessControlService;
                 _balanceService = balanceService;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var hasBudgetCategoryAccess = await _accessControlService.HasBudgetCategoryAccessAsync(request.BudgetCategoryId);
-                if (!hasBudgetCategoryAccess)
+                var hasBudgetCategoriesAccess = await _accessControlService.HasBudgetCategoriesAccessAsync(request.BudgetCategoryIds);
+                if (!hasBudgetCategoriesAccess)
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
-                var endDate = new DateTime(DateTime.Today.Year, 12, 1);
-                var dto = new BudgetCategoryBalanceDto()
-                          {
-                              BudgetCategoryId = request.BudgetCategoryId,
-                          };
+                var balances = request.BudgetCategoryIds
+                                      .Select(x => _balanceService.GetTotalCategoryBalance(x))
+                                      .Select(x=>new BudgetCategoryBalanceDto()
+                                                 {
+                                                     BudgetCategoryId = x.BudgetCategoryId,
+                                                     BudgetLeftToEndOfYear = x.BudgetLeftToEndOfYear,
+                                                     ThisMonthTransactionsTotal = x.ThisMonthTransactionsTotal,
+                                                     TotalCategoryBalance = x.TotalCategoryBalance
+                                                 })
+                                      .ToList();
 
-                foreach (var budgetCategoryBalance in _balanceService.GetCategoryBalances(request.BudgetCategoryId, null, endDate))
-                {
-                    if (dto.TotalCategoryBalance == null)
-                    {
-                        dto.TotalCategoryBalance = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
-                    }
-                    else if (budgetCategoryBalance.Year < DateTime.Today.Year
-                             || (budgetCategoryBalance.Year == DateTime.Today.Year && budgetCategoryBalance.Month <= DateTime.Today.Month))
-                    {
-                        dto.TotalCategoryBalance += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
-                    }
+                //var endDate = new DateTime(DateTime.Today.Year, 12, 1);
+                //var dto = new BudgetCategoryBalanceDto()
+                //          {
+                //              BudgetCategoryId = request.BudgetCategoryId,
+                //          };
 
-                    if (dto.BudgetLeftToEndOfYear == null)
-                    {
-                        dto.BudgetLeftToEndOfYear = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
-                    }
-                    else
-                    {
-                        dto.BudgetLeftToEndOfYear += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
-                    }
+                //foreach (var budgetCategoryBalance in _balanceService.GetCategoryBalances(request.BudgetCategoryId, null, endDate))
+                //{
+                //    if (dto.TotalCategoryBalance == null)
+                //    {
+                //        dto.TotalCategoryBalance = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                //    }
+                //    else if (budgetCategoryBalance.Year < DateTime.Today.Year
+                //             || (budgetCategoryBalance.Year == DateTime.Today.Year && budgetCategoryBalance.Month <= DateTime.Today.Month))
+                //    {
+                //        dto.TotalCategoryBalance += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                //    }
 
-                    if (budgetCategoryBalance.Month == DateTime.Today.Month && budgetCategoryBalance.Year == DateTime.Today.Year)
-                    {
-                        dto.ThisMonthTransactionsTotal = budgetCategoryBalance.TransactionsTotal;
-                    }
-                }
+                //    if (dto.BudgetLeftToEndOfYear == null)
+                //    {
+                //        dto.BudgetLeftToEndOfYear = (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                //    }
+                //    else
+                //    {
+                //        dto.BudgetLeftToEndOfYear += (budgetCategoryBalance.BudgetedAmount + budgetCategoryBalance.AllocationsTotal) - budgetCategoryBalance.TransactionsTotal;
+                //    }
+
+                //    if (budgetCategoryBalance.Month == DateTime.Today.Month && budgetCategoryBalance.Year == DateTime.Today.Year)
+                //    {
+                //        dto.ThisMonthTransactionsTotal = budgetCategoryBalance.TransactionsTotal;
+                //    }
+                //}
 
                 return new Result()
                        {
-                           Data = dto,
+                           Data = balances,
+                           Total = balances.Count
                        };
             }
         }
