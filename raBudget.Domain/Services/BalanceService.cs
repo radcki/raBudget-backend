@@ -42,17 +42,9 @@ namespace raBudget.Domain.Services
                                    .Where(x => incomeCategoryIds.Any(s => s == x.BudgetCategoryId))
                                    .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
 
-
             var spendingCategoryIds = _readDb.BudgetCategories
                                              .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
                                              .Select(x => x.BudgetCategoryId);
-
-            //var allocatedSum = _readDb.Allocations
-            //                          .Where(x => spendingCategoryIds.Any(s => s == x.TargetBudgetCategoryId))
-            //                          .Sum(x => x.Amount.Amount)
-            //                   - _readDb.Allocations
-            //                            .Where(x => spendingCategoryIds.Any(s => s == x.SourceBudgetCategoryId))
-            //                            .Sum(x => x.Amount.Amount);
 
             var spendingSum = _readDb.Transactions
                                      .Where(x => spendingCategoryIds.Any(s => s == x.BudgetCategoryId))
@@ -132,7 +124,7 @@ namespace raBudget.Domain.Services
             }
         }
 
-        public async Task CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, int year, int month, CancellationToken cancellationToken)
+        public async Task<BudgetCategoryBalance> CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, int year, int month, CancellationToken cancellationToken)
         {
             var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
                                  ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
@@ -176,6 +168,7 @@ namespace raBudget.Domain.Services
                                  new MoneyAmount(currency.CurrencyCode, targetAllocationsSum - sourceAllocationsSum));
 
             await _writeDb.SaveChangesAsync(cancellationToken);
+            return storedBalance;
         }
 
         public async Task<MoneyAmount> GetCategoryBudgetedAmount(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to, CancellationToken cancellationToken)

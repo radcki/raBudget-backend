@@ -112,7 +112,6 @@ namespace raBudget.Application.Features.Transactions.Notification
                     return;
                 }
 
-                await _balanceService.CalculateBudgetBalance(category.BudgetId, cancellationToken);
 
                 var dates = new List<DateTime>()
                             {
@@ -135,6 +134,8 @@ namespace raBudget.Application.Features.Transactions.Notification
                                       {
                                           BudgetCategoryId = notification.ReferenceTransaction.BudgetCategoryId
                                       }, cancellationToken);
+                
+                await _balanceService.CalculateBudgetBalance(category.BudgetId, cancellationToken);
 
                 await _mediator.Publish(new BudgetBalanceChanged()
                                       {
