@@ -22,7 +22,7 @@ namespace raBudget.Domain.UnitTests.Models
             var budgetCategory = RandomBudgetCategory(budget);
 
             // Act
-            var amount = new MoneyAmount(budget.Currency, RandomInt());
+            var amount = new MoneyAmount(budget.Currency.CurrencyCode, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
 
             // Assert
@@ -39,8 +39,8 @@ namespace raBudget.Domain.UnitTests.Models
             var budgetCategory = RandomBudgetCategory(budget);
 
             // Act
-            budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency, RandomInt()), DateTime.Today);
-            Action act = () => budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency, RandomInt()), DateTime.Today);
+            budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
+            Action act = () => budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
 
             // Assert
             act.Should().Throw<BusinessException>();
@@ -53,7 +53,7 @@ namespace raBudget.Domain.UnitTests.Models
             var budget = RandomBudget();
 
             var budgetCategory = RandomBudgetCategory(budget);
-            var budgetedAmount = new BudgetCategory.BudgetedAmount(budgetCategory, new MoneyAmount(budget.Currency, RandomInt()), DateTime.Today);
+            var budgetedAmount = budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
            
             // Act
             Action act = ()=> budgetCategory.RemoveBudgetedAmount(budgetedAmount);
@@ -69,10 +69,10 @@ namespace raBudget.Domain.UnitTests.Models
             var budget = RandomBudget();
 
             var budgetCategory = RandomBudgetCategory(budget);
-            var amount = new MoneyAmount(budget.Currency, RandomInt());
+            var amount = new MoneyAmount(budget.Currency.CurrencyCode, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
             var amountToUpdate = budgetCategory.BudgetedAmounts.ToList().First();
-            amountToUpdate.SetAmount(new MoneyAmount(budget.Currency, RandomInt()));;
+            amountToUpdate.SetAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()));;
 
             // Act
             Action act = () => budgetCategory.UpdateBudgetedAmount(amountToUpdate);
@@ -88,7 +88,7 @@ namespace raBudget.Domain.UnitTests.Models
             var budget = RandomBudget();
 
             var budgetCategory = RandomBudgetCategory(budget);
-            var amount = new MoneyAmount(budget.Currency, RandomInt());
+            var amount = new MoneyAmount(budget.Currency.CurrencyCode, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
             var amountToUpdate = budgetCategory.BudgetedAmounts.ToList().First();
             amountToUpdate.SetValidFromDate(DateTime.Today.AddMonths(-1)); ;
@@ -107,7 +107,8 @@ namespace raBudget.Domain.UnitTests.Models
             var budget = RandomBudget();
 
             var budgetCategory = RandomBudgetCategory(budget);
-            var budgetedAmount = new BudgetCategory.BudgetedAmount(budgetCategory, new MoneyAmount(budget.Currency, RandomInt()), DateTime.Today);
+            var budgetCategory2 = RandomBudgetCategory(budget);
+            var budgetedAmount = budgetCategory2.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
 
             // Act
             Action act = () => budgetCategory.UpdateBudgetedAmount(budgetedAmount);
