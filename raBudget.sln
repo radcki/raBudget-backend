@@ -19,6 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Api", "raBudget.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raBudget.Application", "reBudget.Application\raBudget.Application.csproj", "{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CICD", "CICD", "{0D47EAB1-3CAA-4009-AB93-7EDB986522D6}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -21,18 +21,17 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIconId(Guid.NewGuid()), RandomString(4));
             var budgetCategory = BudgetCategory.Create(budget,
                                                        RandomString(4),
                                                        icon,
-                                                       new List<BudgetCategory.BudgetedAmount>(),
                                                        eBudgetCategoryType.Income);
 
             var transaction = Transaction.Create(RandomString(5),
                                                  budgetCategory,
-                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()),
                                                  DateTime.Now);
-            var newAmount = new MoneyAmount(new Currency(eCurrencyCode.AFN), RandomInt());
+            var newAmount = new MoneyAmount(eCurrencyCode.AFN, RandomInt());
             // Act
             Action act = () => transaction.SetAmount(newAmount);
 
@@ -48,18 +47,17 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIconId(Guid.NewGuid()), RandomString(4));
             var budgetCategory = BudgetCategory.Create(budget,
                                                        RandomString(4),
                                                        icon,
-                                                       new List<BudgetCategory.BudgetedAmount>(),
                                                        eBudgetCategoryType.Income);
 
 
             // Act
             var transaction = Transaction.Create(RandomString(5),
                                                  budgetCategory,
-                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()),
                                                  DateTime.Now);
 
 
@@ -75,21 +73,19 @@ namespace raBudget.Domain.UnitTests.Models
                                        DateTime.Now,
                                        new Currency(eCurrencyCode.PLN));
 
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIcon.BudgetCategoryIconId(RandomInt()), RandomString(4));
+            var icon = new BudgetCategoryIcon(new BudgetCategoryIconId(Guid.NewGuid()), RandomString(4));
             var budgetCategory1 = BudgetCategory.Create(budget,
                                                         RandomString(4),
                                                         icon,
-                                                        new List<BudgetCategory.BudgetedAmount>(),
                                                         eBudgetCategoryType.Income);
             var budgetCategory2 = BudgetCategory.Create(budget,
                                                         RandomString(4),
                                                         icon,
-                                                        new List<BudgetCategory.BudgetedAmount>(),
                                                         eBudgetCategoryType.Saving);
 
             var transaction = Transaction.Create(RandomString(5),
                                                  budgetCategory1,
-                                                 new MoneyAmount(budget.Currency, RandomInt()),
+                                                 new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()),
                                                  DateTime.Now);
             // Act
             Action act = () => transaction.SetBudgetCategory(budgetCategory2);
