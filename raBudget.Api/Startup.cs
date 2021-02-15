@@ -117,18 +117,22 @@ namespace raBudget.Api
                                    options.SerializeAsV2 = true;
                                });
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
+                app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod()
+                                              .AllowCredentials());
             }
             else
             {
+                app.UseCors(builder => builder.WithOrigins("https://budget.rabt.pl")
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod()
+                                              .AllowCredentials());
                 app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
             app.UseExceptionHandler("/error");
-            app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
-                                          .AllowAnyHeader()
-                                          .AllowAnyMethod()
-                                          .AllowCredentials());
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
