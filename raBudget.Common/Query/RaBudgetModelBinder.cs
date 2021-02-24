@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 
 namespace raBudget.Common.Query
 {
@@ -15,6 +18,16 @@ namespace raBudget.Common.Query
         /// <inheritdoc />
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
+            if (bindingContext.BindingSource == BindingSource.Body)
+            {
+                string json;
+                using (var reader = new StreamReader(bindingContext.ActionContext.HttpContext.Request.Body, Encoding.UTF8))
+                    json = reader.ReadToEndAsync().GetAwaiter().GetResult();
+                var bodyModel = JsonConvert.DeserializeObject(json, bindingContext.ModelType);
+                bindingContext.Result = ModelBindingResult.Success(bodyModel);
+                return Task.CompletedTask;
+            }
+
             var dataOrder = new FieldOrderInfoCollection();
 
             var model = Activator.CreateInstance(bindingContext.ModelType);
@@ -52,6 +65,7 @@ namespace raBudget.Common.Query
                                 {
                                     continue;
                                 }
+
                                 emptyCollection.Add(rowConverter.ConvertFrom(value));
                             }
                         }

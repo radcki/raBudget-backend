@@ -55,7 +55,7 @@ namespace raBudget.Application.Features.Transactions.Command
                 var budgetCategoryId = request.BudgetCategoryId;
                 if (!await _accessControlService.HasBudgetCategoryAccessAsync(budgetCategoryId))
                 {
-                    throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetNotFound));
+                    throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
                 var budgetCategory = _writeDbContext.BudgetCategories
