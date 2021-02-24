@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace raBudget.Common.Query
 {
-    [ModelBinder(typeof(GridQueryModelBinder))]
     public class GridQuery : CollectionQuery
     {
         public int Page { get; set; } = 1;

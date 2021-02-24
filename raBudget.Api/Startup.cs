@@ -69,12 +69,12 @@ namespace raBudget.Api
                                                                 ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                                                         });
 
-            services.AddControllers()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                    .AddJsonOptions(options =>
+            services.AddControllers(options =>
                                     {
-                                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                                    });
+                                        options.ModelBinderProviders.Insert(0, new ModelBinderProvider());
+                                    })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; });
 
             services.AddSwaggerGen(options =>
                                    {
