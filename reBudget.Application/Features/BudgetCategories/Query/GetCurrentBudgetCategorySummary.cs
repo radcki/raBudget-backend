@@ -37,6 +37,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             public MoneyAmount TotalTransactionsBalance { get; set; }
             public MoneyAmount ThisMonthTransactionsTotal { get; set; }
             public MoneyAmount ThisMonthBudgetedAmount { get; set; }
+            public MoneyAmount ThisMonthBudgetedAmountLeft { get; set; }
         }
 
 
@@ -71,6 +72,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                                       ThisMonthBudgetedAmount = thisMonthBalance.BudgetedAmount,
                                       TotalTransactionsBalance = new MoneyAmount(thisMonthBalance.BudgetedAmount.CurrencyCode, balances.Sum(x => x.TransactionsTotal.Amount + x.AllocationsTotal.Amount))
                                   };
+                    balance.ThisMonthBudgetedAmountLeft = balance.ThisMonthBudgetedAmount - balance.ThisMonthTransactionsTotal;
                     responseData.Add(balance);
                 }
 
