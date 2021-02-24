@@ -20,9 +20,9 @@ using RLib.Localization;
 
 namespace raBudget.Application.Features.BudgetCategories.Query
 {
-    public class GetBudgetCategoryBalance
+    public class GetCurrentBudgetCategorySummary
     {
-        public class Query : GridQuery, IRequest<Result>
+        public class Query : IRequest<Result>
         {
             public List<BudgetCategoryId> BudgetCategoryIds { get; set; }
         }
@@ -34,9 +34,9 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         public class BudgetCategoryBalanceDto
         {
             public BudgetCategoryId BudgetCategoryId { get; set; }
-            public MoneyAmount TotalCategoryBalance { get; set; }
+            public MoneyAmount TotalTransactionsBalance { get; set; }
             public MoneyAmount ThisMonthTransactionsTotal { get; set; }
-            public MoneyAmount BudgetLeftToEndOfYear { get; set; }
+            public MoneyAmount ThisMonthBudgetedAmount { get; set; }
         }
 
 
@@ -59,21 +59,25 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
-                var balances = request.BudgetCategoryIds
-                                      .Select(x => _balanceService.GetTotalCategoryBalance(x))
-                                      .Select(x=>new BudgetCategoryBalanceDto()
-                                                 {
-                                                     BudgetCategoryId = x.BudgetCategoryId,
-                                                     BudgetLeftToEndOfYear = x.BudgetLeftToEndOfYear,
-                                                     ThisMonthTransactionsTotal = x.ThisMonthTransactionsTotal,
-                                                     TotalCategoryBalance = x.TotalCategoryBalance
-                                                 })
-                                      .ToList();
+                var responseData = new List<BudgetCategoryBalanceDto>();
+                foreach (var budgetCategoryId in request.BudgetCategoryIds)
+                {
+                    var balances = _balanceService.GetCategoryBalances(budgetCategoryId, null, null).ToList();
+                    var thisMonthBalance = balances.First(x => x.Year == DateTime.Today.Year && x.Month == DateTime.Today.Month);
+                    var balance = new BudgetCategoryBalanceDto()
+                                  {
+                                      BudgetCategoryId = budgetCategoryId,
+                                      ThisMonthTransactionsTotal = thisMonthBalance.TransactionsTotal,
+                                      ThisMonthBudgetedAmount = thisMonthBalance.BudgetedAmount,
+                                      TotalTransactionsBalance = new MoneyAmount(thisMonthBalance.BudgetedAmount.CurrencyCode, balances.Sum(x => x.TransactionsTotal.Amount + x.AllocationsTotal.Amount))
+                                  };
+                    responseData.Add(balance);
+                }
 
                 return new Result()
                        {
-                           Data = balances,
-                           Total = balances.Count
+                           Data = responseData,
+                           Total = responseData.Count
                        };
             }
         }

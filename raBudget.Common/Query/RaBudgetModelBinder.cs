@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace raBudget.Common.Query
 {
-    public class GridQueryModelBinder : IModelBinder
+    public class RaBudgetModelBinder : IModelBinder
     {
         #region Implementation of IModelBinder
 
