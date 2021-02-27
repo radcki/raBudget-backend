@@ -232,6 +232,31 @@ namespace raBudget.Domain.Services
                 if (budgetCategoryBalance.Month == DateTime.Today.Month && budgetCategoryBalance.Year == DateTime.Today.Year)
                 {
                     categoryBalance.ThisMonthTransactionsTotal = budgetCategoryBalance.TransactionsTotal;
+                    categoryBalance.ThisMonthBudgetedAmount = budgetCategoryBalance.BudgetedAmount;
+                }
+
+                if ( budgetCategoryBalance.Year == DateTime.Today.Year)
+                {
+                    if (categoryBalance.ThisYearBudgetedAmount == null)
+                    {
+                        categoryBalance.ThisYearBudgetedAmount = budgetCategoryBalance.BudgetedAmount;
+                    }
+                    else
+                    {
+                        categoryBalance.ThisYearBudgetedAmount += budgetCategoryBalance.BudgetedAmount;
+                    }
+                }
+
+                if (!(budgetCategoryBalance.Year == DateTime.Today.Year && budgetCategoryBalance.Month > DateTime.Today.Month))
+                {
+                    if (categoryBalance.TotalBudgetedAmount == null)
+                    {
+                        categoryBalance.TotalBudgetedAmount = budgetCategoryBalance.BudgetedAmount;
+                    }
+                    else
+                    {
+                        categoryBalance.TotalBudgetedAmount += budgetCategoryBalance.BudgetedAmount;
+                    }
                 }
             }
 

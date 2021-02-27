@@ -98,7 +98,13 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 
                 return new Result()
                        {
-                           Data = dtos.OrderBy(x => x.Order).ToList(),
+                           Data = dtos.Select(x =>
+                                              {
+                                                  x.BudgetedAmounts = x.BudgetedAmounts.OrderBy(s => s.ValidFrom).ToList();
+                                                  return x;
+                                              })
+                                      .OrderBy(x => x.Order)
+                                      .ToList(),
                            Total = budgetCategories.Count()
                        };
             }

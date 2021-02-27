@@ -30,6 +30,8 @@ namespace raBudget.Api.ApiControllers
         }
 
         [HttpGet("get-list")] public async Task<GetBudgetCategoryList.Result> OnGetGetBudgetCategoryList([FromQuery] GetBudgetCategoryList.Query query) => await _mediator.Send(query);
+        [HttpGet("get-budgeted-amounts-summary")] public async Task<GetBudgetedAmountsSummary.Result> GetBudgetedAmountsSummary([FromQuery] GetBudgetedAmountsSummary.Query query) => await _mediator.Send(query);
+        
         [HttpPost("create")] public async Task<CreateBudgetCategory.Result> CreateBudgetCategory([FromBody] CreateBudgetCategory.Command command) => await _mediator.Send(command);
         [HttpPost("remove")] public async Task<RemoveBudgetCategory.Result> RemoveBudget([FromBody] RemoveBudgetCategory.Command command) => await _mediator.Send(command);
         [HttpPatch("update/name")] public async Task<UpdateBudgetCategoryName.Result> UpdateBudgetCategoryName([FromBody] UpdateBudgetCategoryName.Command command) => await _mediator.Send(command);
@@ -40,6 +42,7 @@ namespace raBudget.Api.ApiControllers
         [HttpGet("balance")] public async Task<GetBudgetCategoryBalance.Result> GetBudgetCategoryBalance([FromQuery] GetBudgetCategoryBalance.Query query) => await _mediator.Send(query);
         [HttpGet("current-balance")] public async Task<GetCurrentBudgetCategorySummary.Result> GetCurrentBudgetCategorySummary([FromQuery] GetCurrentBudgetCategorySummary.Query query) => await _mediator.Send(query);
 
+        
         [HttpPost("budgeted-amount/add")] public async Task<AddBudgetedAmount.Result> AddBudgetedAmount([FromBody] AddBudgetedAmount.Command command) => await _mediator.Send(command);
         [HttpPost("budgeted-amount/remove")] public async Task<RemoveBudgetedAmount.Result> RemoveBudgetedAmount([FromBody] RemoveBudgetedAmount.Command command) => await _mediator.Send(command);
         [HttpPatch("budgeted-amount/update/valid-from")] public async Task<UpdateBudgetedAmountValidFrom.Result> UpdateBudgetedAmountValidFrom([FromBody] UpdateBudgetedAmountValidFrom.Command command) => await _mediator.Send(command);
