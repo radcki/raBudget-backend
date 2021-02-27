@@ -61,12 +61,12 @@ namespace raBudget.Application.Features.Transactions.Notification
             /// <inheritdoc />
             public async Task Handle(Notification notification, CancellationToken cancellationToken)
             {
-                await _balanceService.CalculateBudgetedCategoryBalance(notification.OldBudgetCategoryId,
+                await _balanceService.CalculateBudgetCategoryBalance(notification.OldBudgetCategoryId,
                                                                        notification.ReferenceTransaction.TransactionDate.Year,
                                                                        notification.ReferenceTransaction.TransactionDate.Month,
                                                                        cancellationToken);
 
-                await _balanceService.CalculateBudgetedCategoryBalance(notification.NewBudgetCategoryId,
+                await _balanceService.CalculateBudgetCategoryBalance(notification.NewBudgetCategoryId,
 																	   notification.ReferenceTransaction.TransactionDate.Year,
 																	   notification.ReferenceTransaction.TransactionDate.Month,
 																	   cancellationToken);
