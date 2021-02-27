@@ -8,5 +8,9 @@ namespace raBudget.Domain.ReadModels
         public MoneyAmount TotalCategoryBalance { get; set; }
         public MoneyAmount ThisMonthTransactionsTotal { get; set; }
         public MoneyAmount BudgetLeftToEndOfYear { get; set; }
+
+        public MoneyAmount TotalBudgetedAmount { get; set; }
+        public MoneyAmount ThisMonthBudgetedAmount { get; set; }
+        public MoneyAmount ThisYearBudgetedAmount { get; set; }
     }
 }

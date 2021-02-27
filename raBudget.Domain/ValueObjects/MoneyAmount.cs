@@ -47,7 +47,7 @@ namespace raBudget.Domain.ValueObjects
         }
         
         public static MoneyAmount operator +(MoneyAmount a, MoneyAmount b)
-		{
+        {
 			if (a.CurrencyCode != b.CurrencyCode)
 			{
                 throw new BusinessException(Localization.For(()=>ErrorMessages.NotMatchingCurrencies));

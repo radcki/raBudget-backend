@@ -203,11 +203,11 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             private readonly BalanceService _balanceService;
             private readonly IMediator _mediator;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory, IMediator mediator)
+            public Handler(IServiceScopeFactory serviceScopeFactory)
             {
-                _mediator = mediator;
                 var serviceScope = serviceScopeFactory.CreateScope();
                 _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
+                _mediator = serviceScope.ServiceProvider.GetService<IMediator>();
             }
 
 
