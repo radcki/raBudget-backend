@@ -124,7 +124,7 @@ namespace raBudget.Application.Features.Transactions.Notification
 
                 foreach (var dateTime in dates.Select(x => x.StartOfMonth()).Distinct())
                 {
-                    await _balanceService.CalculateBudgetedCategoryBalance(category.BudgetCategoryId,
+                    await _balanceService.CalculateBudgetCategoryBalance(category.BudgetCategoryId,
                                                                            dateTime.Year,
                                                                            dateTime.Month,
                                                                            cancellationToken);

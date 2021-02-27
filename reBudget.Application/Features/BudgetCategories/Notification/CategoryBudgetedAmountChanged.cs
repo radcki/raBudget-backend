@@ -36,11 +36,11 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             private readonly IMediator _mediator;
             private readonly IWriteDbContext _writeDbContext;
 
-            public Listener(IMediator mediator, IServiceScopeFactory serviceScopeFactory)
+            public Listener(IServiceScopeFactory serviceScopeFactory)
             {
-                _mediator = mediator;
                 var scope = serviceScopeFactory.CreateScope();
                 _writeDbContext = scope.ServiceProvider.GetService<IWriteDbContext>();
+                _mediator = scope.ServiceProvider.GetService<IMediator>();
             }
 
             public async Task Handle(CreateBudgetCategory.Notification notification, CancellationToken cancellationToken)
@@ -214,8 +214,8 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             /// <inheritdoc />
             public async Task Handle(Notification notification, CancellationToken cancellationToken)
             {
+                await _balanceService.CalculateBudgetCategoryBalance(notification.BudgetCategory.BudgetCategoryId, cancellationToken);
                 await _balanceService.CalculateBudgetBalance(notification.BudgetCategory.BudgetId, cancellationToken);
-                await _balanceService.CalculateBudgetedCategoryBalance(notification.BudgetCategory.BudgetCategoryId, cancellationToken);
 
                 await _mediator.Publish(new BudgetBalanceChanged()
                                         {

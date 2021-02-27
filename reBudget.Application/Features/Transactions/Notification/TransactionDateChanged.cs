@@ -83,12 +83,12 @@ namespace raBudget.Application.Features.Transactions.Notification
 					return;
 				}
 
-				await _balanceService.CalculateBudgetedCategoryBalance(transaction.BudgetCategoryId,
+				await _balanceService.CalculateBudgetCategoryBalance(transaction.BudgetCategoryId,
 																	   notification.OldDate.Year,
 																	   notification.OldDate.Month,
 																	   cancellationToken);
 
-				await _balanceService.CalculateBudgetedCategoryBalance(transaction.BudgetCategoryId,
+				await _balanceService.CalculateBudgetCategoryBalance(transaction.BudgetCategoryId,
 																	   notification.NewDate.Year,
 																	   notification.NewDate.Month,
 																	   cancellationToken);

@@ -39,10 +39,13 @@ namespace raBudget.Api
 
             services.Configure<ApiConfiguration>(Configuration.GetSection("SystemConfiguration"));
             var mysqlConnectionString = Configuration.GetConnectionString("MySql");
-            services.AddDbContext<IWriteDbContext, WriteDbContext>(options => options.UseMySql(mysqlConnectionString,
-                                                                                               MariaDbServerVersion.LatestSupportedServerVersion,
-                                                                                               builder => { builder.MigrationsAssembly("raBudget.Api"); }));
-            services.AddTransient<IReadDbContext, ReadDbContext>();
+            services.AddDbContext<IWriteDbContext, WriteDbContext>(options =>
+                                                                   {
+                                                                       options.UseMySql(mysqlConnectionString,
+                                                                                        MariaDbServerVersion.LatestSupportedServerVersion,
+                                                                                        builder => { builder.MigrationsAssembly("raBudget.Api"); });
+                                                                   }, ServiceLifetime.Transient);
+            services.AddScoped<IReadDbContext, ReadDbContext>();
             services.AddTransient<AccessControlService>();
             services.AddTransient<BalanceService>();
 

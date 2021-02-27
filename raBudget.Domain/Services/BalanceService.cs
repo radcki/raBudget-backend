@@ -32,31 +32,34 @@ namespace raBudget.Domain.Services
 
         public async Task CalculateBudgetBalance(BudgetId budgetId, CancellationToken cancellationToken)
         {
-            var currency = (await _readDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetId, cancellationToken: cancellationToken)).Currency;
+            var currency = (await _writeDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetId, cancellationToken: cancellationToken)).Currency;
 
-            var incomeCategoryIds = _readDb.BudgetCategories
-                                           .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Income)
-                                           .Select(x => x.BudgetCategoryId);
+            var incomeCategoryIds = _writeDb.BudgetCategories
+                                            .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Income)
+                                            .Select(x => x.BudgetCategoryId);
 
-            var incomeSum = _readDb.Transactions
-                                   .Where(x => incomeCategoryIds.Any(s => s == x.BudgetCategoryId))
-                                   .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
+            var incomeSum = _writeDb.Transactions
+                                    .Include(x=>x.SubTransactions)
+                                    .Where(x => incomeCategoryIds.Any(s => s == x.BudgetCategoryId))
+                                    .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
 
-            var spendingCategoryIds = _readDb.BudgetCategories
-                                             .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
-                                             .Select(x => x.BudgetCategoryId);
+            var spendingCategoryIds = _writeDb.BudgetCategories
+                                              .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
+                                              .Select(x => x.BudgetCategoryId);
 
-            var spendingSum = _readDb.Transactions
-                                     .Where(x => spendingCategoryIds.Any(s => s == x.BudgetCategoryId))
-                                     .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
+            var spendingSum = _writeDb.Transactions
+                                      .Include(x=>x.SubTransactions)
+                                      .Where(x => spendingCategoryIds.Any(s => s == x.BudgetCategoryId))
+                                      .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
 
-            var savingCategoryIds = _readDb.BudgetCategories
-                                           .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Saving)
-                                           .Select(x => x.BudgetCategoryId);
+            var savingCategoryIds = _writeDb.BudgetCategories
+                                            .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Saving)
+                                            .Select(x => x.BudgetCategoryId);
 
-            var savingSum = _readDb.Transactions
-                                   .Where(x => savingCategoryIds.Any(s => s == x.BudgetCategoryId))
-                                   .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
+            var savingSum = _writeDb.Transactions
+                                    .Include(x=>x.SubTransactions)
+                                    .Where(x => savingCategoryIds.Any(s => s == x.BudgetCategoryId))
+                                    .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s => s.Amount.Amount));
 
             var storedBalance = await _writeDb.BudgetBalances.FirstOrDefaultAsync(x => x.BudgetId == budgetId, cancellationToken);
             if (storedBalance == null)
@@ -71,10 +74,10 @@ namespace raBudget.Domain.Services
             var savingTotal = new MoneyAmount(currency.CurrencyCode, savingSum);
 
             var categoriesBudgetedLeftoverTotal = 0m;
-            var budgetCategoryIds = _readDb.BudgetCategories
-                                           .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
-                                           .Select(x => x.BudgetCategoryId)
-                                           .ToList();
+            var budgetCategoryIds = _writeDb.BudgetCategories
+                                            .Where(x => x.BudgetId == budgetId && x.BudgetCategoryType == eBudgetCategoryType.Spending)
+                                            .Select(x => x.BudgetCategoryId)
+                                            .ToList();
             foreach (var budgetCategoryId in budgetCategoryIds)
             {
                 categoriesBudgetedLeftoverTotal += Math.Max(0,(await GetCategoryBalance(budgetCategoryId, null, null, cancellationToken)).Amount);
@@ -99,7 +102,7 @@ namespace raBudget.Domain.Services
             return storedBalance;
         }
 
-        public async Task CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, CancellationToken cancellationToken)
+        public async Task CalculateBudgetCategoryBalance(BudgetCategoryId budgetCategoryId, CancellationToken cancellationToken)
         {
             if (_writeDb.BudgetCategoryBalances.Any(x => x.BudgetCategoryId == budgetCategoryId))
             {
@@ -116,19 +119,25 @@ namespace raBudget.Domain.Services
             }
 
             var from = budgetCategory.BudgetedAmounts.Min(x => x.ValidFrom);
-            var to = new DateTime(DateTime.Today.Year, 12, 1);
+            var to = new[]{ budgetCategory.BudgetedAmounts.Max(x => x.ValidFrom), new DateTime(DateTime.Today.Year, 12, 1) }.Max();
 
             foreach (var month in DateTimeExtensions.MonthRange(from, to))
             {
-                await CalculateBudgetedCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None);
+                await CalculateBudgetCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None);
             }
         }
 
-        public async Task<BudgetCategoryBalance> CalculateBudgetedCategoryBalance(BudgetCategoryId budgetCategoryId, int year, int month, CancellationToken cancellationToken)
+        public async Task<BudgetCategoryBalance> CalculateBudgetCategoryBalance(BudgetCategoryId budgetCategoryId, int year, int month, CancellationToken cancellationToken)
         {
-            var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
+            if (year == 2021 && month == 4)
+            {
+
+            }
+            var budgetCategory = _writeDb.BudgetCategories
+                                         .Include(x=>x.BudgetedAmounts)
+                                         .FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
                                  ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
-            var currency = (await _readDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetCategory.BudgetId, cancellationToken: cancellationToken)).Currency;
+            var currency = (await _writeDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetCategory.BudgetId, cancellationToken: cancellationToken)).Currency;
 
             var storedBalance = _writeDb.BudgetCategoryBalances.FirstOrDefault(x => x.Month == month && x.Year == year && x.BudgetCategoryId == budgetCategoryId);
             if (storedBalance == null)
@@ -147,21 +156,22 @@ namespace raBudget.Domain.Services
                 budgetedAmount += categoryBudgetedAmount.Amount.Amount;
             }
 
-            var transactionsSum = _readDb.Transactions
-                                         .Where(x => x.BudgetCategoryId == budgetCategoryId && x.TransactionDate >= date && x.TransactionDate <= endOfMonth)
-                                         .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s=>s.Amount.Amount));
+            var transactionsSum = _writeDb.Transactions
+                                          .Include(x=>x.SubTransactions)
+                                          .Where(x => x.BudgetCategoryId == budgetCategoryId && x.TransactionDate >= date && x.TransactionDate <= endOfMonth)
+                                          .Sum(x => x.Amount.Amount + x.SubTransactions.Sum(s=>s.Amount.Amount));
 
-            var targetAllocationsSum = _readDb.Allocations
-                                              .Where(x => x.TargetBudgetCategoryId == budgetCategoryId
-                                                          && x.AllocationDate >= date
-                                                          && x.AllocationDate <= endOfMonth)
-                                              .Sum(x => x.Amount.Amount);
+            var targetAllocationsSum = _writeDb.Allocations
+                                               .Where(x => x.TargetBudgetCategoryId == budgetCategoryId
+                                                           && x.AllocationDate >= date
+                                                           && x.AllocationDate <= endOfMonth)
+                                               .Sum(x => x.Amount.Amount);
 
-            var sourceAllocationsSum = _readDb.Allocations
-                                              .Where(x => x.SourceBudgetCategoryId == budgetCategoryId
-                                                          && x.AllocationDate >= date
-                                                          && x.AllocationDate <= endOfMonth)
-                                              .Sum(x => x.Amount.Amount);
+            var sourceAllocationsSum = _writeDb.Allocations
+                                               .Where(x => x.SourceBudgetCategoryId == budgetCategoryId
+                                                           && x.AllocationDate >= date
+                                                           && x.AllocationDate <= endOfMonth)
+                                               .Sum(x => x.Amount.Amount);
 
             storedBalance.Update(new MoneyAmount(currency.CurrencyCode, budgetedAmount),
                                  new MoneyAmount(currency.CurrencyCode, transactionsSum),
@@ -187,9 +197,9 @@ namespace raBudget.Domain.Services
         }
         public async Task<MoneyAmount> GetCategoryBalance(BudgetCategoryId budgetCategoryId, DateTime? from, DateTime? to, CancellationToken cancellationToken)
         {
-            var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
+            var budgetCategory = _writeDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
                                  ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
-            var currency = (await _readDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetCategory.BudgetId, cancellationToken: cancellationToken)).Currency;
+            var currency = (await _writeDb.Budgets.FirstOrDefaultAsync(x => x.BudgetId == budgetCategory.BudgetId, cancellationToken: cancellationToken)).Currency;
 
             var amount = 0m;
             foreach (var balance in GetCategoryBalances(budgetCategoryId, from, to))
@@ -281,10 +291,10 @@ namespace raBudget.Domain.Services
             var toYear = to.Value.Year;
             var toMonth = to.Value.Month;
             var balances = _readDb.BudgetCategoryBalances
-                                  .Where(x => x.BudgetCategoryId == budgetCategoryId
-                                              && ((x.Year == fromYear && x.Month >= fromMonth) || x.Year > fromYear)
-                                              && ((x.Year == toYear && x.Month <= toMonth) || x.Year < toYear))
-                                  .ToList();
+                                   .Where(x => x.BudgetCategoryId == budgetCategoryId
+                                               && ((x.Year == fromYear && x.Month >= fromMonth) || x.Year > fromYear)
+                                               && ((x.Year == toYear && x.Month <= toMonth) || x.Year < toYear))
+                                   .ToList();
 
             foreach (var month in DateTimeExtensions.MonthRange(from.Value, to.Value))
             {
@@ -292,7 +302,7 @@ namespace raBudget.Domain.Services
                 
                 if (categoryBalance == null)
                 {
-                    CalculateBudgetedCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None).GetAwaiter().GetResult();
+                    CalculateBudgetCategoryBalance(budgetCategoryId, month.Year, month.Month, CancellationToken.None).GetAwaiter().GetResult();
                     categoryBalance = _readDb.BudgetCategoryBalances.FirstOrDefault(x => x.Year == month.Year && x.Month == month.Month);
                 }
 
