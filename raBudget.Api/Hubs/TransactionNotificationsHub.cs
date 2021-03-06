@@ -43,6 +43,7 @@ namespace raBudget.Api.Hubs
                                 INotificationHandler<UpdateSubTransactionAmount.Notification>,
                                 INotificationHandler<UpdateSubTransactionDate.Notification>,
                                 INotificationHandler<UpdateSubTransactionDescription.Notification>,
+                                INotificationHandler<RemoveSubTransaction.Notification>,
                                 INotificationHandler<UpdateTransactionDate.Notification>,
                                 INotificationHandler<UpdateTransactionCategory.Notification>,
                                 INotificationHandler<UpdateTransactionDescription.Notification>
@@ -96,6 +97,11 @@ namespace raBudget.Api.Hubs
             }
 
             public async Task Handle(UpdateTransactionCategory.Notification notification, CancellationToken cancellationToken)
+            {
+                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+            }
+
+            public async Task Handle(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
             {
                 await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
             }
