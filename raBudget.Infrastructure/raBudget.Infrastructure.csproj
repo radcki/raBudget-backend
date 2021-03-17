@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Database\Dao\" />
     <Folder Include="Migrations\" />
     <Folder Include="Services\" />
   </ItemGroup>
