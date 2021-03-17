@@ -19,28 +19,31 @@ namespace raBudget.Common.Resources
         [Localized(KnownCulture.Polish, "Kategoria budżetowa nie została odnaleziona")]
         public static string BudgetCategoryNotFound = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Transakcja nie została odnaleziona")]
         public static string TransactionNotFound = "";
 
-		[Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Schemat transakcji nie został odnaleziony")]
+        public static string TransactionTemplateNotFound = "";
+
+        [Localized(KnownCulture.Polish, "Alokacja nie została odnaleziona")]
 		public static string AllocationNotFound = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Opis transakcji nie może być pusty")]
         public static string TransactionDescriptionEmpty = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Kategoria budżetowa nie została wybrana")]
         public static string BudgetCategoryEmpty = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Nie odnaleziono zabudżetowanej kwoty")]
         public static string BudgetedAmountNotFound = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Już istnieje zabudżetowana kwota z tą samą datą początku obowiązywania")]
         public static string SameBudgetedAmountDate = "";
 
-        [Localized(KnownCulture.Polish, "")]
+        [Localized(KnownCulture.Polish, "Data końca musi być późniejsza niż data początku")]
         public static string EndDateBeforeStartDate = "";
 
-		[Localized(KnownCulture.Polish, "")]
+		[Localized(KnownCulture.Polish, "Waluty muszą być zgodne")]
 		public static string NotMatchingCurrencies = "";
     }
 }

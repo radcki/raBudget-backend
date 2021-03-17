@@ -22,6 +22,7 @@ namespace raBudget.Infrastructure.Database
         public DbSet<Currency> Currencies { get; private set; }
         public DbSet<BudgetBalance> BudgetBalances { get; private set; }
 		public DbSet<BudgetCategoryBalance> BudgetCategoryBalances { get; private set; }
+        public DbSet<TransactionTemplate> TransactionTemplates { get; private set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

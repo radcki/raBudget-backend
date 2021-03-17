@@ -67,7 +67,18 @@ namespace raBudget.Domain.Services
                                                                                  && _readDbContext.Budgets
                                                                                                   .Any(b => b.BudgetId == s.BudgetId && b.OwnerUserId == _userContext.UserId)));
         }
-		public async Task<bool> HasAllocationAccess(AllocationId allocationId)
+
+        public async Task<bool> HasTransactionTemplateAccess(TransactionTemplateId transactionTemplateId)
+        {
+            return await _readDbContext.TransactionTemplates
+                                       .AnyAsync(x => x.TransactionTemplateId == transactionTemplateId
+                                                      && _readDbContext.BudgetCategories
+                                                                       .Any(s => x.BudgetCategoryId == s.BudgetCategoryId
+                                                                                 && _readDbContext.Budgets
+                                                                                                  .Any(b => b.BudgetId == s.BudgetId && b.OwnerUserId == _userContext.UserId)));
+        }
+
+        public async Task<bool> HasAllocationAccess(AllocationId allocationId)
 		{
 			return await _readDbContext.Allocations
 									   .AnyAsync(x => x.AllocationId == allocationId

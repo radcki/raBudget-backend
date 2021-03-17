@@ -19,6 +19,7 @@ namespace raBudget.Domain.Interfaces
 
         DbSet<BudgetBalance> BudgetBalances { get; }
         DbSet<BudgetCategoryBalance> BudgetCategoryBalances { get; }
+        DbSet<TransactionTemplate> TransactionTemplates { get; }
 
         DatabaseFacade Database { get; }
         int SaveChanges();
