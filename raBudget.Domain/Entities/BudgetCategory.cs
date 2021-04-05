@@ -238,6 +238,16 @@ namespace raBudget.Domain.Entities
                 SetValidToDates();
             }
 
+            public void SetItemValidFromDate(BudgetedAmount item, DateTime date)
+            {
+                if (!this.Contains(item))
+                {
+                    throw new BusinessException(ErrorMessages.BudgetedAmountNotFound);
+                }
+                item.SetValidFromDate(date);
+                SetValidToDates();
+            }
+
             private void SetValidToDates()
             {
                 var sorted = this.OrderBy(x => x.ValidFrom).ToList();

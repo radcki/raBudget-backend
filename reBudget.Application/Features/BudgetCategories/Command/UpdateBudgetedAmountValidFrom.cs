@@ -57,10 +57,10 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
-                var budgetedAmount = budgetCategory.BudgetedAmounts.FirstOrDefault(x => x.BudgetedAmountId == request.BudgetedAmountId)
-                                     ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetedAmountNotFound));
+                var budgetedAmount = budgetCategory.BudgetedAmounts.FirstOrDefault(x => x.BudgetedAmountId == request.BudgetedAmountId);
 
-                budgetedAmount.SetValidFromDate(request.ValidFrom);
+                budgetCategory.BudgetedAmounts.SetItemValidFromDate(budgetedAmount, request.ValidFrom);
+
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
 				_ = _mediator.Publish(new Notification()
