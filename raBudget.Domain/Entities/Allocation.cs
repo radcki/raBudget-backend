@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using raBudget.Common.Entities;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
@@ -8,7 +9,7 @@ using RLib.Localization;
 
 namespace raBudget.Domain.Entities
 {
-	public class Allocation
+	public class Allocation : BaseEntity
 	{
 		private Allocation()
 		{

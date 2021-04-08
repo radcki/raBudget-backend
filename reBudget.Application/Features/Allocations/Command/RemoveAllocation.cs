@@ -45,19 +45,19 @@ namespace raBudget.Application.Features.Allocations.Command
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
                 var allocation = await _writeDbContext.Allocations
-                                                       .FirstOrDefaultAsync(x => x.AllocationId == request.AllocationId, cancellationToken: cancellationToken)
-                                  ?? throw new NotFoundException(Localization.For(() => ErrorMessages.TransactionNotFound));
+                                                      .FirstOrDefaultAsync(x => x.AllocationId == request.AllocationId, cancellationToken: cancellationToken)
+                                 ?? throw new NotFoundException(Localization.For(() => ErrorMessages.AllocationNotFound));
 
                 if (!await _accessControlService.HasAllocationAccess(allocation.AllocationId))
                 {
                     throw new NotFoundException(Localization.For(() => ErrorMessages.AllocationNotFound));
                 }
 
-                _writeDbContext.Allocations.Remove(allocation);
+                allocation.SoftDelete();
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-                _ = _mediator.Publish(new Notification() { Allocation = allocation }, cancellationToken);
+                _ = _mediator.Publish(new Notification() {Allocation = allocation}, cancellationToken);
 
                 return new Result() { };
             }
