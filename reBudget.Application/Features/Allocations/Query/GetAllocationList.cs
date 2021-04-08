@@ -93,6 +93,11 @@ namespace raBudget.Application.Features.Allocations.Query
 				var query = _readDb.Allocations.Where(x => targetBudgetCategoryIds.Contains(x.TargetBudgetCategoryId)
 														   && (x.SourceBudgetCategoryId == null || sourceBudgetCategoryIds.Contains(x.SourceBudgetCategoryId)));
 
+                if (request.SourceBudgetCategoryIds != null && request.SourceBudgetCategoryIds.Any())
+                {
+                    query = query.Where(x => x.SourceBudgetCategoryId != null);
+                }
+
 				if (!string.IsNullOrEmpty(request.Search))
 				{
 					query = query.Where(x => x.Description.ToLower().Contains(request.Search.ToLower()));
