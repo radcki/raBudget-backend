@@ -37,6 +37,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             public MoneyAmount TotalCategoryBalance { get; set; }
             public MoneyAmount ThisMonthTransactionsTotal { get; set; }
             public MoneyAmount BudgetLeftToEndOfYear { get; set; }
+            public MoneyAmount ThisYearBudgetedAmount { get; set; }
         }
 
 
@@ -66,7 +67,8 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                                                      BudgetCategoryId = x.BudgetCategoryId,
                                                      BudgetLeftToEndOfYear = x.BudgetLeftToEndOfYear,
                                                      ThisMonthTransactionsTotal = x.ThisMonthTransactionsTotal,
-                                                     TotalCategoryBalance = x.TotalCategoryBalance
+                                                     TotalCategoryBalance = x.TotalCategoryBalance,
+                                                     ThisYearBudgetedAmount = x.ThisYearBudgetedAmount
                                                  })
                                       .ToList();
 
