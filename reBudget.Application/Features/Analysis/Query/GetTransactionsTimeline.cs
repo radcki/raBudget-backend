@@ -150,7 +150,7 @@ namespace raBudget.Application.Features.Analysis.Query
 
                                                          var totalAmount = categoryDataPoints.Select(x => x.AmountTotal)
                                                                                              .Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b);
-
+                                                         
                                                          return new DateRangeData()
                                                                 {
                                                                     DateRange = period,

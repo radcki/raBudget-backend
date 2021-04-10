@@ -28,5 +28,25 @@ namespace raBudget.Common.Extensions
             return stdDev;
 
         }
+        public static decimal StandardDeviation<T>(this IEnumerable<T> list, Func<T, decimal> values)
+        {
+            var mean = 0.0m;
+            var sum = 0.0m;
+            var stdDev = 0.0m;
+            var n = 0;
+
+            foreach (var value in list.Select(values))
+            {
+                n++;
+                var delta = value - mean;
+                mean += delta / n;
+                sum += delta * (value - mean);
+            }
+            if (1 < n)
+                stdDev = (decimal)Math.Sqrt((double)sum / (n - 1));
+
+            return stdDev;
+
+        }
     }
 }
