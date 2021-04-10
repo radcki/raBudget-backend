@@ -14,7 +14,7 @@ namespace raBudget.Domain.ReadModels
         public string Description { get; set; }
         public BudgetCategoryId BudgetCategoryId { get; set; }
         public MoneyAmount Amount { get; set; }
-        public List<SubTransaction> SubTransactions { get; set; }
+        public List<SubTransaction> SubTransactions { get; set; } = new List<SubTransaction>();
         public DateTime TransactionDate { get; set; }
         public DateTime CreationDateTime { get; set; }
     }
