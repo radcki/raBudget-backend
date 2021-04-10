@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CICD", "CICD", "{0D47EAB1-3
 		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "raBudget.Common.UnitsTests", "raBudget.Common.UnitsTests\raBudget.Common.UnitsTests.csproj", "{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,18 @@ Global
 		{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}.Release|x64.Build.0 = Release|Any CPU
 		{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD}.Release|x86.Build.0 = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|x64.Build.0 = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Debug|x86.Build.0 = Debug|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|x64.ActiveCfg = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|x64.Build.0 = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|x86.ActiveCfg = Release|Any CPU
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +132,7 @@ Global
 		{6EF6BFFA-48A0-4A1D-BDAE-30BA640D97B8} = {DD72B9B0-2CB2-4877-A17D-1929E3FFA5CA}
 		{1CBA920D-A99C-4EC2-BD8A-33EB2392EF0E} = {DD72B9B0-2CB2-4877-A17D-1929E3FFA5CA}
 		{FF0381AF-9581-42BA-A2A1-4CEADD39B2CD} = {DD72B9B0-2CB2-4877-A17D-1929E3FFA5CA}
+		{F33DDFA3-E9CA-4419-8F27-5F4C13D47ADB} = {A2389A55-FAA0-427B-A354-BE3A12184544}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3641A8E8-A6B5-43A3-80B8-F3E9D2063162}
