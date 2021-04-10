@@ -135,7 +135,7 @@ namespace raBudget.Application.Features.Analysis.Query
                                                                                                           {
                                                                                                               var categoryId = category.BudgetCategoryId;
                                                                                                               var categoryAmount = periodGroup.Where(s => s.BudgetCategoryId == categoryId)
-                                                                                                                                              .Select(s => s.Amount)
+                                                                                                                                              .Select(s => s.Amount + s.SubTransactions.Select(t=>t.Amount).Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b))
                                                                                                                                               .Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b);
 
                                                                                                               return new BudgetCategoryDataPointDto()
