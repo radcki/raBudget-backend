@@ -65,33 +65,5 @@ namespace raBudget.Domain.UnitTests.Models
             transaction.TransactionDate.Should().Be(DateTime.Today);
         }
 
-        [Fact]
-        public void Throws_WhenNewBudgetCategoryHasDifferentType()
-        {
-            // Arrange
-            var budget = Budget.Create(RandomString(4),
-                                       DateTime.Now,
-                                       new Currency(eCurrencyCode.PLN));
-
-            var icon = new BudgetCategoryIcon(new BudgetCategoryIconId(Guid.NewGuid()), RandomString(4));
-            var budgetCategory1 = BudgetCategory.Create(budget,
-                                                        RandomString(4),
-                                                        icon,
-                                                        eBudgetCategoryType.Income);
-            var budgetCategory2 = BudgetCategory.Create(budget,
-                                                        RandomString(4),
-                                                        icon,
-                                                        eBudgetCategoryType.Saving);
-
-            var transaction = Transaction.Create(RandomString(5),
-                                                 budgetCategory1,
-                                                 new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()),
-                                                 DateTime.Now);
-            // Act
-            Action act = () => transaction.SetBudgetCategory(budgetCategory2);
-
-            // Assert
-            act.Should().Throw<BusinessException>();
-        }
     }
 }

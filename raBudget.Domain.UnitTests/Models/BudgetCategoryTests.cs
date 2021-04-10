@@ -53,7 +53,8 @@ namespace raBudget.Domain.UnitTests.Models
             var budget = RandomBudget();
 
             var budgetCategory = RandomBudgetCategory(budget);
-            var budgetedAmount = budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
+            var budgetCategory2 = RandomBudgetCategory(budget);
+            var budgetedAmount = budgetCategory2.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
            
             // Act
             Action act = ()=> budgetCategory.RemoveBudgetedAmount(budgetedAmount);

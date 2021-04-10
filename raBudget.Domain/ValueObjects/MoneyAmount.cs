@@ -18,7 +18,10 @@ namespace raBudget.Domain.ValueObjects
     [SortableClass(nameof(Amount))]
     public class MoneyAmount : IEquatable<MoneyAmount>
     {
-        private MoneyAmount(){}
+        private MoneyAmount()
+        {
+        }
+
         public MoneyAmount(eCurrencyCode currencyCode, decimal amount)
         {
             this.CurrencyCode = currencyCode;
@@ -45,28 +48,42 @@ namespace raBudget.Domain.ValueObjects
         {
             return this.Amount.GetHashCode();
         }
-        
+
         public static MoneyAmount operator +(MoneyAmount a, MoneyAmount b)
         {
-			if (a.CurrencyCode != b.CurrencyCode)
-			{
-                throw new BusinessException(Localization.For(()=>ErrorMessages.NotMatchingCurrencies));
-			}
-			return new MoneyAmount(a.CurrencyCode, a.Amount + b.Amount);
+            if (a.CurrencyCode != b.CurrencyCode)
+            {
+                throw new BusinessException(Localization.For(() => ErrorMessages.NotMatchingCurrencies));
+            }
+
+            return new MoneyAmount(a.CurrencyCode, a.Amount + b.Amount);
         }
+
         public static MoneyAmount operator +(MoneyAmount a, decimal b)
         {
             return new MoneyAmount(a.CurrencyCode, a.Amount + b);
         }
 
-        public static MoneyAmount operator -(MoneyAmount a, MoneyAmount b)
-		{
-			if (a.CurrencyCode != b.CurrencyCode)
-			{
-				throw new BusinessException(Localization.For(() => ErrorMessages.NotMatchingCurrencies));
-			}
-			return new MoneyAmount(a.CurrencyCode, a.Amount - b.Amount);
+        public static MoneyAmount operator /(MoneyAmount a, decimal b)
+        {
+            return new MoneyAmount(a.CurrencyCode, a.Amount / b);
         }
+
+        public static MoneyAmount operator *(MoneyAmount a, decimal b)
+        {
+            return new MoneyAmount(a.CurrencyCode, a.Amount * b);
+        }
+
+        public static MoneyAmount operator -(MoneyAmount a, MoneyAmount b)
+        {
+            if (a.CurrencyCode != b.CurrencyCode)
+            {
+                throw new BusinessException(Localization.For(() => ErrorMessages.NotMatchingCurrencies));
+            }
+
+            return new MoneyAmount(a.CurrencyCode, a.Amount - b.Amount);
+        }
+
         public static MoneyAmount operator -(MoneyAmount a, decimal b)
         {
             return new MoneyAmount(a.CurrencyCode, a.Amount - b);
