@@ -68,6 +68,11 @@ namespace raBudget.Application.Features.Analysis.Query
             public MoneyAmount AmountPerDay => AmountTotal / DateRange.DayCount();
             public MoneyAmount AmountPerWeek => AmountTotal / DateRange.WeekCount(CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
             public MoneyAmount AmountPerMonth => AmountTotal / DateRange.MonthCount();
+
+            public decimal? AmountTotalChange { get; set; }
+            public decimal? AmountPerDayChange { get; set; }
+            public decimal? AmountPerWeekChange { get; set; }
+            public decimal? AmountPerMonthChange { get; set; }
         }
 
         public class BudgetCategoryDataPointDto
@@ -79,6 +84,11 @@ namespace raBudget.Application.Features.Analysis.Query
             public MoneyAmount AmountPerDay => AmountTotal / DateRange.DayCount();
             public MoneyAmount AmountPerWeek => AmountTotal / DateRange.WeekCount(CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
             public MoneyAmount AmountPerMonth => AmountTotal / DateRange.MonthCount();
+
+            public decimal? AmountTotalChange { get; set; }
+            public decimal? AmountPerDayChange { get; set; }
+            public decimal? AmountPerWeekChange { get; set; }
+            public decimal? AmountPerMonthChange { get; set; }
         }
 
 
@@ -135,7 +145,7 @@ namespace raBudget.Application.Features.Analysis.Query
                                                                                                           {
                                                                                                               var categoryId = category.BudgetCategoryId;
                                                                                                               var categoryAmount = periodGroup.Where(s => s.BudgetCategoryId == categoryId)
-                                                                                                                                              .Select(s => s.Amount + s.SubTransactions.Select(t=>t.Amount).Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b))
+                                                                                                                                              .Select(s => s.Amount + s.SubTransactions.Select(t => t.Amount).Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b))
                                                                                                                                               .Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b);
 
                                                                                                               return new BudgetCategoryDataPointDto()
@@ -150,7 +160,7 @@ namespace raBudget.Application.Features.Analysis.Query
 
                                                          var totalAmount = categoryDataPoints.Select(x => x.AmountTotal)
                                                                                              .Aggregate(new MoneyAmount(budgetCurrency.CurrencyCode, 0), (a, b) => a + b);
-                                                         
+
                                                          return new DateRangeData()
                                                                 {
                                                                     DateRange = period,
@@ -164,8 +174,57 @@ namespace raBudget.Application.Features.Analysis.Query
                                                                             }
                                                                 };
                                                      })
-                                             .OrderBy(x=>x.DateRange.Start)
+                                             .OrderBy(x => x.DateRange.Start)
                                              .ToList();
+
+                if (dateRanges.Count > 1)
+                {
+                    for (var i = 1; i < dateRanges.Count; i++)
+                    {
+                        var current = dateRanges[i];
+                        var previous = dateRanges[i - 1];
+
+                        foreach (var budgetCategoryDataPoint in current.BudgetCategories)
+                        {
+                            var previousBudgetCategoryDataPoint = previous.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryDataPoint.BudgetCategoryId);
+                            if (previousBudgetCategoryDataPoint == null)
+                            {
+                                continue;
+                                ;
+                            }
+
+                            budgetCategoryDataPoint.AmountTotalChange = previousBudgetCategoryDataPoint.AmountTotal.Amount > 0
+                                                                            ? (budgetCategoryDataPoint.AmountTotal.Amount - previousBudgetCategoryDataPoint.AmountTotal.Amount) / previousBudgetCategoryDataPoint.AmountTotal.Amount
+                                                                            : (decimal?) null;
+
+                            budgetCategoryDataPoint.AmountPerDayChange = previousBudgetCategoryDataPoint.AmountPerDay.Amount > 0
+                                                                             ? (budgetCategoryDataPoint.AmountPerDay.Amount - previousBudgetCategoryDataPoint.AmountPerDay.Amount) / previousBudgetCategoryDataPoint.AmountPerDay.Amount
+                                                                             : (decimal?) null;
+
+                            budgetCategoryDataPoint.AmountPerWeekChange = previousBudgetCategoryDataPoint.AmountPerWeek.Amount > 0
+                                                                              ? (budgetCategoryDataPoint.AmountPerWeek.Amount - previousBudgetCategoryDataPoint.AmountPerWeek.Amount) / previousBudgetCategoryDataPoint.AmountPerWeek.Amount
+                                                                              : (decimal?) null;
+
+                            budgetCategoryDataPoint.AmountPerMonthChange = previousBudgetCategoryDataPoint.AmountPerMonth.Amount > 0
+                                                                               ? (budgetCategoryDataPoint.AmountPerMonth.Amount - previousBudgetCategoryDataPoint.AmountPerMonth.Amount) / previousBudgetCategoryDataPoint.AmountPerMonth.Amount
+                                                                               : (decimal?) null;
+                        }
+
+                        current.Total.AmountTotalChange = previous.Total.AmountTotal.Amount > 0
+                                                              ? (current.Total.AmountTotal.Amount - previous.Total.AmountTotal.Amount) / previous.Total.AmountTotal.Amount
+                                                              : (decimal?) null;
+                        current.Total.AmountPerDayChange = previous.Total.AmountTotal.Amount > 0
+                                                               ? (current.Total.AmountPerDay.Amount - previous.Total.AmountPerDay.Amount) / previous.Total.AmountPerDay.Amount
+                                                               : (decimal?) null;
+                        current.Total.AmountPerWeekChange = previous.Total.AmountTotal.Amount > 0
+                                                                ? (current.Total.AmountPerWeek.Amount - previous.Total.AmountPerWeek.Amount) / previous.Total.AmountPerWeek.Amount
+                                                                : (decimal?) null;
+                        current.Total.AmountPerMonthChange = previous.Total.AmountTotal.Amount > 0
+                                                                 ? (current.Total.AmountPerMonth.Amount - previous.Total.AmountPerMonth.Amount) / previous.Total.AmountPerMonth.Amount
+                                                                 : (decimal?) null;
+                    }
+                }
+
                 var budgetCategoryTotals = dateRanges.SelectMany(x => x.BudgetCategories)
                                                      .GroupBy(x => x.BudgetCategoryId)
                                                      .Select(x => new BudgetCategoryDataPointDto()
