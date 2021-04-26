@@ -31,6 +31,7 @@ namespace raBudget.Domain.ValueObjects
         public eCurrencyCode CurrencyCode { get; set; }
         [JsonIgnore] public Currency Currency => new Currency(CurrencyCode);
         public decimal Amount { get; private set; }
+        public string Display => this.ToString();
 
         public bool Equals(MoneyAmount other)
         {
@@ -49,6 +50,16 @@ namespace raBudget.Domain.ValueObjects
             return this.Amount.GetHashCode();
         }
 
+        #region Overrides of Object
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return string.Format(Currency.NumberFormat, "{0:C}", Amount);
+        }
+
+        #endregion
+
         public static MoneyAmount operator +(MoneyAmount a, MoneyAmount b)
         {
             if (a.CurrencyCode != b.CurrencyCode)
@@ -66,7 +77,7 @@ namespace raBudget.Domain.ValueObjects
 
         public static MoneyAmount operator /(MoneyAmount a, decimal b)
         {
-            return new MoneyAmount(a.CurrencyCode, a.Amount / b);
+            return b > 0 ? new MoneyAmount(a.CurrencyCode, a.Amount / b) : null;
         }
 
         public static MoneyAmount operator *(MoneyAmount a, decimal b)
