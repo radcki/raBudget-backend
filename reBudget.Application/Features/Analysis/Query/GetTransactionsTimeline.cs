@@ -174,15 +174,15 @@ namespace raBudget.Application.Features.Analysis.Query
                                                                             }
                                                                 };
                                                      })
-                                             .OrderBy(x => x.DateRange.Start)
+                                             .OrderByDescending(x => x.DateRange.Start)
                                              .ToList();
 
                 if (dateRanges.Count > 1)
                 {
-                    for (var i = 1; i < dateRanges.Count; i++)
+                    for (var i = 0; i < dateRanges.Count-1; i++)
                     {
                         var current = dateRanges[i];
-                        var previous = dateRanges[i - 1];
+                        var previous = dateRanges[i + 1];
 
                         foreach (var budgetCategoryDataPoint in current.BudgetCategories)
                         {
