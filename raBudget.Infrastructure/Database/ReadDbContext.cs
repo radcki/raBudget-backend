@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
-using raBudget.Domain.ReadModels;
 using raBudget.Domain.ValueObjects;
+using Allocation = raBudget.Domain.ReadModels.Allocation;
+using Budget = raBudget.Domain.ReadModels.Budget;
+using BudgetBalance = raBudget.Domain.ReadModels.BudgetBalance;
+using BudgetCategory = raBudget.Domain.ReadModels.BudgetCategory;
+using BudgetCategoryBalance = raBudget.Domain.ReadModels.BudgetCategoryBalance;
+using BudgetCategoryIcon = raBudget.Domain.ReadModels.BudgetCategoryIcon;
+using SubTransaction = raBudget.Domain.ReadModels.SubTransaction;
+using Transaction = raBudget.Domain.ReadModels.Transaction;
+using TransactionTemplate = raBudget.Domain.ReadModels.TransactionTemplate;
 
 namespace raBudget.Infrastructure.Database
 {

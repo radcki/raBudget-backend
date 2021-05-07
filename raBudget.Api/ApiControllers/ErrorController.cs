@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using raBudget.Application.Features.Budget.Command;
 using raBudget.Application.Features.Dictionaries.Query;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 
 namespace raBudget.Api.ApiControllers
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Infrastructure.Database.Configuration

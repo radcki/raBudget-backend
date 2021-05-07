@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
-using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.Entities

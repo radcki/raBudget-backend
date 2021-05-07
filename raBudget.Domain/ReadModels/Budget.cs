@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using raBudget.Domain.Models;
+using raBudget.Domain.Entities;
 using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels

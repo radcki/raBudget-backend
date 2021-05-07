@@ -9,9 +9,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Interfaces;
 using raBudget.Common.Response;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 
 namespace raBudget.Application.Features.Dictionaries.Query
 {

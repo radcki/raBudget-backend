@@ -6,7 +6,6 @@ using FluentAssertions;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
-using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;
 using Xunit;
 

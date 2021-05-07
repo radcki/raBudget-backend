@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
-using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;
 using Xunit.Sdk;
 
