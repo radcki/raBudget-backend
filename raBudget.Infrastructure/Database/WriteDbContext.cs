@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using raBudget.Domain.ValueObjects;
 using raBudget.Infrastructure.Database.Configuration;
 

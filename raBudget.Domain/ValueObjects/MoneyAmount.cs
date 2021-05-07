@@ -7,10 +7,10 @@ using System.Text.Json.Serialization;
 using raBudget.Common.Attributes;
 using raBudget.Common.Interfaces;
 using raBudget.Common.Resources;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using RLib.Localization;
 
 namespace raBudget.Domain.ValueObjects
@@ -29,7 +29,8 @@ namespace raBudget.Domain.ValueObjects
         }
 
         public eCurrencyCode CurrencyCode { get; set; }
-        [JsonIgnore] public Currency Currency => new Currency(CurrencyCode);
+
+        [JsonIgnore] public Currency Currency => Currency.CurrencyDictionary[CurrencyCode];
         public decimal Amount { get; private set; }
         public string Display => this.ToString();
 

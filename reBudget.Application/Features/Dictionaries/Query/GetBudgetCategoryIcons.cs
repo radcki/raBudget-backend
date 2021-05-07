@@ -11,7 +11,6 @@ using raBudget.Common.Interfaces;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using raBudget.Domain.ReadModels;
 using raBudget.Domain.ValueObjects;
 

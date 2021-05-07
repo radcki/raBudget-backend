@@ -3,8 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using raBudget.Domain.Models;
-using raBudget.Domain.ReadModels;
+using raBudget.Domain.Entities;
+using Allocation = raBudget.Domain.ReadModels.Allocation;
+using Budget = raBudget.Domain.ReadModels.Budget;
+using BudgetBalance = raBudget.Domain.ReadModels.BudgetBalance;
+using BudgetCategory = raBudget.Domain.ReadModels.BudgetCategory;
+using BudgetCategoryBalance = raBudget.Domain.ReadModels.BudgetCategoryBalance;
+using BudgetCategoryIcon = raBudget.Domain.ReadModels.BudgetCategoryIcon;
+using Transaction = raBudget.Domain.ReadModels.Transaction;
+using TransactionTemplate = raBudget.Domain.ReadModels.TransactionTemplate;
 
 namespace raBudget.Domain.Interfaces
 {

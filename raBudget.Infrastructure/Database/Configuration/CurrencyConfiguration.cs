@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using raBudget.Domain.Models;
+using raBudget.Domain.Entities;
 
 namespace raBudget.Infrastructure.Database.Configuration
 {

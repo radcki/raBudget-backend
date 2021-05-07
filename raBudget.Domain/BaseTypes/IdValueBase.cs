@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using raBudget.Domain.Models;
 
 namespace raBudget.Domain.BaseTypes
 {

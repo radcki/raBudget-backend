@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using raBudget.Common.Response;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 

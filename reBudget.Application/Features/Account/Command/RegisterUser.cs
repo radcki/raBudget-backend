@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using MediatR;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Models;
 
 namespace raBudget.Application.Features.Account.Command
 {

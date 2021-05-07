@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using raBudget.Domain.Enums;
 
-namespace raBudget.Domain.Models
+namespace raBudget.Domain.Entities
 {
     public class Currency : IEquatable<Currency>
     {
@@ -74,6 +74,7 @@ namespace raBudget.Domain.Models
                 try
                 {
                     RegionInfo ri = new RegionInfo(ci.LCID);
+                    
                     if (ri.ISOCurrencySymbol == isoCode)
                         return ci;
                 }
