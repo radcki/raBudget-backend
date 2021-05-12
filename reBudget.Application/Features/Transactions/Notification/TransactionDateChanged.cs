@@ -93,7 +93,7 @@ namespace raBudget.Application.Features.Transactions.Notification
 																	   notification.NewDate.Month,
 																	   cancellationToken);
 
-				_ = _mediator.Publish(new BudgetCategoryBalanceChanged()
+				_ = _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
 				{
 					BudgetCategoryId = transaction.BudgetCategoryId
 				}, cancellationToken);

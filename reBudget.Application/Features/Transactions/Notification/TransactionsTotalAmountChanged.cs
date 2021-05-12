@@ -130,7 +130,7 @@ namespace raBudget.Application.Features.Transactions.Notification
                                                                            cancellationToken);
                 }
 
-                await _mediator.Publish(new BudgetCategoryBalanceChanged()
+                await _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
                                       {
                                           BudgetCategoryId = notification.ReferenceTransaction.BudgetCategoryId
                                       }, cancellationToken);

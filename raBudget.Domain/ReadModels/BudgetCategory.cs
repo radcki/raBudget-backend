@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.ValueObjects;
 
@@ -10,6 +11,7 @@ namespace raBudget.Domain.ReadModels
     {
         public BudgetCategoryId BudgetCategoryId { get; set; }
         public BudgetId BudgetId { get; set; }
+        public Currency Currency { get; set; }
         public string Name { get; set; }
         public int Order { get; set; }
         public string BudgetCategoryIconKey { get; set; }

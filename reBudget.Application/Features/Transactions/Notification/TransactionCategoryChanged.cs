@@ -72,12 +72,12 @@ namespace raBudget.Application.Features.Transactions.Notification
 																	   cancellationToken);
 
 
-				_ = _mediator.Publish(new BudgetCategoryBalanceChanged()
+				_ = _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
 				{
 					BudgetCategoryId = notification.OldBudgetCategoryId
 				}, cancellationToken);
 
-				_ = _mediator.Publish(new BudgetCategoryBalanceChanged()
+				_ = _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
 				{
 					BudgetCategoryId = notification.NewBudgetCategoryId
 				}, cancellationToken);
