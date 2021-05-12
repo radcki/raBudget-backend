@@ -26,7 +26,7 @@ namespace raBudget.Application.Features.Allocations.Command
 		}
         public class Notification : INotification
         {
-            public Allocation Allocation { get; set; }
+            public Allocation ReferenceAllocation { get; set; }
         }
 
 		public class Handler : IRequestHandler<Command, Result>
@@ -57,7 +57,7 @@ namespace raBudget.Application.Features.Allocations.Command
 
 				await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-                _ = _mediator.Publish(new Notification() { Allocation = allocation }, cancellationToken);
+                _ = _mediator.Publish(new Notification() { ReferenceAllocation = allocation }, cancellationToken);
 
 				return new Result()
 				{

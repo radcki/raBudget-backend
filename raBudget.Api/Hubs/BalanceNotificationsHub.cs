@@ -36,7 +36,7 @@ namespace raBudget.Api.Hubs
 		}
 
 
-		public class Listener : INotificationHandler<BudgetCategoryBalanceChanged>, 
+		public class Listener : INotificationHandler<BudgetCategoryBalanceChanged.Notification>, 
 								INotificationHandler<BudgetBalanceChanged>
 		{
 			private readonly BalanceNotificationsHub _balanceNotificationsHub;
@@ -46,7 +46,7 @@ namespace raBudget.Api.Hubs
 				_balanceNotificationsHub = balanceNotificationsHub;
 			}
 
-			public async Task Handle(BudgetCategoryBalanceChanged notification, CancellationToken cancellationToken)
+			public async Task Handle(BudgetCategoryBalanceChanged.Notification notification, CancellationToken cancellationToken)
 			{
 				await _balanceNotificationsHub.Send(BalanceNotificationEvents.BudgetCategoryBalanceChanged, notification);
 			}

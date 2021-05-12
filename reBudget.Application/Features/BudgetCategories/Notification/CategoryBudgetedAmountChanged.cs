@@ -14,6 +14,7 @@ using raBudget.Common.Extensions;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Application.Features.BudgetCategories.Notification
 {
@@ -24,12 +25,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
                                 INotificationHandler<RemoveBudgetCategory.Notification>,
                                 INotificationHandler<RemoveBudgetedAmount.Notification>,
                                 INotificationHandler<UpdateBudgetedAmountAmount.Notification>,
-                                INotificationHandler<UpdateBudgetedAmountValidFrom.Notification>,
-                                INotificationHandler<CreateAllocation.Notification>,
-                                INotificationHandler<RemoveAllocation.Notification>,
-                                INotificationHandler<UpdateAllocationAmount.Notification>,
-                                INotificationHandler<UpdateAllocationSourceCategory.Notification>,
-                                INotificationHandler<UpdateAllocationTargetCategory.Notification>
+                                INotificationHandler<UpdateBudgetedAmountValidFrom.Notification>
 
 
         {
@@ -47,7 +43,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
 
@@ -55,7 +51,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
 
@@ -63,7 +59,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
 
@@ -71,7 +67,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
 
@@ -79,7 +75,7 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
 
@@ -87,115 +83,14 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             {
                 await _mediator.Publish(new Notification()
                                         {
-                                            BudgetCategory = notification.ReferenceBudgetCategory
+                                            BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
                                         }, cancellationToken);
             }
-
-            /// <inheritdoc />
-            public async Task Handle(CreateAllocation.Notification notification, CancellationToken cancellationToken)
-            {
-                var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.TargetBudgetCategoryId);
-                await _mediator.Publish(new Notification()
-                                        {
-                                            BudgetCategory = targetCategory
-                                        }, cancellationToken);
-                if (notification.Allocation.SourceBudgetCategoryId != null)
-                {
-                    var sourceCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.SourceBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = sourceCategory
-                                            }, cancellationToken);
-                }
             }
-
-            /// <inheritdoc />
-            public async Task Handle(RemoveAllocation.Notification notification, CancellationToken cancellationToken)
-            {
-                var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.TargetBudgetCategoryId);
-                await _mediator.Publish(new Notification()
-                                        {
-                                            BudgetCategory = targetCategory
-                                        }, cancellationToken);
-                if (notification.Allocation.SourceBudgetCategoryId != null)
-                {
-                    var sourceCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.SourceBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = sourceCategory
-                                            }, cancellationToken);
-                }
-            }
-
-            /// <inheritdoc />
-            public async Task Handle(UpdateAllocationAmount.Notification notification, CancellationToken cancellationToken)
-            {
-                var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.TargetBudgetCategoryId);
-                await _mediator.Publish(new Notification()
-                                        {
-                                            BudgetCategory = targetCategory
-                                        }, cancellationToken);
-                if (notification.Allocation.SourceBudgetCategoryId != null)
-                {
-                    var sourceCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.Allocation.SourceBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = sourceCategory
-                                            }, cancellationToken);
-                }
-            }
-
-
-            /// <inheritdoc />
-            public async Task Handle(UpdateAllocationSourceCategory.Notification notification, CancellationToken cancellationToken)
-            {
-                if (notification.OldBudgetCategoryId != null)
-                {
-                    var sourceCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.OldBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = sourceCategory
-                                            }, cancellationToken);
-                }
-
-                if (notification.NewBudgetCategoryId != null)
-                {
-                    var sourceCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.NewBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = sourceCategory
-                                            }, cancellationToken);
-                }
-            }
-
-
-            /// <inheritdoc />
-            public async Task Handle(UpdateAllocationTargetCategory.Notification notification, CancellationToken cancellationToken)
-            {
-
-                if (notification.OldBudgetCategoryId != null)
-                {
-                    var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.OldBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = targetCategory
-                                            }, cancellationToken);
-                }
-
-                if (notification.NewBudgetCategoryId != null)
-                {
-                    var targetCategory = _writeDbContext.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.NewBudgetCategoryId);
-                    await _mediator.Publish(new Notification()
-                                            {
-                                                BudgetCategory = targetCategory
-                                            }, cancellationToken);
-                }
-            }
-        }
 
         public class Notification : INotification
         {
-            public BudgetCategory BudgetCategory { get; set; }
+            public List<BudgetCategory> BudgetCategories { get; set; }
         }
 
         public class Handler : INotificationHandler<Notification>
@@ -214,17 +109,24 @@ namespace raBudget.Application.Features.BudgetCategories.Notification
             /// <inheritdoc />
             public async Task Handle(Notification notification, CancellationToken cancellationToken)
             {
-                await _balanceService.CalculateBudgetCategoryBalance(notification.BudgetCategory.BudgetCategoryId, cancellationToken);
-                await _balanceService.CalculateBudgetBalance(notification.BudgetCategory.BudgetId, cancellationToken);
+                foreach (var budgetCategory in notification.BudgetCategories)
+                {
+                    await _balanceService.CalculateBudgetCategoryBalance(budgetCategory.BudgetCategoryId, cancellationToken);
+                    await _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
+                                            {
+                                                BudgetCategoryId = budgetCategory.BudgetCategoryId
+                                            }, cancellationToken);
+                }
 
-                await _mediator.Publish(new BudgetBalanceChanged()
-                                        {
-                                            BudgetId = notification.BudgetCategory.BudgetId
-                                        }, cancellationToken);
-                await _mediator.Publish(new BudgetCategoryBalanceChanged()
-                                        {
-                                            BudgetCategoryId = notification.BudgetCategory.BudgetCategoryId
-                                        }, cancellationToken);
+
+                foreach (var budgetId in notification.BudgetCategories.Select(x => x.BudgetId).Distinct())
+                {
+                    await _balanceService.CalculateBudgetBalance(budgetId, cancellationToken);
+                    await _mediator.Publish(new BudgetBalanceChanged()
+                                            {
+                                                BudgetId = budgetId
+                                            }, cancellationToken);
+                }
             }
         }
     }

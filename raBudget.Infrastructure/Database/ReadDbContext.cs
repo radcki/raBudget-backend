@@ -63,7 +63,8 @@ namespace raBudget.Infrastructure.Database
                                                                     ValidFrom = s.ValidFrom,
                                                                     ValidTo = s.ValidTo
                                                                 })
-                                                   .ToList()
+                                                   .ToList(),
+                                Currency = _db.Budgets.FirstOrDefault(s=>x.BudgetId == s.BudgetId).Currency
                             });
 
         /// <inheritdoc />
