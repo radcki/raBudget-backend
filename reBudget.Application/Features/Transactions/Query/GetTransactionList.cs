@@ -36,6 +36,7 @@ namespace raBudget.Application.Features.Transactions.Query
 
         public class Result : CollectionResponse<TransactionDto>
         {
+            public MoneyAmount AmountTotal => Data.Count > 0 ? Data.Select(x => x.TotalAmount).Aggregate((amount, moneyAmount) => amount + moneyAmount) : null;
         }
 
         public class TransactionDto
@@ -84,8 +85,9 @@ namespace raBudget.Application.Features.Transactions.Query
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                 if (request.BudgetCategoryIds != null && request.BudgetCategoryIds.Any())
                 {
-                    budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s=>s == x));
+                    budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s => s == x));
                 }
+
                 var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
 
                 var query = _readDb.Transactions.Where(x => budgetCategoryIds.Contains(x.BudgetCategoryId));
@@ -99,6 +101,7 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     query = query.Where(x => x.TransactionDate >= request.TransactionDateStart.Value.Date);
                 }
+
                 if (request.TransactionDateEnd != null)
                 {
                     query = query.Where(x => x.TransactionDate <= request.TransactionDateEnd.Value.Date);
@@ -108,18 +111,20 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     query = query.Where(x => x.Amount.Amount >= request.MinAmount);
                 }
+
                 if (request.MaxAmount != null)
                 {
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
-                
+
                 var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);
                 return new Result()
                        {
                            Data = data,
-                           Total = query.Count()
+                           Total = query.Count(),
+                           PageSize = request.PageSize
                        };
             }
         }

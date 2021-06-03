@@ -39,6 +39,7 @@ namespace raBudget.Application.Features.Allocations.Query
 
 		public class Result : CollectionResponse<AllocationDto>
 		{
+            public MoneyAmount AmountTotal => Data.Count > 0 ? Data.Select(x => x.Amount).Aggregate((amount, moneyAmount) => amount + moneyAmount) : null;
 		}
 
 		public class AllocationDto
