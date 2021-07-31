@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -237,6 +238,7 @@ namespace raBudget.Domain.Entities
                 SetValidToDates();
             }
 
+           
             public void SetItemValidFromDate(BudgetedAmount item, DateTime date)
             {
                 if (!this.Contains(item))
@@ -262,7 +264,10 @@ namespace raBudget.Domain.Entities
                     {
                         current.SetValidToDate(null);
                     }
+
+                    this[i] = current;
                 }
+
             }
         }
 

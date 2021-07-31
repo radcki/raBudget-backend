@@ -61,7 +61,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             {
                 configuration.CreateMap<Domain.ReadModels.BudgetCategory.BudgetedAmount, BudgetedAmountDto>();
                 configuration.CreateMap<Domain.ReadModels.BudgetCategory, BudgetCategoryDto>()
-                             .ForMember(dest => dest.BudgetedAmounts, opt => opt.MapFrom(src => src.BudgetedAmounts));
+                             .ForMember(dest => dest.BudgetedAmounts, opt => opt.MapFrom(src => src.BudgetedAmounts.OrderBy(x => x.ValidFrom)));
             }
         }
 
