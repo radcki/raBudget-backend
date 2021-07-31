@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Application.Features.BudgetCategories.Query;
+using raBudget.Common.Extensions;
+using raBudget.Common.Interfaces;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
+using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -24,8 +30,27 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public DateTime ValidFrom { get; set; }
         }
 
-        public class Result : SingleResponse<BudgetedAmountDto>
+        public class Result : SingleResponse<BudgetCategoryDto>
         {
+        }
+
+        public class BudgetCategoryDto
+        {
+            public BudgetCategoryId BudgetCategoryId { get; set; }
+            public string BudgetCategoryIconKey { get; set; }
+            public BudgetCategoryIconId BudgetCategoryIconId { get; set; }
+            public BudgetId BudgetId { get; set; }
+            public eBudgetCategoryType BudgetCategoryType { get; set; }
+            public int Order { get; set; }
+            public string Name { get; set; }
+
+            public MoneyAmount CurrentBudgetedAmount => BudgetedAmounts != null
+                                                        && BudgetedAmounts.Any()
+                                                            ? BudgetedAmounts.First(x => x.ValidFrom <= DateTime.Today && (x.ValidTo == null || x.ValidTo >= DateTime.Today))
+                                                                             .Amount
+                                                            : null;
+
+            public List<BudgetedAmountDto> BudgetedAmounts { get; set; }
         }
 
         public class BudgetedAmountDto
@@ -42,18 +67,30 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public BudgetCategory.BudgetedAmount ReferenceBudgetedAmount { get; set; }
 		}
 
+        public class Mapper : IHaveCustomMapping
+        {
+            public void CreateMappings(Profile configuration)
+            {
+                configuration.CreateMap<BudgetCategory.BudgetedAmount, BudgetedAmountDto>();
+                configuration.CreateMap<BudgetCategory, BudgetCategoryDto>()
+                             .ForMember(dest => dest.BudgetedAmounts, opt => opt.MapFrom(src => src.BudgetedAmounts.OrderBy(x => x.ValidFrom)));
+            }
+        }
+
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
 			private readonly IMediator _mediator;
+            private readonly IMapper _mapper;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator, IMapper mapper)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
 				_mediator = mediator;
-			}
+                _mapper = mapper;
+            }
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
@@ -63,9 +100,10 @@ namespace raBudget.Application.Features.BudgetCategories.Command
                 }
 
                 var budgetCategory = await _writeDbContext.BudgetCategories
+                                                          .Include(x=>x.BudgetedAmounts)
                                                           .FirstOrDefaultAsync(x => x.BudgetCategoryId == request.BudgetCategoryId, cancellationToken);
 
-                var budgetedAmount = budgetCategory.AddBudgetedAmount(request.Amount, request.ValidFrom);
+                var budgetedAmount = budgetCategory.AddBudgetedAmount(request.Amount, request.ValidFrom.StartOfMonth());
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
@@ -77,13 +115,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           Data = new BudgetedAmountDto()
-                                  {
-                                      Amount = budgetedAmount.Amount,
-                                      BudgetedAmountId = budgetedAmount.BudgetedAmountId,
-                                      ValidFrom = budgetedAmount.ValidFrom,
-                                      ValidTo = budgetedAmount.ValidTo
-                                  }
+                           Data = _mapper.Map<BudgetCategoryDto>(budgetCategory)
                        };
             }
         }
