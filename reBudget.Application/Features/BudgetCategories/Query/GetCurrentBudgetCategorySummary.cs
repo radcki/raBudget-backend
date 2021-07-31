@@ -64,15 +64,21 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 foreach (var budgetCategoryId in request.BudgetCategoryIds)
                 {
                     var balances = _balanceService.GetCategoryBalances(budgetCategoryId, null, null).ToList();
-                    var thisMonthBalance = balances.First(x => x.Year == DateTime.Today.Year && x.Month == DateTime.Today.Month);
+                    var thisMonthBalance = balances.FirstOrDefault(x => x.Year == DateTime.Today.Year && x.Month == DateTime.Today.Month);
                     var balance = new BudgetCategoryBalanceDto()
                                   {
                                       BudgetCategoryId = budgetCategoryId,
-                                      ThisMonthTransactionsTotal = thisMonthBalance.TransactionsTotal,
-                                      ThisMonthBudgetedAmount = thisMonthBalance.BudgetedAmount,
-                                      TotalTransactionsBalance = new MoneyAmount(thisMonthBalance.BudgetedAmount.CurrencyCode, balances.Sum(x => x.TransactionsTotal.Amount + x.AllocationsTotal.Amount))
+                                      ThisMonthTransactionsTotal = thisMonthBalance?.TransactionsTotal,
+                                      ThisMonthBudgetedAmount = thisMonthBalance?.BudgetedAmount,
+                                      TotalTransactionsBalance = thisMonthBalance != null
+                                                                     ? new MoneyAmount(thisMonthBalance.BudgetedAmount.CurrencyCode, balances.Sum(x => x.TransactionsTotal.Amount + x.AllocationsTotal.Amount))
+                                                                     : null
                                   };
-                    balance.ThisMonthBudgetedAmountLeft = balance.ThisMonthBudgetedAmount - balance.ThisMonthTransactionsTotal;
+                    if (balance.ThisMonthBudgetedAmount != null)
+                    {
+                        balance.ThisMonthBudgetedAmountLeft = balance.ThisMonthBudgetedAmount - balance.ThisMonthTransactionsTotal;
+                    }
+
                     responseData.Add(balance);
                 }
 

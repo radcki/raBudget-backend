@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
@@ -18,6 +19,8 @@ namespace raBudget.Domain.ReadModels
         public BudgetCategoryIconId BudgetCategoryIconId { get; set; }
         public List<BudgetedAmount> BudgetedAmounts { get; set; }
         public eBudgetCategoryType BudgetCategoryType { get; set; }
+
+        public MoneyAmount CurrentBudgetedAmount => BudgetedAmounts?.FirstOrDefault(x => x.ValidFrom <= DateTime.Today && (x.ValidTo == null || x.ValidTo >= DateTime.Today))?.Amount;
 
         public class BudgetedAmount
         {

@@ -15,6 +15,8 @@ namespace raBudget.Infrastructure.Database.Configuration
             builder.Property(x => x.BudgetCategoryId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryId(i));
             builder.Property(x => x.BudgetId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetId(i));
             builder.HasOne(x => x.BudgetCategoryIcon).WithMany().HasForeignKey(x=>x.BudgetCategoryIconId);
+
+            builder.HasQueryFilter(x => !x.Deleted);
         }
     }
 }
