@@ -118,10 +118,9 @@ namespace raBudget.Domain.Services
                 await _writeDb.SaveChangesAsync(cancellationToken);
             }
 
-            var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId)
-                                 ?? throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
+            var budgetCategory = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == budgetCategoryId);
 
-            if (!budgetCategory.BudgetedAmounts.Any())
+            if (budgetCategory == null || !budgetCategory.BudgetedAmounts.Any())
             {
                 return;
             }

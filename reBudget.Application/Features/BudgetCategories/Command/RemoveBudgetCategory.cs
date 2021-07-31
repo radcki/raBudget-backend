@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -52,7 +53,11 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 var budgetCategory = await _writeDbContext.BudgetCategories
                                                           .FirstOrDefaultAsync(x => x.BudgetCategoryId == request.BudgetCategoryId, cancellationToken);
-                _writeDbContext.BudgetCategories.Remove(budgetCategory);
+
+                await _writeDbContext.Allocations.Where(x => x.SourceBudgetCategoryId == budgetCategory.BudgetCategoryId || x.TargetBudgetCategoryId == budgetCategory.BudgetCategoryId).ForEachAsync(x => x.SoftDelete(), cancellationToken: cancellationToken);
+                await _writeDbContext.Transactions.Where(x => x.BudgetCategoryId == budgetCategory.BudgetCategoryId).ForEachAsync(x => x.SoftDelete(), cancellationToken: cancellationToken);
+
+                budgetCategory.SoftDelete();
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 

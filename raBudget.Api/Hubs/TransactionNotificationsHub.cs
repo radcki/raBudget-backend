@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using raBudget.Application.Features.BudgetCategories.Command;
 using raBudget.Application.Features.BudgetCategories.Notification;
 using raBudget.Application.Features.Budgets.Notification;
 using raBudget.Application.Features.Transactions.Command;
@@ -46,8 +47,9 @@ namespace raBudget.Api.Hubs
                                 INotificationHandler<RemoveSubTransaction.Notification>,
                                 INotificationHandler<UpdateTransactionDate.Notification>,
                                 INotificationHandler<UpdateTransactionCategory.Notification>,
-                                INotificationHandler<UpdateTransactionDescription.Notification>
-        {
+                                INotificationHandler<UpdateTransactionDescription.Notification>,
+                                INotificationHandler<RemoveBudgetCategory.Notification>
+                                {
             private readonly TransactionNotificationsHub _transactionNotificationsHub;
 
             public Listener(TransactionNotificationsHub transactionNotificationsHub)
@@ -62,6 +64,11 @@ namespace raBudget.Api.Hubs
 
             /// <inheritdoc />
             public async Task Handle(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
+            {
+                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionListChanged, notification);
+            }
+            /// <inheritdoc />
+            public async Task Handle(RemoveBudgetCategory.Notification notification, CancellationToken cancellationToken)
             {
                 await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionListChanged, notification);
             }

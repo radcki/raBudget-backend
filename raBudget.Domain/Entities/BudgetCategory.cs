@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using raBudget.Common.Entities;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
@@ -10,7 +11,7 @@ using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.Entities
 {
-    public class BudgetCategory
+    public class BudgetCategory : BaseEntity
     {
         #region Constructors
 

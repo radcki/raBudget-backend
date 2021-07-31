@@ -43,13 +43,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public eBudgetCategoryType BudgetCategoryType { get; set; }
             public int Order { get; set; }
             public string Name { get; set; }
-
-            public MoneyAmount CurrentBudgetedAmount => BudgetedAmounts != null
-                                                        && BudgetedAmounts.Any()
-                                                            ? BudgetedAmounts.First(x => x.ValidFrom <= DateTime.Today && (x.ValidTo == null || x.ValidTo >= DateTime.Today))
-                                                                             .Amount
-                                                            : null;
-
+            public MoneyAmount CurrentBudgetedAmount { get; set; }
             public List<BudgetedAmountDto> BudgetedAmounts { get; set; }
         }
 

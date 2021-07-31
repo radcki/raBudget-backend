@@ -18,7 +18,7 @@ namespace raBudget.Common.Resources
 
         [Localized(KnownCulture.Polish, "Kategoria budżetowa nie została odnaleziona")]
         public static string BudgetCategoryNotFound = "";
-
+        
         [Localized(KnownCulture.Polish, "Transakcja nie została odnaleziona")]
         public static string TransactionNotFound = "";
 

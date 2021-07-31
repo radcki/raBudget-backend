@@ -78,21 +78,21 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 
                 var spendingSummary = new BudgetedAmountSummaryDto
                                       {
-                                          CurrentBudgetedAmount = spendingBalances.Select(x => x.ThisMonthBudgetedAmount).Aggregate((a, b) => a + b),
-                                          TotalBudgetedAmount = spendingBalances.Select(x => x.TotalBudgetedAmount).Aggregate((a, b) => a + b),
-                                          ThisYearBudgetedAmount = spendingBalances.Select(x => x.ThisYearBudgetedAmount).Aggregate((a, b) => a + b),
+                                          CurrentBudgetedAmount = spendingBalances.Select(x => x.ThisMonthBudgetedAmount).Where(x=>x != null).Aggregate((a, b) => a + b),
+                                          TotalBudgetedAmount = spendingBalances.Select(x => x.TotalBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
+                                          ThisYearBudgetedAmount = spendingBalances.Select(x => x.ThisYearBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
                                       };
                 var incomeSummary = new BudgetedAmountSummaryDto
                                     {
-                                        CurrentBudgetedAmount = incomeBalances.Select(x => x.ThisMonthBudgetedAmount).Aggregate((a, b) => a + b),
-                                        TotalBudgetedAmount = incomeBalances.Select(x => x.TotalBudgetedAmount).Aggregate((a, b) => a + b),
-                                        ThisYearBudgetedAmount = incomeBalances.Select(x => x.ThisYearBudgetedAmount).Aggregate((a, b) => a + b),
+                                        CurrentBudgetedAmount = incomeBalances.Select(x => x.ThisMonthBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
+                                        TotalBudgetedAmount = incomeBalances.Select(x => x.TotalBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
+                                        ThisYearBudgetedAmount = incomeBalances.Select(x => x.ThisYearBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
                                     };
                 var savingSummary = new BudgetedAmountSummaryDto
                                     {
-                                        CurrentBudgetedAmount = savingBalances.Select(x => x.ThisMonthBudgetedAmount).Aggregate((a, b) => a + b),
-                                        TotalBudgetedAmount = savingBalances.Select(x => x.TotalBudgetedAmount).Aggregate((a, b) => a + b),
-                                        ThisYearBudgetedAmount = savingBalances.Select(x => x.ThisYearBudgetedAmount).Aggregate((a, b) => a + b),
+                                        CurrentBudgetedAmount = savingBalances.Select(x => x.ThisMonthBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
+                                        TotalBudgetedAmount = savingBalances.Select(x => x.TotalBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
+                                        ThisYearBudgetedAmount = savingBalances.Select(x => x.ThisYearBudgetedAmount).Where(x => x != null).Aggregate((a, b) => a + b),
                                     };
 
                 var totalSummary = new BudgetedAmountSummaryDto
