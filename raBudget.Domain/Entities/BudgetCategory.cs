@@ -50,6 +50,8 @@ namespace raBudget.Domain.Entities
         public BudgetedAmountCollection BudgetedAmounts { get; private set; }
         public eBudgetCategoryType BudgetCategoryType { get; private set; }
 
+        public MoneyAmount CurrentBudgetedAmount => BudgetedAmounts?.FirstOrDefault(x => x.ValidFrom <= DateTime.Today && (x.ValidTo == null || x.ValidTo >= DateTime.Today))?.Amount;
+
         #endregion
 
         #region Methods
