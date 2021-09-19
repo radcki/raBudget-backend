@@ -49,6 +49,7 @@ namespace raBudget.Domain.ValueObjects
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
+            Console.WriteLine("BudgetCategoryIdTypeConverter ConvertFrom");
             if (value is string stringValue)
             {
                 return new BudgetCategoryId(Guid.ParseExact(stringValue, "N"));
