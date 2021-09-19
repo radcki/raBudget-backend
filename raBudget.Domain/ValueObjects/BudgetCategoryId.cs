@@ -40,6 +40,7 @@ namespace raBudget.Domain.ValueObjects
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
+            Console.WriteLine("CanConvertFrom " + sourceType.ToString());
             if (sourceType == typeof(string))
             {
                 return true;
