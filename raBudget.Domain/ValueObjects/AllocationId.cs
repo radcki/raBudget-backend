@@ -23,7 +23,7 @@ namespace raBudget.Domain.ValueObjects
     public class AllocationIdConverter : JsonConverter<AllocationId>
     {
         /// <inheritdoc />
-        public override AllocationId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override AllocationId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return new AllocationId(Guid.ParseExact(reader.GetString(), "N"));
         }

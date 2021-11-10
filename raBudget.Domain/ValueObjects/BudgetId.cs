@@ -23,7 +23,7 @@ namespace raBudget.Domain.ValueObjects
     public class BudgetIdConverter : JsonConverter<BudgetId>
     {
         /// <inheritdoc />
-        public override BudgetId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override BudgetId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return new BudgetId(Guid.ParseExact(reader.GetString(), "N"));
         }

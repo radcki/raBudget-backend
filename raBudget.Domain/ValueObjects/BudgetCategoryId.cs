@@ -18,7 +18,7 @@ namespace raBudget.Domain.ValueObjects
     public class BudgetCategoryIdConverter : JsonConverter<BudgetCategoryId>
     {
         /// <inheritdoc />
-        public override BudgetCategoryId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override BudgetCategoryId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var value = reader.GetString();
             return string.IsNullOrWhiteSpace(value) 
