@@ -124,11 +124,13 @@ namespace raBudget.Infrastructure.Database
         /// <inheritdoc />
         public IQueryable<Currency> Currencies =>
             _db.Currencies
+               .AsNoTracking()
                .OrderBy(x => x.NativeName)
                .Select(x => new Currency(x.CurrencyCode));
 
         public IQueryable<BudgetCategoryIcon> BudgetCategoryIcons =>
             _db.BudgetCategoryIcons
+               .AsNoTracking()
                .OrderBy(x => x.IconKey)
                .Select(x => new BudgetCategoryIcon()
                             {

@@ -15,7 +15,7 @@ namespace raBudget.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.6");
 
             modelBuilder.Entity("raBudget.Domain.Entities.Allocation", b =>
                 {
@@ -28,8 +28,14 @@ namespace raBudget.Api.Migrations
                     b.Property<DateTime>("CreationDateTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<Guid?>("SourceBudgetCategoryId")
                         .HasColumnType("char(36)");
@@ -51,10 +57,10 @@ namespace raBudget.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("OwnerUserId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("StartingDate")
                         .HasColumnType("datetime(6)");
@@ -93,8 +99,14 @@ namespace raBudget.Api.Migrations
                     b.Property<Guid?>("BudgetId")
                         .HasColumnType("char(36)");
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -154,7 +166,7 @@ namespace raBudget.Api.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("IconKey")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("BudgetCategoryIconId");
 
@@ -163,293 +175,232 @@ namespace raBudget.Api.Migrations
                     b.HasData(
                         new
                         {
-                            BudgetCategoryIconId = new Guid("736efd59-f867-494f-9ce8-b220868a3eb3"),
+                            BudgetCategoryIconId = new Guid("5e8d6d95-9b5d-41fc-9d5e-6bd7c67cbbdf"),
                             IconKey = "mdi-car"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("1fcf4e3b-edac-485b-9de5-4b6f6f29cbbe"),
+                            BudgetCategoryIconId = new Guid("ade5d9d2-62a3-460d-8221-6a512e1dae3a"),
                             IconKey = "mdi-cart"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ccfd6056-5c60-4903-b16c-117089262a86"),
+                            BudgetCategoryIconId = new Guid("b8b1701d-567c-4072-86af-691143cfdf58"),
                             IconKey = "mdi-train-car"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("79f042df-ebf8-4469-8502-a06ce1460a77"),
+                            BudgetCategoryIconId = new Guid("adcac3e4-2431-47f0-92b5-43cc28477a55"),
                             IconKey = "mdi-wallet-travel"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("455edacd-16a2-4425-9572-42d34cec4837"),
+                            BudgetCategoryIconId = new Guid("971552c6-c014-4c70-8e2e-7348a7816b3a"),
                             IconKey = "mdi-wrench"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("807e296e-ec8c-4889-92d1-e5ea19428324"),
+                            BudgetCategoryIconId = new Guid("fe0b4e20-d784-4d9c-b674-be1f18b11337"),
                             IconKey = "mdi-basket"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("324ef057-8a9c-4dc0-a36c-e4ee014bf516"),
+                            BudgetCategoryIconId = new Guid("3c29fe93-4057-41f4-87b9-ae3aad1d7ac7"),
                             IconKey = "mdi-gamepad"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("294434a9-c6cc-458b-8588-a1a91c38cc49"),
+                            BudgetCategoryIconId = new Guid("4cdd7d26-2a55-41da-8619-7d43cde3f98b"),
                             IconKey = "mdi-phone"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("2857d744-4744-4d67-a67b-068c645fe1ac"),
+                            BudgetCategoryIconId = new Guid("050a5651-ecba-42d6-bec9-ec4bce99878e"),
                             IconKey = "mdi-airplane"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("23ac59ef-c4b1-42d2-9090-f5f0697bda26"),
+                            BudgetCategoryIconId = new Guid("2dbe3259-dd7f-4932-b268-152d2ce628aa"),
                             IconKey = "mdi-currency-usd-circle-outline"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("952ee913-4e7e-43d0-b86e-2515eae4f6f6"),
+                            BudgetCategoryIconId = new Guid("a81dcc76-8466-4321-bf26-45e01eb4fa25"),
                             IconKey = "mdi-format-paint"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("0da74798-baa2-4646-9fca-bad9210ca261"),
+                            BudgetCategoryIconId = new Guid("05ded520-c1a0-43be-8c5c-46f2105127ce"),
                             IconKey = "mdi-gamepad-square"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("45f2e112-3991-49c3-9ede-661ab099fc9c"),
+                            BudgetCategoryIconId = new Guid("3126c9b1-c645-4236-b1fb-6a903af4a425"),
                             IconKey = "mdi-laptop"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("19789209-2651-474c-aadd-eb9c1a82636e"),
+                            BudgetCategoryIconId = new Guid("abfcd591-bb46-4140-8df7-78b918bf5d54"),
                             IconKey = "mdi-camera"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("0b72cfe6-ea67-453f-ab4f-6d04d19ff835"),
+                            BudgetCategoryIconId = new Guid("33297c9c-9e7c-430a-b26c-156db92ebacb"),
                             IconKey = "mdi-city"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ae9408b6-d9bb-4bb1-8f9e-39a01e9f2987"),
+                            BudgetCategoryIconId = new Guid("d7eefaa0-7a28-44bd-a2b8-9acc285f1d67"),
                             IconKey = "mdi-fire"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("01623131-8751-4816-90ff-3561bfb8e660"),
+                            BudgetCategoryIconId = new Guid("63708afd-2981-443a-bf42-20abd0ca7569"),
                             IconKey = "mdi-dumbbell"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("95c8fb1c-8e8b-4766-85c5-22e1789fedb5"),
+                            BudgetCategoryIconId = new Guid("33abc471-0ebf-4010-b5ae-616d69a27843"),
                             IconKey = "mdi-coffee"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("6bd8ff5a-1b87-48d2-85dc-735c5d7a05ca"),
+                            BudgetCategoryIconId = new Guid("142e320c-9443-42bb-bb90-94424e4892da"),
                             IconKey = "mdi-dice-5"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("e307c6b6-07c9-4f00-bb68-8b4091c9e92c"),
+                            BudgetCategoryIconId = new Guid("d48ad1c7-ab9b-40e0-a9cf-8e75cebdce4a"),
                             IconKey = "mdi-beach"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("18f13d4b-bc59-4e26-9dcb-823b03b98808"),
+                            BudgetCategoryIconId = new Guid("5afab896-c136-4038-b877-5689f0b737d0"),
                             IconKey = "mdi-bus-articulated-front"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("13903ac1-da94-4a14-b70b-2216ff6ec758"),
+                            BudgetCategoryIconId = new Guid("9017e6df-31ad-4f26-9823-c18649fb0050"),
                             IconKey = "mdi-smoking"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("a5ed95d9-9cc5-4513-b638-1d9c3b62ecb3"),
+                            BudgetCategoryIconId = new Guid("d6becd4b-5787-4e5a-84ba-aa7d4fba4dba"),
                             IconKey = "mdi-fridge"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("d33b65fb-db13-4a28-ad85-dd81e6f0b1d2"),
+                            BudgetCategoryIconId = new Guid("9babdfb1-2a4c-4dfd-8ab3-156318b8dfa9"),
                             IconKey = "mdi-baby-face"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("354876d7-f2fb-4e6c-9dac-8bcca969b0de"),
+                            BudgetCategoryIconId = new Guid("2ebcf1a1-b189-4810-a752-5135834de4b0"),
                             IconKey = "mdi-paw"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("e5a1c718-1705-4e5d-8425-c9e82f76a9c8"),
+                            BudgetCategoryIconId = new Guid("04d78c03-4815-43d3-85bc-0be77feb7830"),
                             IconKey = "mdi-bandage"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("cc4a0fb8-8a38-424e-9c77-a9951d59cadd"),
+                            BudgetCategoryIconId = new Guid("78a22cc1-ff4f-4451-bef2-4b1d7a22f92d"),
                             IconKey = "mdi-human"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("11833fd4-f96c-491f-aa9a-c3801fec7630"),
+                            BudgetCategoryIconId = new Guid("d761ff55-56cc-4bbb-941f-df3e337ab340"),
                             IconKey = "mdi-sofa"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("78001c20-f03a-4d6b-8c5a-94031f3acd24"),
+                            BudgetCategoryIconId = new Guid("35e4a316-757c-4eac-8106-42e44ce6f202"),
                             IconKey = "mdi-memory"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("7469a967-ce81-46e0-818f-1fa64f462e8b"),
+                            BudgetCategoryIconId = new Guid("3a970a19-2543-4079-9e1b-e2bd9d8ca9b3"),
                             IconKey = "mdi-cellphone-android"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("2610e7df-7d9d-4d80-a2c0-8ff9d2f4075b"),
+                            BudgetCategoryIconId = new Guid("9ac070b6-760f-4fdd-9395-b36b07e46096"),
                             IconKey = "mdi-speaker"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("379d1c00-9b3b-4297-90b6-6c2d6f39e0a0"),
+                            BudgetCategoryIconId = new Guid("b4f0048f-0577-416c-8489-f31ec24cdf9d"),
                             IconKey = "mdi-sim"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("099092e8-ce4e-4913-afc5-a739fb604bd3"),
+                            BudgetCategoryIconId = new Guid("21d70b28-1532-44a0-985f-d2c97d4db1cf"),
                             IconKey = "mdi-silverware-fork-knife"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("03fb20c5-b0fd-490e-8b28-cdf3ed572422"),
+                            BudgetCategoryIconId = new Guid("2f473088-bbfe-44de-8dc2-d264e105e9e0"),
                             IconKey = "mdi-food"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("579d4d94-850f-437e-8e6b-2db279f761b9"),
+                            BudgetCategoryIconId = new Guid("fea7aef0-854c-42f5-84d0-c92fd4a6fc84"),
                             IconKey = "mdi-gas-station"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("e2751582-af71-43cd-9f28-1b3af8522d60"),
+                            BudgetCategoryIconId = new Guid("05cb0931-6023-49be-8112-67cf19f43217"),
                             IconKey = "mdi-hospital-building"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("10762299-cf16-43a0-90bf-919f5094f2ab"),
+                            BudgetCategoryIconId = new Guid("61aba482-a483-452a-adfa-fabccae6d29c"),
                             IconKey = "mdi-shopping"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("b819fb3d-893f-4c12-9752-8d3bbc2a32b7"),
+                            BudgetCategoryIconId = new Guid("0098fb49-45b6-4f54-b7f2-df5c0654723e"),
                             IconKey = "mdi-glass-cocktail"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("f37b9427-7d5e-4290-a1b5-55fef7ebe68c"),
+                            BudgetCategoryIconId = new Guid("0b12e5fe-367d-4f5f-b7ea-1175c14c5fcd"),
                             IconKey = "mdi-filmstrip"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("f135c0a2-71a6-442f-9cb1-986f23e6805c"),
+                            BudgetCategoryIconId = new Guid("b005e998-0c0b-4ddc-bd73-166a67e8659b"),
                             IconKey = "mdi-bike"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("ac2db726-2845-4fde-81ee-8ebf15680f03"),
+                            BudgetCategoryIconId = new Guid("2b9e95b8-1b25-4ef7-a1bb-dab9e2607b91"),
                             IconKey = "mdi-motorbike"
                         },
                         new
                         {
-                            BudgetCategoryIconId = new Guid("adc0a01f-b975-4d11-af7f-456433a4a208"),
+                            BudgetCategoryIconId = new Guid("b9414560-67f9-41fb-ba6d-61b929ccd125"),
                             IconKey = "mdi-wallet-giftcard"
                         });
                 });
 
-            modelBuilder.Entity("raBudget.Domain.Entities.SubTransaction", b =>
-                {
-                    b.Property<Guid>("SubTransactionId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreationDateTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid?>("ParentTransactionId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("TransactionId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("SubTransactionId");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("SubTransaction");
-                });
-
-            modelBuilder.Entity("raBudget.Domain.Entities.Transaction", b =>
-                {
-                    b.Property<Guid>("TransactionId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("BudgetCategoryId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreationDateTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("TransactionId");
-
-                    b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("raBudget.Domain.Models.Currency", b =>
+            modelBuilder.Entity("raBudget.Domain.Entities.Currency", b =>
                 {
                     b.Property<int>("CurrencyCode")
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("EnglishName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("NativeName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Symbol")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("CurrencyCode");
 
@@ -1218,6 +1169,92 @@ namespace raBudget.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("raBudget.Domain.Entities.SubTransaction", b =>
+                {
+                    b.Property<Guid>("SubTransactionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreationDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("ParentTransactionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("TransactionId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("SubTransactionId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("SubTransaction");
+                });
+
+            modelBuilder.Entity("raBudget.Domain.Entities.Transaction", b =>
+                {
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("BudgetCategoryId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreationDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("TransactionId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("raBudget.Domain.Entities.TransactionTemplate", b =>
+                {
+                    b.Property<Guid>("TransactionTemplateId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("BudgetCategoryId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreationDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("TransactionTemplateId");
+
+                    b.ToTable("TransactionTemplates");
+                });
+
             modelBuilder.Entity("raBudget.Domain.Entities.Allocation", b =>
                 {
                     b.OwnsOne("raBudget.Domain.ValueObjects.MoneyAmount", "Amount", b1 =>
@@ -1244,7 +1281,7 @@ namespace raBudget.Api.Migrations
 
             modelBuilder.Entity("raBudget.Domain.Entities.Budget", b =>
                 {
-                    b.HasOne("raBudget.Domain.Models.Currency", null)
+                    b.HasOne("raBudget.Domain.Entities.Currency", null)
                         .WithMany()
                         .HasForeignKey("CurrencyCode")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1531,6 +1568,30 @@ namespace raBudget.Api.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("TransactionId");
+                        });
+
+                    b.Navigation("Amount");
+                });
+
+            modelBuilder.Entity("raBudget.Domain.Entities.TransactionTemplate", b =>
+                {
+                    b.OwnsOne("raBudget.Domain.ValueObjects.MoneyAmount", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("TransactionTemplateId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(65,30)");
+
+                            b1.Property<int>("CurrencyCode")
+                                .HasColumnType("int");
+
+                            b1.HasKey("TransactionTemplateId");
+
+                            b1.ToTable("TransactionTemplates");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TransactionTemplateId");
                         });
 
                     b.Navigation("Amount");
