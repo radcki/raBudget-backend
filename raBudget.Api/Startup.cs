@@ -45,7 +45,7 @@ namespace raBudget.Api
                                                                                         MariaDbServerVersion.LatestSupportedServerVersion,
                                                                                         builder => { builder.MigrationsAssembly("raBudget.Api"); });
                                                                    }, ServiceLifetime.Transient);
-            services.AddScoped<IReadDbContext, ReadDbContext>();
+            services.AddScoped<IReadDbContext, ReadDbContext>(); 
             services.AddTransient<AccessControlService>();
             services.AddTransient<BalanceService>();
 
@@ -76,7 +76,6 @@ namespace raBudget.Api
                                     {
                                         options.ModelBinderProviders.Insert(0, new ModelBinderProvider());
                                     })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                     .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; });
 
             services.AddSwaggerGen(options =>

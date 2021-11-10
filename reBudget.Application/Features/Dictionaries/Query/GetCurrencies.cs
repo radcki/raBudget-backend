@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using raBudget.Common.Interfaces;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
@@ -46,21 +48,23 @@ namespace raBudget.Application.Features.Dictionaries.Query
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
+            private readonly IMapper _mapper;
             private readonly MapperConfiguration _mapperConfiguration;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration)
+            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, IMapper mapper)
             {
                 _readDb = readDb;
                 _mapperConfiguration = mapperConfiguration;
+                _mapper = mapper;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var data = _readDb.Currencies.ProjectTo<CurrencyDto>(_mapperConfiguration);
-
+                var currencies = await _readDb.Currencies.ToListAsync(cancellationToken);
+                var data = _mapper.Map<List<CurrencyDto>>(currencies).ToList();
                 return new Result()
                        {
-                           Data = await data.ToListAsync(cancellationToken),
+                           Data = data,
                            Total = data.Count()
                        };
             }
