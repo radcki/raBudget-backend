@@ -23,7 +23,7 @@ namespace raBudget.Domain.ValueObjects
     public class TransactionTemplateIdConverter : JsonConverter<TransactionTemplateId>
     {
         /// <inheritdoc />
-        public override TransactionTemplateId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override TransactionTemplateId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return new TransactionTemplateId(Guid.ParseExact(reader.GetString(), "N"));
         }

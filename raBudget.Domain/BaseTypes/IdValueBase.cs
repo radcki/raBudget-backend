@@ -70,7 +70,7 @@ namespace raBudget.Domain.BaseTypes
     public class IdValueBaseConverter : JsonConverter<IdValueBase<Guid>>
     {
         /// <inheritdoc />
-        public override IdValueBase<Guid>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override IdValueBase<Guid> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return new IdValueBase<Guid>(Guid.ParseExact(reader.GetString(), "N"));
         }

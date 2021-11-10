@@ -40,7 +40,7 @@ namespace raBudget.Domain.Entities
 		public AllocationId AllocationId { get; private set; }
 		public string Description { get; private set; }
 		public BudgetCategoryId TargetBudgetCategoryId { get; private set; }
-		public BudgetCategoryId? SourceBudgetCategoryId { get; private set; }
+		public BudgetCategoryId SourceBudgetCategoryId { get; private set; }
 		public MoneyAmount Amount { get; private set; }
 		public DateTime AllocationDate { get; private set; }
 		public DateTime CreationDateTime { get; private set; }

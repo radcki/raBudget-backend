@@ -11,7 +11,7 @@ namespace raBudget.Domain.ReadModels
         public AllocationId AllocationId { get; set; }
         public string Description { get; set; }
         public BudgetCategoryId TargetBudgetCategoryId { get; set; }
-        public BudgetCategoryId? SourceBudgetCategoryId { get; set; }
+        public BudgetCategoryId SourceBudgetCategoryId { get; set; }
         public MoneyAmount Amount { get; set; }
         public DateTime AllocationDate { get; set; }
         public DateTime CreationDateTime { get; set; }

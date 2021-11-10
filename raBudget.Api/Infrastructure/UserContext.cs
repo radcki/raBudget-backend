@@ -23,7 +23,7 @@ namespace raBudget.Api.Infrastructure
             {
                 UserId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
