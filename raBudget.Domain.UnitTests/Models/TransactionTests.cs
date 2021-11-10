@@ -30,7 +30,7 @@ namespace raBudget.Domain.UnitTests.Models
                                                  budgetCategory,
                                                  new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()),
                                                  DateTime.Now);
-            var newAmount = new MoneyAmount(eCurrencyCode.AFN, RandomInt());
+            var newAmount = new MoneyAmount(eCurrencyCode.USD, RandomInt());
             // Act
             Action act = () => transaction.SetAmount(newAmount);
 
