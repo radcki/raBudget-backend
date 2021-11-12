@@ -9,15 +9,12 @@ namespace raBudget.Domain.ValueObjects
 {
     [JsonConverter(typeof(SubTransactionIdConverter))]
     [TypeConverter(typeof(SubTransactionIdTypeConverter))]
-    public class SubTransactionId : IdValueBase<Guid>
+    public record SubTransactionId(Guid Value)
     {
-        public SubTransactionId() : base(Guid.NewGuid())
-        {
-        }
-
-        public SubTransactionId(Guid value) : base(value)
-        {
-        }
+        public SubTransactionId() : this(Guid.NewGuid()){}
+        public SubTransactionId(string stringValue) : this(Guid.ParseExact(stringValue, "N")){}
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
     }
 
     public class SubTransactionIdConverter : JsonConverter<SubTransactionId>
@@ -25,7 +22,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override SubTransactionId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new SubTransactionId(Guid.ParseExact(reader.GetString(), "N"));
+            return new SubTransactionId(reader.GetString());
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -33,7 +30,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, SubTransactionId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
         #endregion
     }

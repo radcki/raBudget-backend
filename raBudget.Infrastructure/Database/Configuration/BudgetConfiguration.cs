@@ -11,7 +11,7 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<Budget> builder)
         {
             builder.HasKey(x => x.BudgetId);
-            builder.Property(x => x.BudgetId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetId(i));
+            builder.Property(x => x.BudgetId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetId(i));
             builder.HasOne<Currency>().WithMany().HasForeignKey(x => x.CurrencyCode);
         }
     }

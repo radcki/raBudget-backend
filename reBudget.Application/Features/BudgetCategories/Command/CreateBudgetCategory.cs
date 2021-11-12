@@ -33,7 +33,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public DateTime ValidFrom { get; set; }
         }
 
-        public class Result : IdResponse<Guid>
+        public class Result : IdResponse<BudgetCategoryId>
         {
         }
 
@@ -88,7 +88,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           Id = budgetCategory.BudgetCategoryId.Value
+                           Id = budgetCategory.BudgetCategoryId
                        };
             }
         }

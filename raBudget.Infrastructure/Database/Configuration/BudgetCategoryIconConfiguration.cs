@@ -12,7 +12,7 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<BudgetCategoryIcon> builder)
         {
             builder.HasKey(x => x.BudgetCategoryIconId);
-            builder.Property(x => x.BudgetCategoryIconId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryIconId(i));
+            builder.Property(x => x.BudgetCategoryIconId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetCategoryIconId(i));
 
             builder.HasData(new List<BudgetCategoryIcon>()
                             {

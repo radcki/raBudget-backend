@@ -11,9 +11,9 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<BudgetCategory> builder)
         {
             builder.HasKey(x => x.BudgetCategoryId);
-            builder.Property(x => x.BudgetCategoryIconId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryIconId(i));
-            builder.Property(x => x.BudgetCategoryId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryId(i));
-            builder.Property(x => x.BudgetId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetId(i));
+            builder.Property(x => x.BudgetCategoryIconId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetCategoryIconId(i));
+            builder.Property(x => x.BudgetCategoryId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetCategoryId(i));
+            builder.Property(x => x.BudgetId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetId(i));
             builder.HasOne(x => x.BudgetCategoryIcon).WithMany().HasForeignKey(x=>x.BudgetCategoryIconId);
 
             builder.HasQueryFilter(x => !x.Deleted);

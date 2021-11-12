@@ -9,23 +9,20 @@ namespace raBudget.Domain.ValueObjects
 {
     [JsonConverter(typeof(BudgetCategoryIconIdConverter))]
     [TypeConverter(typeof(BudgetCategoryIconIdTypeConverter))]
-    public class BudgetCategoryIconId : IdValueBase<Guid>
+    public record BudgetCategoryIconId (Guid Value)
     {
-        public BudgetCategoryIconId(Guid value) : base(value)
-        {
-        }
-
-        public BudgetCategoryIconId() : base(Guid.NewGuid())
-        {
-        }
-    }
+        public BudgetCategoryIconId() : this(Guid.NewGuid()){}
+        public BudgetCategoryIconId(string stringValue) : this(Guid.ParseExact(stringValue, "N")){}
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
+}
 
     public class BudgetCategoryIconIdConverter : JsonConverter<BudgetCategoryIconId>
     {
         /// <inheritdoc />
         public override BudgetCategoryIconId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new BudgetCategoryIconId(Guid.ParseExact(reader.GetString(), "N"));
+            return new BudgetCategoryIconId(reader.GetString());
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -33,7 +30,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, BudgetCategoryIconId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
         #endregion
     }
