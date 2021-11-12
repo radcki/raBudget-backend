@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
 using raBudget.Application.Infrastructure;
@@ -19,6 +20,7 @@ using raBudget.Common;
 using raBudget.Common.Query;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
+using raBudget.Domain.ValueObjects;
 using raBudget.Infrastructure.Database;
 
 namespace raBudget.Api
@@ -76,7 +78,11 @@ namespace raBudget.Api
                                     {
                                         options.ModelBinderProviders.Insert(0, new ModelBinderProvider());
                                     })
-                    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; });
+                    .AddJsonOptions(options =>
+                                    {
+                                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                                    });
+            
 
             services.AddSwaggerGen(options =>
                                    {

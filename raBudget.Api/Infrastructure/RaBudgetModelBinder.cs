@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
+using raBudget.Common.Query;
+using raBudget.Domain.ValueObjects;
 
-namespace raBudget.Common.Query
+namespace raBudget.Api.Infrastructure
 {
     public class RaBudgetModelBinder : IModelBinder
     {
@@ -23,7 +24,11 @@ namespace raBudget.Common.Query
                 string json;
                 using (var reader = new StreamReader(bindingContext.ActionContext.HttpContext.Request.Body, Encoding.UTF8))
                     json = reader.ReadToEndAsync().GetAwaiter().GetResult();
-                var bodyModel = JsonConvert.DeserializeObject(json, bindingContext.ModelType);
+                var bodyModel = JsonSerializer.Deserialize(json, bindingContext.ModelType, new JsonSerializerOptions()
+                                                                                           {
+                                                                                               PropertyNameCaseInsensitive = true
+                                                                                           });
+                //var bodyModel = JsonConvert.DeserializeObject(json, bindingContext.ModelType);
                 bindingContext.Result = ModelBindingResult.Success(bodyModel);
                 return Task.CompletedTask;
             }
