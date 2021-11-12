@@ -9,23 +9,20 @@ namespace raBudget.Domain.ValueObjects
 {
     [TypeConverter(typeof(TransactionTemplateIdTypeConverter))]
     [JsonConverter(typeof(TransactionTemplateIdConverter))]
-    public class TransactionTemplateId : IdValueBase<Guid>
+    public record TransactionTemplateId (Guid Value)
     {
-        public TransactionTemplateId() : base(Guid.NewGuid())
-        {
-        }
-
-        public TransactionTemplateId(Guid value) : base(value)
-        {
-        }
-    }
+        public TransactionTemplateId() : this(Guid.NewGuid()){}
+        public TransactionTemplateId(string stringValue) : this(Guid.ParseExact(stringValue, "N")) { }
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
+}
 
     public class TransactionTemplateIdConverter : JsonConverter<TransactionTemplateId>
     {
         /// <inheritdoc />
         public override TransactionTemplateId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new TransactionTemplateId(Guid.ParseExact(reader.GetString(), "N"));
+            return new TransactionTemplateId(reader.GetString());
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -33,7 +30,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, TransactionTemplateId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
         #endregion
     }

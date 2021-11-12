@@ -11,12 +11,12 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<Allocation> builder)
         {
             builder.HasKey(x => x.AllocationId);
-            builder.Property(x => x.AllocationId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new AllocationId(i));
-            builder.Property(x => x.TargetBudgetCategoryId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryId(i));
+            builder.Property(x => x.AllocationId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new AllocationId(i));
+            builder.Property(x => x.TargetBudgetCategoryId).HasColumnType("VARCHAR(36)").HasConversion(x => x.ToString(), i => new BudgetCategoryId(i));
             builder.Property(x => x.SourceBudgetCategoryId)
-				   .HasColumnType("char(36)")
+				   .HasColumnType("VARCHAR(36)")
 				   .IsRequired(false)
-				   .HasConversion<Guid?>(x => x.Value, i => i != null ? new BudgetCategoryId(i.Value) : null);
+				   .HasConversion(x => x.ToString(), i => i != null ? new BudgetCategoryId(i) : null);
 
             builder.OwnsOne(typeof(MoneyAmount), "Amount");
             builder.HasQueryFilter(x => !x.Deleted);

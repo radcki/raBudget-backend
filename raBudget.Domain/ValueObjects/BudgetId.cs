@@ -9,23 +9,21 @@ namespace raBudget.Domain.ValueObjects
 {
     [JsonConverter(typeof(BudgetIdConverter))]
     [TypeConverter(typeof(BudgetIdTypeConverter))]
-    public class BudgetId : IdValueBase<Guid>
+    public record BudgetId(Guid Value)
     {
-        public BudgetId() : base(Guid.NewGuid())
-        {
-        }
-
-        public BudgetId(Guid value) : base(value)
-        {
-        }
+        public BudgetId() : this(Guid.NewGuid()){}
+        public BudgetId(string stringValue) : this(Guid.ParseExact(stringValue, "N")){}
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
     }
+    
 
     public class BudgetIdConverter : JsonConverter<BudgetId>
     {
         /// <inheritdoc />
         public override BudgetId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new BudgetId(Guid.ParseExact(reader.GetString(), "N"));
+            return new BudgetId(reader.GetString());
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -33,7 +31,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, BudgetId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
         #endregion
     }

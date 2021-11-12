@@ -9,15 +9,12 @@ namespace raBudget.Domain.ValueObjects
 {
     [TypeConverter(typeof(AllocationIdTypeConverter))]
     [JsonConverter(typeof(AllocationIdConverter))]
-    public class AllocationId : IdValueBase<Guid>
+    public record AllocationId(Guid Value)
     {
-        public AllocationId() : base(Guid.NewGuid())
-        {
-        }
-
-        public AllocationId(Guid value) : base(value)
-        {
-        }
+        public AllocationId() : this(Guid.NewGuid()){}
+        public AllocationId(string stringValue) : this(Guid.ParseExact(stringValue, "N")){}
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
     }
 
     public class AllocationIdConverter : JsonConverter<AllocationId>
@@ -25,7 +22,7 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override AllocationId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new AllocationId(Guid.ParseExact(reader.GetString(), "N"));
+            return new AllocationId(reader.GetString());
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -33,8 +30,9 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, AllocationId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
+
         #endregion
     }
 
@@ -46,6 +44,7 @@ namespace raBudget.Domain.ValueObjects
             {
                 return true;
             }
+
             return base.CanConvertFrom(context, sourceType);
         }
 
@@ -55,6 +54,7 @@ namespace raBudget.Domain.ValueObjects
             {
                 return new AllocationId(Guid.ParseExact(stringValue, "N"));
             }
+
             return base.ConvertFrom(context, culture, value);
         }
     }

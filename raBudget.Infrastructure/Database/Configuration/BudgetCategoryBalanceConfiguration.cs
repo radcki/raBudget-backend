@@ -11,7 +11,7 @@ namespace raBudget.Infrastructure.Database.Configuration
         public void Configure(EntityTypeBuilder<BudgetCategoryBalance> builder)
         {
             builder.HasKey(x => new {x.Year, x.Month, x.BudgetCategoryId});
-            builder.Property(x => x.BudgetCategoryId).HasColumnType("char(36)").HasConversion<Guid>(x => x.Value, i => new BudgetCategoryId(i));
+            builder.Property(x => x.BudgetCategoryId).HasColumnType("VARCHAR(36)").HasConversion<string>(x => x.ToString(), i => new BudgetCategoryId(i));
 
             builder.OwnsOne(typeof(MoneyAmount), "BudgetedAmount");
             builder.OwnsOne(typeof(MoneyAmount), "TransactionsTotal");

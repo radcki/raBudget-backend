@@ -9,10 +9,13 @@ namespace raBudget.Domain.ValueObjects
 {
     [TypeConverter(typeof(BudgetCategoryIdTypeConverter))]
     [JsonConverter(typeof(BudgetCategoryIdConverter))]
-    public class BudgetCategoryId : IdValueBase<Guid>
+    public record BudgetCategoryId(Guid Value)
     {
-        public BudgetCategoryId() : base(Guid.NewGuid()) { }
-        public BudgetCategoryId(Guid value) : base(value) { }
+        public BudgetCategoryId() : this(Guid.NewGuid()){}
+        public BudgetCategoryId(string stringValue) : this(Guid.ParseExact(stringValue, "N")){}
+
+        protected Guid Value { get; init; } = Value;
+        public override string ToString() => Value.ToString("N");
     }
 
     public class BudgetCategoryIdConverter : JsonConverter<BudgetCategoryId>
@@ -21,9 +24,9 @@ namespace raBudget.Domain.ValueObjects
         public override BudgetCategoryId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var value = reader.GetString();
-            return string.IsNullOrWhiteSpace(value) 
-                       ? null 
-                       : new BudgetCategoryId(Guid.ParseExact(value, "N"));
+            return string.IsNullOrWhiteSpace(value)
+                       ? null
+                       : new BudgetCategoryId(value);
         }
 
         #region Overrides of JsonConverter<IdValueBase<Guid>>
@@ -31,8 +34,9 @@ namespace raBudget.Domain.ValueObjects
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, BudgetCategoryId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.Value.ToString("N"));
+            writer.WriteStringValue(value.ToString());
         }
+
         #endregion
     }
 
@@ -45,6 +49,7 @@ namespace raBudget.Domain.ValueObjects
             {
                 return true;
             }
+
             return base.CanConvertFrom(context, sourceType);
         }
 
@@ -55,6 +60,7 @@ namespace raBudget.Domain.ValueObjects
             {
                 return new BudgetCategoryId(Guid.ParseExact(stringValue, "N"));
             }
+
             return base.ConvertFrom(context, culture, value);
         }
     }
