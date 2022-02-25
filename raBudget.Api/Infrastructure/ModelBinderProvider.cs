@@ -14,7 +14,7 @@ namespace raBudget.Api.Infrastructure
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context.Metadata.ModelType.ImplementsGenericInterface(typeof(IRequest<>)))
+            if (context.Metadata.ModelType.GetInterfaces().Contains(typeof(IBaseRequest)))
             {
                 return new BinderTypeModelBinder(typeof(RaBudgetModelBinder));
             }
