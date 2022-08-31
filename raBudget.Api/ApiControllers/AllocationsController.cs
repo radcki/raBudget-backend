@@ -10,7 +10,7 @@ using raBudget.Application.Features.Allocations.Query;
 namespace raBudget.Api.ApiControllers
 {
     [ApiController]
-    [Route("Allocation")]
+    [Route("allocation")]
     [Authorize]
     public class AllocationsController : ControllerBase
     {
@@ -28,7 +28,7 @@ namespace raBudget.Api.ApiControllers
             return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
-        [HttpGet("get-list")] public async Task<GetAllocationList.Result> GetAllocationList([FromQuery] GetAllocationList.Query query) => await _mediator.Send(query);
+        [HttpPost("search")] public async Task<GetAllocationList.Result> SearchAllocations([FromBody] GetAllocationList.Query query) => await _mediator.Send(query);
         [HttpPost("create")] public async Task<CreateAllocation.Result> CreateAllocation([FromBody] CreateAllocation.Command command) => await _mediator.Send(command);
         [HttpPost("remove")] public async Task<RemoveAllocation.Result> RemoveAllocation([FromBody] RemoveAllocation.Command command) => await _mediator.Send(command);
         [HttpPatch("update/description")] public async Task<UpdateAllocationDescription.Result> UpdateAllocationDescription([FromBody] UpdateAllocationDescription.Command command) => await _mediator.Send(command);

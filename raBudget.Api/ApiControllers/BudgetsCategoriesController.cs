@@ -29,7 +29,7 @@ namespace raBudget.Api.ApiControllers
             return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
-        [HttpGet("get-list")] public async Task<GetBudgetCategoryList.Result> OnGetGetBudgetCategoryList([FromQuery] GetBudgetCategoryList.Query query) => await _mediator.Send(query);
+        [HttpGet("")] public async Task<GetBudgetCategoryList.Result> GetBudgetCategoryList([FromQuery] GetBudgetCategoryList.Query query) => await _mediator.Send(query);
         [HttpGet("get-budgeted-amounts-summary")] public async Task<GetBudgetedAmountsSummary.Result> GetBudgetedAmountsSummary([FromQuery] GetBudgetedAmountsSummary.Query query) => await _mediator.Send(query);
         
         [HttpPost("create")] public async Task<CreateBudgetCategory.Result> CreateBudgetCategory([FromBody] CreateBudgetCategory.Command command) => await _mediator.Send(command);
@@ -39,8 +39,8 @@ namespace raBudget.Api.ApiControllers
         [HttpPatch("move-up")] public async Task<MoveBudgetCategoryUp.Result> MoveBudgetCategoryUp([FromBody] MoveBudgetCategoryUp.Command command) => await _mediator.Send(command);
         [HttpPatch("move-down")] public async Task<MoveBudgetCategoryDown.Result> MoveBudgetCategoryDown([FromBody] MoveBudgetCategoryDown.Command command) => await _mediator.Send(command);
 
-        [HttpGet("balance")] public async Task<GetBudgetCategoryBalance.Result> GetBudgetCategoryBalance([FromQuery] GetBudgetCategoryBalance.Query query) => await _mediator.Send(query);
-        [HttpGet("current-balance")] public async Task<GetCurrentBudgetCategorySummary.Result> GetCurrentBudgetCategorySummary([FromQuery] GetCurrentBudgetCategorySummary.Query query) => await _mediator.Send(query);
+        [HttpPost("get-balance")] public async Task<GetBudgetCategoryBalance.Result> GetBudgetCategoryBalance([FromBody] GetBudgetCategoryBalance.Query query) => await _mediator.Send(query);
+        [HttpPost("get-current-balance")] public async Task<GetCurrentBudgetCategorySummary.Result> GetCurrentBudgetCategorySummary([FromBody] GetCurrentBudgetCategorySummary.Query query) => await _mediator.Send(query);
 
         
         [HttpPost("budgeted-amount/add")] public async Task<AddBudgetedAmount.Result> AddBudgetedAmount([FromBody] AddBudgetedAmount.Command command) => await _mediator.Send(command);
