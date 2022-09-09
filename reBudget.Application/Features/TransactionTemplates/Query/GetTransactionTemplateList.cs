@@ -65,9 +65,9 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                
-                var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
+                //var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
 
-                var query = _readDb.TransactionTemplates.Where(x => budgetCategoryIds.Contains(x.BudgetCategoryId));
+                var query = _readDb.TransactionTemplates.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId));
 
                 var data = await query.ProjectTo<TransactionTemplateDto>(_mapperConfiguration)
                                       .OrderBy(x=>x.Description)

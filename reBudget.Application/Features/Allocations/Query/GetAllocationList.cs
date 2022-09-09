@@ -81,7 +81,7 @@ namespace raBudget.Application.Features.Allocations.Query
 					targetBudgetCategoryIdsQuery = targetBudgetCategoryIdsQuery.Where(x => request.TargetBudgetCategoryIds.Any(s => s == x));
 				}
 
-				var targetBudgetCategoryIds = targetBudgetCategoryIdsQuery.ToList();
+				//var targetBudgetCategoryIds = targetBudgetCategoryIdsQuery.ToList();
 
 				var sourceBudgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.SourceBudgetCategoryType);
 				if (request.SourceBudgetCategoryIds != null && request.SourceBudgetCategoryIds.Any())
@@ -89,10 +89,10 @@ namespace raBudget.Application.Features.Allocations.Query
 					sourceBudgetCategoryIdsQuery = sourceBudgetCategoryIdsQuery.Where(x => request.SourceBudgetCategoryIds.Any(s => s == x));
 				}
 
-				var sourceBudgetCategoryIds = sourceBudgetCategoryIdsQuery.ToList();
+				//var sourceBudgetCategoryIds = sourceBudgetCategoryIdsQuery.ToList();
 
-				var query = _readDb.Allocations.Where(x => targetBudgetCategoryIds.Contains(x.TargetBudgetCategoryId)
-														   && (x.SourceBudgetCategoryId == null || sourceBudgetCategoryIds.Contains(x.SourceBudgetCategoryId)));
+				var query = _readDb.Allocations.Where(x => targetBudgetCategoryIdsQuery.Contains(x.TargetBudgetCategoryId)
+                                                           && (x.SourceBudgetCategoryId == null || sourceBudgetCategoryIdsQuery.Contains(x.SourceBudgetCategoryId)));
 
                 if (request.SourceBudgetCategoryIds != null && request.SourceBudgetCategoryIds.Any())
                 {

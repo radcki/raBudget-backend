@@ -16,6 +16,7 @@ using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
+using raBudget.Infrastructure.Database;
 using RLib.Localization;
 
 namespace raBudget.Application.Features.BudgetCategories.Query
@@ -45,11 +46,13 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
+            private readonly IReadDbContext _readDbContext;
 
-            public Handler(AccessControlService accessControlService, BalanceService balanceService)
+            public Handler(AccessControlService accessControlService, BalanceService balanceService, IReadDbContext readDb)
             {
                 _accessControlService = accessControlService;
                 _balanceService = balanceService;
+                _readDbContext = readDb;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
@@ -60,14 +63,15 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
+                var budgetCategories = _readDbContext.BudgetCategories.Where(x => request.BudgetCategoryIds.Contains(x.BudgetCategoryId)).ToList();
                 var responseData = new List<BudgetCategoryBalanceDto>();
-                foreach (var budgetCategoryId in request.BudgetCategoryIds)
+                foreach (var budgetCategory in budgetCategories)
                 {
-                    var balances = _balanceService.GetCategoryBalances(budgetCategoryId, null, null).ToList();
+                    var balances = _balanceService.GetCategoryBalances(budgetCategory, null, null).ToList();
                     var thisMonthBalance = balances.FirstOrDefault(x => x.Year == DateTime.Today.Year && x.Month == DateTime.Today.Month);
                     var balance = new BudgetCategoryBalanceDto()
                                   {
-                                      BudgetCategoryId = budgetCategoryId,
+                                      BudgetCategoryId = budgetCategory.BudgetCategoryId,
                                       ThisMonthTransactionsTotal = thisMonthBalance?.TransactionsTotal,
                                       ThisMonthBudgetedAmount = thisMonthBalance?.BudgetedAmount,
                                       TotalTransactionsBalance = thisMonthBalance != null

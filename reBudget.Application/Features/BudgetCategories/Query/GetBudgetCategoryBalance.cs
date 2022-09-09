@@ -45,11 +45,13 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
+            private readonly IReadDbContext _readDbContext;
 
-            public Handler(AccessControlService accessControlService, BalanceService balanceService)
+            public Handler(AccessControlService accessControlService, BalanceService balanceService, IReadDbContext readDbContext)
             {
                 _accessControlService = accessControlService;
                 _balanceService = balanceService;
+                _readDbContext = readDbContext;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
@@ -60,17 +62,18 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                     throw new NotFoundException(Localization.For(() => ErrorMessages.BudgetCategoryNotFound));
                 }
 
-                var balances = request.BudgetCategoryIds
-                                      .Select(x => _balanceService.GetTotalCategoryBalance(x))
-                                      .Select(x=>new BudgetCategoryBalanceDto()
-                                                 {
-                                                     BudgetCategoryId = x.BudgetCategoryId,
-                                                     BudgetLeftToEndOfYear = x.BudgetLeftToEndOfYear,
-                                                     ThisMonthTransactionsTotal = x.ThisMonthTransactionsTotal,
-                                                     TotalCategoryBalance = x.TotalCategoryBalance,
-                                                     ThisYearBudgetedAmount = x.ThisYearBudgetedAmount
-                                                 })
-                                      .ToList();
+                var budgetCategories = _readDbContext.BudgetCategories.Where(x => request.BudgetCategoryIds.Contains(x.BudgetCategoryId)).ToList();
+                var balances = budgetCategories
+                              .Select(x => _balanceService.GetTotalCategoryBalance(x))
+                              .Select(x => new BudgetCategoryBalanceDto()
+                                           {
+                                               BudgetCategoryId = x.BudgetCategoryId,
+                                               BudgetLeftToEndOfYear = x.BudgetLeftToEndOfYear,
+                                               ThisMonthTransactionsTotal = x.ThisMonthTransactionsTotal,
+                                               TotalCategoryBalance = x.TotalCategoryBalance,
+                                               ThisYearBudgetedAmount = x.ThisYearBudgetedAmount
+                                           })
+                              .ToList();
 
                 return new Result()
                        {
