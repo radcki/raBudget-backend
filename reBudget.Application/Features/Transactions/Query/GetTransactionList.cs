@@ -88,9 +88,9 @@ namespace raBudget.Application.Features.Transactions.Query
                     budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s => s == x));
                 }
 
-                var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
+               // var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
 
-                var query = _readDb.Transactions.Where(x => budgetCategoryIds.Contains(x.BudgetCategoryId));
+                var query = _readDb.Transactions.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId));
 
                 if (!string.IsNullOrEmpty(request.Search))
                 {

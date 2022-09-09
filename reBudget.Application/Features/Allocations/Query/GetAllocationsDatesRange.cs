@@ -42,8 +42,8 @@ namespace raBudget.Application.Features.Allocations.Query
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId).ToList();
-                var query = _readDb.Allocations.Where(x => budgetCategoryIds.Any(s => s == x.TargetBudgetCategoryId));
+                var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
+                var query = _readDb.Allocations.Where(x => budgetCategoryIds.Contains(x.TargetBudgetCategoryId));
                 DateTime? min = null;
                 DateTime? max = null;
                 if (query.Any())

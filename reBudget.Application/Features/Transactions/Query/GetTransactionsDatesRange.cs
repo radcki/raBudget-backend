@@ -43,8 +43,8 @@ namespace raBudget.Application.Features.Transactions.Query
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId).ToList();
-                var query = _readDb.Transactions.Where(x => budgetCategoryIds.Any(s => s == x.BudgetCategoryId));
+                var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
+                var query = _readDb.Transactions.Where(x => budgetCategoryIds.Contains(x.BudgetCategoryId));
                 DateTime? min = null;
                 DateTime? max = null;
                 if (query.Any())

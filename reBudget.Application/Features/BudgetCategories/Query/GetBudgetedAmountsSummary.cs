@@ -51,22 +51,30 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
+            private readonly IReadDbContext _readDb;
 
-            public Handler(AccessControlService accessControlService, BalanceService balanceService)
+            public Handler(AccessControlService accessControlService, BalanceService balanceService, IReadDbContext readDb)
             {
                 _accessControlService = accessControlService;
                 _balanceService = balanceService;
+                _readDb = readDb;
             }
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var spendingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Spending).ToList();
-                var incomeBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Income).ToList();
-                var savingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Saving).ToList();
+                //var spendingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Spending).ToList();
+                //var incomeBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Income).ToList();
+                //var savingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Saving).ToList();
 
-                var budgetCategoryIds = spendingBudgetCategoryIds.Union(incomeBudgetCategoryIds).Union(savingBudgetCategoryIds);
+                //var budgetCategoryIds = spendingBudgetCategoryIds.Union(incomeBudgetCategoryIds).Union(savingBudgetCategoryIds);
+                var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
+                var budgetCategories = _readDb.BudgetCategories.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId)).ToList();
 
-                var balances = budgetCategoryIds
+                var spendingBudgetCategoryIds = budgetCategories.Where(x=>x.BudgetCategoryType == eBudgetCategoryType.Spending).Select(x=>x.BudgetCategoryId).ToList();
+                var incomeBudgetCategoryIds = budgetCategories.Where(x=>x.BudgetCategoryType == eBudgetCategoryType.Income).Select(x=>x.BudgetCategoryId).ToList();
+                var savingBudgetCategoryIds = budgetCategories.Where(x => x.BudgetCategoryType == eBudgetCategoryType.Saving).Select(x => x.BudgetCategoryId).ToList();
+
+                var balances = budgetCategories
                               .Select(x => _balanceService.GetTotalCategoryBalance(x))
                               .ToList();
 
