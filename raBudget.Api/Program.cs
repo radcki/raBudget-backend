@@ -15,10 +15,19 @@ namespace raBudget.Api
     {
         public static void Main(string[] args)
         {
+            var configuration = new ConfigurationBuilder()
+                               .AddJsonFile("appsettings.json")
+                               .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                               .AddEnvironmentVariables()
+                               .Build();
+
             Log.Logger = new LoggerConfiguration()
+#if DEBUG
                         .MinimumLevel.Debug()
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+#endif
+                        .ReadFrom.Configuration(configuration)
                         .Enrich.FromLogContext()
                         .WriteTo.Console()
                         .CreateLogger();
@@ -35,15 +44,11 @@ namespace raBudget.Api
             {
                 Log.CloseAndFlush();
             }
-            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
