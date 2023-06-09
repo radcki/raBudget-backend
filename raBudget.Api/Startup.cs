@@ -53,7 +53,7 @@ namespace raBudget.Api
 
             services.AddIdentityServices(Configuration);
 
-            services.AddMediatR(applicationAssembly, apiAssembly);
+            services.AddMediatR(cfg=> cfg.RegisterServicesFromAssemblies(applicationAssembly, apiAssembly));
             services.AddTransient<WriteDbContext>();
 
             services.AddSignalR();
@@ -126,9 +126,9 @@ namespace raBudget.Api
                                });
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
                 app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
+                                              //.AllowAnyOrigin()
                                               .AllowAnyHeader()
-                                              .AllowAnyMethod()
-                                              .AllowCredentials());
+                                              .AllowAnyMethod());
             }
             else
             {
@@ -140,7 +140,7 @@ namespace raBudget.Api
                 app.UseHsts();
             }
 
-            app.UseExceptionHandler("/error");
+           // app.UseExceptionHandler("/error");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

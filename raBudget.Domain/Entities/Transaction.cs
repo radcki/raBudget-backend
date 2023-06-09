@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using raBudget.Common.Entities;
+using raBudget.Common.Extensions;
 using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;

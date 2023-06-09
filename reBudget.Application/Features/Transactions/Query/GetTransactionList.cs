@@ -48,6 +48,7 @@ namespace raBudget.Application.Features.Transactions.Query
             public DateTime TransactionDate { get; set; }
             public List<SubTransactionDto> SubTransactions { get; set; }
             public MoneyAmount TotalAmount => Amount + SubTransactions.Sum(x => x.Amount.Amount);
+            public DateTime CreationDateTime { get; set; }
         }
 
         public class SubTransactionDto
@@ -56,6 +57,7 @@ namespace raBudget.Application.Features.Transactions.Query
             public MoneyAmount Amount { get; set; }
             public string Description { get; set; }
             public DateTime TransactionDate { get; set; }
+            public DateTime CreationDateTime { get; set; }
         }
 
         public class Mapper : IHaveCustomMapping
@@ -87,8 +89,7 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s => s == x));
                 }
-
-               // var budgetCategoryIds = budgetCategoryIdsQuery.ToList();
+                request.DataOrder.AddDescending<TransactionDto>(x=>x.CreationDateTime);
 
                 var query = _readDb.Transactions.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId));
 
@@ -116,7 +117,6 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
-
                 var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);

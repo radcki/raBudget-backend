@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
+using raBudget.Common.Extensions;
 
 namespace raBudget.Common.Query
 {
@@ -17,6 +19,25 @@ namespace raBudget.Common.Query
     //[TypeConverter(typeof(FieldOrderInfoCollectionTypeConverter))]
     public class FieldOrderInfoCollection : List<FieldOrderInfo>
     {
+        public void AddAscending<TSource, TKey>(Expression<Func<TSource, object>> keySelector)
+        {
+            Add(new FieldOrderInfo()
+                {
+                    FieldName = keySelector.Body.GetMemberName(),
+                    Descending = false
+                });
+        }
+
+        public void AddDescending<TSource>(Expression<Func<TSource, object>> keySelector)
+        {
+            Add(new FieldOrderInfo()
+                {
+                    FieldName = keySelector.Body.GetMemberName(),
+                    Descending = true
+                });
+        }
+
+        
     }
 
     public class FieldOrderInfoCollectionTypeConverter : TypeConverter
@@ -27,6 +48,7 @@ namespace raBudget.Common.Query
             {
                 return true;
             }
+
             return base.CanConvertFrom(context, sourceType);
         }
 
@@ -36,6 +58,7 @@ namespace raBudget.Common.Query
             {
                 return new FieldOrderInfoCollection();
             }
+
             return base.ConvertFrom(context, culture, value);
         }
     }
