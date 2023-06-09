@@ -50,6 +50,7 @@ namespace raBudget.Application.Features.Allocations.Query
 			public MoneyAmount Amount { get; set; }
 			public string Description { get; set; }
 			public DateTime AllocationDate { get; set; }
+			public DateTime CreationDateTime { get; set; }
 		}
 
 		public class Mapper : IHaveCustomMapping
@@ -80,18 +81,17 @@ namespace raBudget.Application.Features.Allocations.Query
 				{
 					targetBudgetCategoryIdsQuery = targetBudgetCategoryIdsQuery.Where(x => request.TargetBudgetCategoryIds.Any(s => s == x));
 				}
-
-				//var targetBudgetCategoryIds = targetBudgetCategoryIdsQuery.ToList();
+				
 
 				var sourceBudgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.SourceBudgetCategoryType);
 				if (request.SourceBudgetCategoryIds != null && request.SourceBudgetCategoryIds.Any())
 				{
 					sourceBudgetCategoryIdsQuery = sourceBudgetCategoryIdsQuery.Where(x => request.SourceBudgetCategoryIds.Any(s => s == x));
 				}
+                request.DataOrder.AddDescending<AllocationDto>(x=>x.CreationDateTime);
 
-				//var sourceBudgetCategoryIds = sourceBudgetCategoryIdsQuery.ToList();
 
-				var query = _readDb.Allocations.Where(x => targetBudgetCategoryIdsQuery.Contains(x.TargetBudgetCategoryId)
+                var query = _readDb.Allocations.Where(x => targetBudgetCategoryIdsQuery.Contains(x.TargetBudgetCategoryId)
                                                            && (x.SourceBudgetCategoryId == null || sourceBudgetCategoryIdsQuery.Contains(x.SourceBudgetCategoryId)));
 
                 if (request.SourceBudgetCategoryIds != null && request.SourceBudgetCategoryIds.Any())

@@ -29,7 +29,7 @@ namespace raBudget.Domain.Entities
             Code = Enum.GetName(typeof(eCurrencyCode), CurrencyCode);
             var cultureInfo = CultureInfoFromCurrencyISO(Code);
             NumberFormat = cultureInfo.NumberFormat;
-            var region = new RegionInfo(cultureInfo.LCID);
+            var region = new RegionInfo(cultureInfo.Name);
             Symbol = region?.CurrencySymbol;
             EnglishName = region?.CurrencyEnglishName;
             NativeName = region?.CurrencyNativeName;
@@ -73,7 +73,7 @@ namespace raBudget.Domain.Entities
             {
                 try
                 {
-                    RegionInfo ri = new RegionInfo(ci.LCID);
+                    RegionInfo ri = new RegionInfo(ci.Name);
                     
                     if (ri.ISOCurrencySymbol == isoCode)
                         return ci;
