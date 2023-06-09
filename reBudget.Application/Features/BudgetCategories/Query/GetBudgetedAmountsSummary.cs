@@ -62,11 +62,6 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                //var spendingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Spending).ToList();
-                //var incomeBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Income).ToList();
-                //var savingBudgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, eBudgetCategoryType.Saving).ToList();
-
-                //var budgetCategoryIds = spendingBudgetCategoryIds.Union(incomeBudgetCategoryIds).Union(savingBudgetCategoryIds);
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
                 var budgetCategories = _readDb.BudgetCategories.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId)).ToList();
 

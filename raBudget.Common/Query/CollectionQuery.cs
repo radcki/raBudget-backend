@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace raBudget.Common.Query
+﻿namespace raBudget.Common.Query
 {
     public class CollectionQuery
     {
