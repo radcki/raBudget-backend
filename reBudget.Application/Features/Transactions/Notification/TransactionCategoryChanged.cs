@@ -50,10 +50,10 @@ namespace raBudget.Application.Features.Transactions.Notification
             private readonly BalanceService _balanceService;
 			private readonly IMediator _mediator;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory, IMediator mediator)
+            public Handler(IServiceScopeFactory serviceScopeFactory)
             {
-				_mediator = mediator;
 				var serviceScope = serviceScopeFactory.CreateScope();
+                _mediator = serviceScope.ServiceProvider.GetService<IMediator>();
                 _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
             }
 
