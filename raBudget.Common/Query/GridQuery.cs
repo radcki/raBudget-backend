@@ -12,7 +12,7 @@ namespace raBudget.Common.Query
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
 
-        public FieldOrderInfoCollection DataOrder { get; set; }
+        public FieldOrderInfoCollection DataOrder { get; set; } = new();
     }
 
     //[TypeConverter(typeof(FieldOrderInfoCollectionTypeConverter))]

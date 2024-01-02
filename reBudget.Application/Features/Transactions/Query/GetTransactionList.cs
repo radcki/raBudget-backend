@@ -89,7 +89,8 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     budgetCategoryIdsQuery = budgetCategoryIdsQuery.Where(x => request.BudgetCategoryIds.Any(s => s == x));
                 }
-                request.DataOrder.AddDescending<TransactionDto>(x=>x.CreationDateTime);
+
+                request.DataOrder.AddDescending<TransactionDto>(x => x.CreationDateTime);
 
                 var query = _readDb.Transactions.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId));
 
@@ -117,9 +118,12 @@ namespace raBudget.Application.Features.Transactions.Query
                 {
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
+
                 var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);
+                data.ForEach(transaction => transaction.SubTransactions = transaction.SubTransactions.OrderByDescending(x => x.TransactionDate).ToList());
+
                 return new Result()
                        {
                            Data = data,
