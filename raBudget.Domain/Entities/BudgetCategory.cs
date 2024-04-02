@@ -49,6 +49,7 @@ namespace raBudget.Domain.Entities
         public BudgetCategoryIconId BudgetCategoryIconId { get; private set; }
         public BudgetedAmountCollection BudgetedAmounts { get; private set; }
         public eBudgetCategoryType BudgetCategoryType { get; private set; }
+        public bool Hidden { get; private set; }
 
         public MoneyAmount CurrentBudgetedAmount => BudgetedAmounts?.FirstOrDefault(x => x.ValidFrom <= DateTime.Today && (x.ValidTo == null || x.ValidTo >= DateTime.Today))?.Amount;
 
@@ -120,6 +121,11 @@ namespace raBudget.Domain.Entities
 
             amountToUpdate.SetValidFromDate(budgetedAmount.ValidFrom);
             amountToUpdate.SetAmount(budgetedAmount.Amount);
+        }
+
+        public void SetVisibility(bool hidden)
+        {
+            Hidden = hidden;
         }
 
         #endregion

@@ -36,6 +36,7 @@ namespace raBudget.Api.ApiControllers
         [HttpPost("remove")] public async Task<RemoveBudgetCategory.Result> RemoveBudget([FromBody] RemoveBudgetCategory.Command command) => await _mediator.Send(command);
         [HttpPatch("update/name")] public async Task<UpdateBudgetCategoryName.Result> UpdateBudgetCategoryName([FromBody] UpdateBudgetCategoryName.Command command) => await _mediator.Send(command);
         [HttpPatch("update/icon")] public async Task<UpdateBudgetCategoryIcon.Result> UpdateBudgetCategoryIcon([FromBody] UpdateBudgetCategoryIcon.Command command) => await _mediator.Send(command);
+        [HttpPatch("update/name")] public async Task<UpdateBudgetCategoryVisibility.Result> UpdateBudgetCategoryVisibility([FromBody] UpdateBudgetCategoryVisibility.Command command) => await _mediator.Send(command);
         [HttpPatch("move-up")] public async Task<MoveBudgetCategoryUp.Result> MoveBudgetCategoryUp([FromBody] MoveBudgetCategoryUp.Command command) => await _mediator.Send(command);
         [HttpPatch("move-down")] public async Task<MoveBudgetCategoryDown.Result> MoveBudgetCategoryDown([FromBody] MoveBudgetCategoryDown.Command command) => await _mediator.Send(command);
 

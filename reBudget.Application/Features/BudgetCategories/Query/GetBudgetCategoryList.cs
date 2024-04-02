@@ -22,6 +22,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         {
             public BudgetId BudgetId { get; set; }
             public List<eBudgetCategoryType> BudgetCategoryTypes { get; set; }
+            public bool IncludeHidden { get; set; } = false;
         }
 
         public class Result : CollectionResponse<BudgetCategoryDto>
@@ -62,14 +63,12 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly IMapper _mapper;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService, IMapper mapper)
+            public Handler(IReadDbContext readDb,AccessControlService accessControlService, IMapper mapper)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
                 _mapper = mapper;
             }
@@ -84,6 +83,11 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 if (request.BudgetCategoryTypes != null && request.BudgetCategoryTypes.Any())
                 {
                     query = query.Where(x => request.BudgetCategoryTypes.Contains(x.BudgetCategoryType));
+                }
+
+                if (!request.IncludeHidden)
+                {
+                    query = query.Where(x => x.Hidden != true);
                 }
 
                 var budgetCategories = await query.ToListAsync(cancellationToken: cancellationToken);

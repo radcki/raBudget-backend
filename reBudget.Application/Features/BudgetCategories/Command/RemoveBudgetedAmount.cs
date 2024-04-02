@@ -40,6 +40,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public int Order { get; set; }
             public string Name { get; set; }
             public MoneyAmount CurrentBudgetedAmount { get; set; }
+            public bool Hidden { get; set; }
 
             public List<BudgetedAmountDto> BudgetedAmounts { get; set; }
         }
