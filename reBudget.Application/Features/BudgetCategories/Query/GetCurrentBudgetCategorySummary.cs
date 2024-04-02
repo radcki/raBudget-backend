@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using raBudget.Common.Interfaces;
-using raBudget.Common.Query;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
-using raBudget.Infrastructure.Database;
 using RLib.Localization;
 
 namespace raBudget.Application.Features.BudgetCategories.Query
