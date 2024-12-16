@@ -45,7 +45,8 @@ namespace raBudget.Api
                                                                    {
                                                                        options.UseMySql(mysqlConnectionString,
                                                                                         MariaDbServerVersion.LatestSupportedServerVersion,
-                                                                                        builder => { builder.MigrationsAssembly("raBudget.Api"); });
+                                                                                        builder => { builder.MigrationsAssembly("raBudget.Api")
+                                                                                                            .EnablePrimitiveCollectionsSupport(); });
                                                                    }, ServiceLifetime.Transient);
             services.AddScoped<IReadDbContext, ReadDbContext>(); 
             services.AddTransient<AccessControlService>();
