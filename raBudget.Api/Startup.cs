@@ -45,16 +45,20 @@ namespace raBudget.Api
                                                                    {
                                                                        options.UseMySql(mysqlConnectionString,
                                                                                         MariaDbServerVersion.LatestSupportedServerVersion,
-                                                                                        builder => { builder.MigrationsAssembly("raBudget.Api")
-                                                                                                            .EnablePrimitiveCollectionsSupport(); });
+                                                                                        builder =>
+                                                                                        {
+                                                                                            builder.MigrationsAssembly("raBudget.Api")
+                                                                                                   .EnablePrimitiveCollectionsSupport()
+                                                                                                   .TranslateParameterizedCollectionsToConstants();
+                                                                                        });
                                                                    }, ServiceLifetime.Transient);
-            services.AddScoped<IReadDbContext, ReadDbContext>(); 
+            services.AddScoped<IReadDbContext, ReadDbContext>();
             services.AddTransient<AccessControlService>();
             services.AddTransient<BalanceService>();
 
             services.AddIdentityServices(Configuration);
 
-            services.AddMediatR(cfg=> cfg.RegisterServicesFromAssemblies(applicationAssembly, apiAssembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(applicationAssembly, apiAssembly));
             services.AddTransient<WriteDbContext>();
 
             services.AddSignalR();
@@ -75,19 +79,13 @@ namespace raBudget.Api
                                                                 ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                                                         });
 
-            services.AddControllers(options =>
-                                    {
-                                        options.ModelBinderProviders.Insert(0, new ModelBinderProvider());
-                                    })
-                    .AddJsonOptions(options =>
-                                    {
-                                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                                    });
-            
+            services.AddControllers(options => { options.ModelBinderProviders.Insert(0, new ModelBinderProvider()); })
+                    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; });
+
 
             services.AddSwaggerGen(options =>
                                    {
-                                       options.SwaggerDoc("v1", new OpenApiInfo() {Title = "raBudgetApi", Version = "v1"});
+                                       options.SwaggerDoc("v1", new OpenApiInfo() { Title = "raBudgetApi", Version = "v1" });
                                        options.CustomSchemaIds(x => x.FullName);
                                    });
 
@@ -127,7 +125,7 @@ namespace raBudget.Api
                                });
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
                 app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
-                                              //.AllowAnyOrigin()
+                                               //.AllowAnyOrigin()
                                               .AllowAnyHeader()
                                               .AllowAnyMethod());
             }
@@ -141,7 +139,7 @@ namespace raBudget.Api
                 app.UseHsts();
             }
 
-           // app.UseExceptionHandler("/error");
+            // app.UseExceptionHandler("/error");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
