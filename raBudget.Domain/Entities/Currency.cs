@@ -69,7 +69,7 @@ namespace raBudget.Domain.Entities
 
         private static CultureInfo CultureInfoFromCurrencyISO(string isoCode)
         {
-            foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.AllCultures))
+            foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
             {
                 try
                 {
