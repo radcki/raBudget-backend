@@ -131,7 +131,7 @@ namespace raBudget.Api
             }
             else
             {
-                app.UseCors(builder => builder.WithOrigins("https://budget.rabt.pl")
+                app.UseCors(builder => builder.WithOrigins(Configuration["AllowedHosts"] ?? "*")
                                               .AllowAnyHeader()
                                               .AllowAnyMethod()
                                               .AllowCredentials());
