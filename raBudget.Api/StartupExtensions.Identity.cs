@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using raBudget.Api.Infrastructure;
 using raBudget.Domain.Interfaces;
@@ -22,8 +23,8 @@ namespace raBudget.Api
                     .AddJwtBearer(options => ConfigureJwtBearer(options, configuration))
                     .AddOAuth2Introspection("introspection", options =>
                                                              {
-                                                                 options.Authority = "https://auth.rabt.pl";
-                                                                 options.ClientId = "rabudget";
+                                                                 options.Authority = configuration["Authentication:Authority"];
+                                                                 options.ClientId = configuration["Authentication:Audience"];
                                                              });
 
             services.AddHttpContextAccessor();
@@ -47,7 +48,7 @@ namespace raBudget.Api
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
                                                     ValidateIssuerSigningKey = true,
-                                                    ValidTypes = new[] {"at+jwt"}
+                                                    ValidTypes = new[] { "at+jwt", "JWT" }
                                                 };
 
             options.RequireHttpsMetadata = false;
