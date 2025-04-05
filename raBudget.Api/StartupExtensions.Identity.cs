@@ -49,7 +49,7 @@ namespace raBudget.Api
                                                     ValidateAudience = true,
                                                     ValidateIssuerSigningKey = true,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
-                                                    ValidIssuers = [configuration["Authentication:Audience"]],
+                                                    ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
                                                 };
 
