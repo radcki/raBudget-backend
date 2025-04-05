@@ -47,7 +47,7 @@ namespace raBudget.Api
                                                     ValidateLifetime = true,
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
-                                                    ValidateIssuerSigningKey = true,
+                                                    ValidateIssuerSigningKey = false,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
