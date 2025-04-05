@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using IdentityModel.AspNetCore.AccessTokenValidation;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -51,6 +51,11 @@ namespace raBudget.Api
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
+                                                    SignatureValidator = delegate(string token, TokenValidationParameters parameters)
+                                                                         {
+                                                                             var jwt = new JwtSecurityToken(token);
+                                                                             return jwt;
+                                                                         },
                                                 };
 
             options.RequireHttpsMetadata = false;
@@ -107,7 +112,7 @@ namespace raBudget.Api
                                                      },
                              };
 
-            options.ForwardDefaultSelector = Selector.ForwardReferenceToken("introspection");
+            //options.ForwardDefaultSelector = Selector.ForwardReferenceToken("introspection");
         }
     }
 }
