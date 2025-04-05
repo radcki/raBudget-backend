@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using raBudget.Api.Infrastructure;
@@ -47,13 +49,15 @@ namespace raBudget.Api
                                                     ValidateLifetime = true,
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
-                                                    ValidateIssuerSigningKey = true,
+                                                    ValidateIssuerSigningKey = false,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
                                                     SignatureValidator = delegate(string token, TokenValidationParameters parameters)
                                                                          {
-                                                                             var jwt = new JwtSecurityToken(token);
+                                                                             var jwt = new JsonWebToken(token);
+                                                                             if (parameters.ValidateIssuer && !parameters.ValidIssuers.Contains(jwt.Issuer))
+                                                                                 return null;
                                                                              return jwt;
                                                                          },
                                                 };
