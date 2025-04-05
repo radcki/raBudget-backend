@@ -48,7 +48,9 @@ namespace raBudget.Api
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
                                                     ValidateIssuerSigningKey = true,
-                                                    ValidTypes = new[] { "at+jwt", "JWT" }
+                                                    ValidTypes = new[] { "at+jwt", "JWT" },
+                                                    ValidIssuers = [configuration["Authentication:Audience"]],
+                                                    ValidAudience = configuration["Authentication:Audience"],
                                                 };
 
             options.RequireHttpsMetadata = false;
@@ -60,8 +62,8 @@ namespace raBudget.Api
                                                                        {
                                                                            // Update user context with authentication result - required for signalr
                                                                            var userContext = c.HttpContext
-                                                                                               .RequestServices
-                                                                                               .GetRequiredService<IUserContext>();
+                                                                                              .RequestServices
+                                                                                              .GetRequiredService<IUserContext>();
 
                                                                            userContext.SetFromAuthenticationResult(c.Principal);
                                                                        });
