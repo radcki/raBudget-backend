@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using raBudget.Api.Infrastructure;
@@ -53,7 +55,9 @@ namespace raBudget.Api
                                                     ValidAudience = configuration["Authentication:Audience"],
                                                     SignatureValidator = delegate(string token, TokenValidationParameters parameters)
                                                                          {
-                                                                             var jwt = new JwtSecurityToken(token);
+                                                                             var jwt = new JsonWebToken(token); // here was JwtSecurityToken
+                                                                             if (parameters.ValidateIssuer && !parameters.ValidIssuers.Contains(jwt.Issuer))
+                                                                                 return null;
                                                                              return jwt;
                                                                          },
                                                 };
