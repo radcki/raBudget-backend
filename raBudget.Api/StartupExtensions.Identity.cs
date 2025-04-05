@@ -23,11 +23,12 @@ namespace raBudget.Api
                                            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                                        })
                     .AddJwtBearer(options => ConfigureJwtBearer(options, configuration))
-                    .AddOAuth2Introspection("introspection", options =>
-                                                             {
-                                                                 options.Authority = configuration["Authentication:Authority"];
-                                                                 options.ClientId = configuration["Authentication:Audience"];
-                                                             });
+                    //.AddOAuth2Introspection("introspection", options =>
+                    //                                         {
+                    //                                             options.Authority = configuration["Authentication:Authority"];
+                    //                                             options.ClientId = configuration["Authentication:Audience"];
+                    //                                         })
+                     ;
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUserContext, UserContext>();
