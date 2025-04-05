@@ -55,7 +55,7 @@ namespace raBudget.Api
                                                     ValidAudience = configuration["Authentication:Audience"],
                                                     SignatureValidator = delegate(string token, TokenValidationParameters parameters)
                                                                          {
-                                                                             var jwt = new JsonWebToken(token); // here was JwtSecurityToken
+                                                                             var jwt = new JsonWebToken(token);
                                                                              if (parameters.ValidateIssuer && !parameters.ValidIssuers.Contains(jwt.Issuer))
                                                                                  return null;
                                                                              return jwt;
