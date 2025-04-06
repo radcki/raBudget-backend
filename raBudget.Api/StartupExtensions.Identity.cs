@@ -51,20 +51,12 @@ namespace raBudget.Api
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
                                                     ValidateIssuerSigningKey = false,
-                                                    LogValidationExceptions = false,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
                                                     SignatureValidator = (token, _) => new JsonWebToken(token),
-                                                    ClockSkew = TimeSpan.Zero
                                                 };
-            //options.BackchannelTimeout = TimeSpan.FromSeconds(2);
-            options.BackchannelHttpHandler = new LoggingHandler(new HttpClientHandler
-                                                                {
-                                                                    UseDefaultCredentials = true,
-                                                                    AllowAutoRedirect = true,
-                                                                        
-                                                                });
+
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
@@ -137,34 +129,4 @@ namespace raBudget.Api
         }
     }
 
-    public class LoggingHandler : DelegatingHandler
-    {
-        public LoggingHandler(HttpMessageHandler innerHandler)
-            : base(innerHandler)
-        {
-        }
-
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Request:");
-            Console.WriteLine(request.ToString());
-            if (request.Content != null)
-            {
-                Console.WriteLine(await request.Content.ReadAsStringAsync());
-            }
-            Console.WriteLine();
-
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
-
-            Console.WriteLine("Response:");
-            Console.WriteLine(response.ToString());
-            if (response.Content != null)
-            {
-                Console.WriteLine(await response.Content.ReadAsStringAsync());
-            }
-            Console.WriteLine();
-
-            return response;
-        }
-    }
 }
