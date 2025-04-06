@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,9 +47,10 @@ namespace raBudget.Api
         {
             options.Authority = configuration["Authentication:Authority"];
             options.Audience = configuration["Authentication:Audience"];
-
+            options.UseSecurityTokenValidators = true;
             options.TokenValidationParameters = new TokenValidationParameters()
                                                 {
+                                                    ClockSkew = TimeSpan.FromMinutes(1),
                                                     ValidateLifetime = true,
                                                     ValidateIssuer = true,
                                                     ValidateAudience = true,
@@ -56,13 +58,7 @@ namespace raBudget.Api
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
-                                                    SignatureValidator = delegate(string token, TokenValidationParameters parameters)
-                                                                         {
-                                                                             var jwt = new JsonWebToken(token);
-                                                                             if (parameters.ValidateIssuer && !parameters.ValidIssuers.Contains(jwt.Issuer))
-                                                                                 return null;
-                                                                             return jwt;
-                                                                         },
+                                                    SignatureValidator = (token, _) => new JwtSecurityToken(token)
                                                 };
 
             options.RequireHttpsMetadata = false;
