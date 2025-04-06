@@ -49,17 +49,18 @@ namespace raBudget.Api
             options.Audience = configuration["Authentication:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters()
                                                 {
-                                                    ValidateLifetime = false,
-                                                    ValidateIssuer = false,
-                                                    ValidateAudience = false,
+                                                    ValidateLifetime = true,
+                                                    ValidateIssuer = true,
+                                                    ValidateAudience = true,
                                                     ValidateIssuerSigningKey = false,
                                                     LogValidationExceptions = false,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
-                                                    SignatureValidator = (token, _) => new JsonWebToken(token)
+                                                    SignatureValidator = (token, _) => new JsonWebToken(token),
+                                                    ClockSkew = TimeSpan.Zero
                                                 };
-
+            
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
