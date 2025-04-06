@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,15 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using raBudget.Api.Infrastructure;
 using raBudget.Domain.Interfaces;
-using Serilog;
 
 namespace raBudget.Api
 {
-    public static partial class StartupExtensions
+    public static class StartupExtensions
     {
         public static void AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -49,7 +45,7 @@ namespace raBudget.Api
         {
             options.Authority = configuration["Authentication:Authority"];
             options.Audience = configuration["Authentication:Audience"];
-            options.TokenValidationParameters = new TokenValidationParameters()
+            options.TokenValidationParameters = new TokenValidationParameters
                                                 {
                                                     ValidateLifetime = true,
                                                     ValidateIssuer = true,
@@ -62,8 +58,13 @@ namespace raBudget.Api
                                                     SignatureValidator = (token, _) => new JsonWebToken(token),
                                                     ClockSkew = TimeSpan.Zero
                                                 };
-            options.BackchannelTimeout = TimeSpan.FromSeconds(2);
-            options.BackchannelHttpHandler = new AuthorizingHandler(new HttpClientHandler());
+            //options.BackchannelTimeout = TimeSpan.FromSeconds(2);
+            options.BackchannelHttpHandler = new LoggingHandler(new HttpClientHandler
+                                                                {
+                                                                    UseDefaultCredentials = true,
+                                                                    AllowAutoRedirect = true,
+                                                                        
+                                                                });
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
@@ -136,25 +137,34 @@ namespace raBudget.Api
         }
     }
 
-    public class AuthorizingHandler : DelegatingHandler
+    public class LoggingHandler : DelegatingHandler
     {
-        public AuthorizingHandler(HttpMessageHandler inner)
-            : base(inner)
+        public LoggingHandler(HttpMessageHandler innerHandler)
+            : base(innerHandler)
         {
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            try
+            Console.WriteLine("Request:");
+            Console.WriteLine(request.ToString());
+            if (request.Content != null)
             {
-                Console.WriteLine(@"AuthorizingHandler SendAsync");
-                return await base.SendAsync(request, cancellationToken);
+                Console.WriteLine(await request.Content.ReadAsStringAsync());
             }
-            catch (Exception e)
+            Console.WriteLine();
+
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+
+            Console.WriteLine("Response:");
+            Console.WriteLine(response.ToString());
+            if (response.Content != null)
             {
-                Console.WriteLine(e);
-                throw;
+                Console.WriteLine(await response.Content.ReadAsStringAsync());
             }
+            Console.WriteLine();
+
+            return response;
         }
     }
 }
