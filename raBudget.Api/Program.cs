@@ -29,7 +29,6 @@ namespace raBudget.Api
 #endif
                         .ReadFrom.Configuration(configuration)
                         .Enrich.FromLogContext()
-                        .WriteTo.Console()
                         .CreateLogger();
             try
             {
