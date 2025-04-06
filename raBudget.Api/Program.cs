@@ -28,7 +28,10 @@ namespace raBudget.Api
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
 #endif
                         .ReadFrom.Configuration(configuration)
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Verbose)
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Authorization", LogEventLevel.Verbose)
                         .Enrich.FromLogContext()
+                         
                         .CreateLogger();
             try
             {
