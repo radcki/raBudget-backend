@@ -49,11 +49,11 @@ namespace raBudget.Api
             options.Audience = configuration["Authentication:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters()
                                                 {
-                                                    ClockSkew = TimeSpan.FromMinutes(1),
-                                                    ValidateLifetime = true,
-                                                    ValidateIssuer = true,
-                                                    ValidateAudience = true,
+                                                    ValidateLifetime = false,
+                                                    ValidateIssuer = false,
+                                                    ValidateAudience = false,
                                                     ValidateIssuerSigningKey = false,
+                                                    LogValidationExceptions = false,
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
@@ -63,6 +63,15 @@ namespace raBudget.Api
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
+                                 OnChallenge = async c =>
+                                               {
+                                                   await Task.Run(() =>
+                                                                  {
+
+                                                                      var logger = c.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                                                                      logger.LogInformation("OnChallenge");
+                                                                  });
+                                               },
                                  OnTokenValidated = async c =>
                                                     {
                                                         await Task.Run(() =>
