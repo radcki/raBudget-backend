@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using raBudget.Api.Infrastructure;
 using raBudget.Domain.Interfaces;
+using Serilog;
 
 namespace raBudget.Api
 {
@@ -23,12 +25,12 @@ namespace raBudget.Api
                                            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                                        })
                     .AddJwtBearer(options => ConfigureJwtBearer(options, configuration))
-                    //.AddOAuth2Introspection("introspection", options =>
-                    //                                         {
-                    //                                             options.Authority = configuration["Authentication:Authority"];
-                    //                                             options.ClientId = configuration["Authentication:Audience"];
-                    //                                         })
-                     ;
+                //.AddOAuth2Introspection("introspection", options =>
+                //                                         {
+                //                                             options.Authority = configuration["Authentication:Authority"];
+                //                                             options.ClientId = configuration["Authentication:Audience"];
+                //                                         })
+                ;
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUserContext, UserContext>();
@@ -70,6 +72,8 @@ namespace raBudget.Api
                                                     {
                                                         await Task.Run(() =>
                                                                        {
+                                                                           var logger = c.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                                                                           logger.LogInformation("OnTokenValidated");
                                                                            // Update user context with authentication result - required for signalr
                                                                            var userContext = c.HttpContext
                                                                                               .RequestServices
@@ -80,6 +84,8 @@ namespace raBudget.Api
                                                     },
                                  OnAuthenticationFailed = c =>
                                                           {
+                                                              var logger = c.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                                                              logger.LogInformation("OnAuthenticationFailed");
                                                               //ProblemDetails problem;
                                                               //if (c.Exception.GetType() == typeof(SecurityTokenExpiredException))
                                                               //{
@@ -105,6 +111,8 @@ namespace raBudget.Api
                                                           },
                                  OnMessageReceived = context =>
                                                      {
+                                                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                                                         logger.LogInformation("OnMessageReceived");
                                                          var accessToken = context.Request.Query["access_token"];
 
                                                          var path = context.HttpContext.Request.Path;
