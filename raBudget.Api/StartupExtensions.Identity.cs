@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -61,6 +63,7 @@ namespace raBudget.Api
                                                     ClockSkew = TimeSpan.Zero
                                                 };
             options.BackchannelTimeout = TimeSpan.FromSeconds(2);
+            options.BackchannelHttpHandler = new AuthorizingHandler(new HttpClientHandler());
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
@@ -68,7 +71,6 @@ namespace raBudget.Api
                                                {
                                                    await Task.Run(() =>
                                                                   {
-
                                                                       var logger = c.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
                                                                       logger.LogInformation("OnChallenge");
                                                                   });
@@ -131,6 +133,28 @@ namespace raBudget.Api
                              };
 
             //options.ForwardDefaultSelector = Selector.ForwardReferenceToken("introspection");
+        }
+    }
+
+    public class AuthorizingHandler : DelegatingHandler
+    {
+        public AuthorizingHandler(HttpMessageHandler inner)
+            : base(inner)
+        {
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Console.WriteLine(@"AuthorizingHandler SendAsync");
+                return await base.SendAsync(request, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
