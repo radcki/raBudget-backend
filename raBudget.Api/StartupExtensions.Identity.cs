@@ -47,7 +47,6 @@ namespace raBudget.Api
         {
             options.Authority = configuration["Authentication:Authority"];
             options.Audience = configuration["Authentication:Audience"];
-            options.UseSecurityTokenValidators = true;
             options.TokenValidationParameters = new TokenValidationParameters()
                                                 {
                                                     ClockSkew = TimeSpan.FromMinutes(1),
@@ -58,7 +57,7 @@ namespace raBudget.Api
                                                     ValidTypes = new[] { "at+jwt", "JWT" },
                                                     ValidIssuers = [configuration["Authentication:Authority"]],
                                                     ValidAudience = configuration["Authentication:Audience"],
-                                                    SignatureValidator = (token, _) => new JwtSecurityToken(token)
+                                                    SignatureValidator = (token, _) => new JsonWebToken(token)
                                                 };
 
             options.RequireHttpsMetadata = false;
