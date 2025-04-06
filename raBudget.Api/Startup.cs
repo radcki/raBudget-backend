@@ -115,28 +115,28 @@ namespace raBudget.Api
             app.UseForwardedHeaders(forwardOptions);
             app.UsePathBase("/api");
 
-            app.UseForwardedHeaders();
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseSwagger(options =>
-            //                   {
-            //                       options.RouteTemplate = "swagger/{documentName}/swagger.json";
-            //                       options.SerializeAsV2 = true;
-            //                   });
-            //    app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
-            //    app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
-            //                                   //.AllowAnyOrigin()
-            //                                  .AllowAnyHeader()
-            //                                  .AllowAnyMethod());
-            //}
-            //else
-            //{
+                app.UseForwardedHeaders();
+            if (env.IsDevelopment())
+            {
+                app.UseSwagger(options =>
+                               {
+                                   options.RouteTemplate = "swagger/{documentName}/swagger.json";
+                                   options.SerializeAsV2 = true;
+                               });
+                app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
+                app.UseCors(builder => builder.WithOrigins("https://localhost:8080")
+                                               //.AllowAnyOrigin()
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod());
+            }
+            else
+            {
                 app.UseCors(builder => builder.WithOrigins(Configuration["AllowedOrigins"] ?? "*")
                                               .AllowAnyHeader()
                                               .AllowAnyMethod()
                                               .AllowCredentials());
                 app.UseHsts();
-            //}
+            }
 
             // app.UseExceptionHandler("/error");
 

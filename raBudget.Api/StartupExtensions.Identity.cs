@@ -60,7 +60,7 @@ namespace raBudget.Api
                                                     SignatureValidator = (token, _) => new JsonWebToken(token),
                                                     ClockSkew = TimeSpan.Zero
                                                 };
-            
+            options.BackchannelTimeout = TimeSpan.FromSeconds(2);
             options.RequireHttpsMetadata = false;
             options.Events = new JwtBearerEvents
                              {
