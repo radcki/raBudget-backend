@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
@@ -15,7 +15,7 @@ namespace raBudget.Application.Features.Budgets.Query
 {
     public class GetBudgetList
     {
-        public class Query : IRequest<Response>
+        public class Query : IApplicationRequest<Response>
         {
         }
 
@@ -31,7 +31,7 @@ namespace raBudget.Application.Features.Budgets.Query
             public string Name { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Response>
+        public class Handler : ICommandHandler<Query, Response>
         {
             private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
@@ -42,7 +42,7 @@ namespace raBudget.Application.Features.Budgets.Query
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Response> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetIds = _accessControlService.GetAccessibleBudgetIds();
 

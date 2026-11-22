@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Query;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -19,7 +17,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetBudgetCategoryBalance
     {
-        public class Query : GridQuery, IRequest<Result>
+        public class Query : GridQuery, IApplicationRequest<Result>
         {
             public List<BudgetCategoryId> BudgetCategoryIds { get; set; }
         }
@@ -38,7 +36,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         }
 
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
@@ -51,7 +49,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 _readDbContext = readDbContext;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var hasBudgetCategoriesAccess = await _accessControlService.HasBudgetCategoriesAccessAsync(request.BudgetCategoryIds);
                 if (!hasBudgetCategoriesAccess)

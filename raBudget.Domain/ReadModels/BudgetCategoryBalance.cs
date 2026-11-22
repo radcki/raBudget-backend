@@ -1,5 +1,4 @@
-﻿using System;
-using raBudget.Domain.ValueObjects;
+﻿using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels
 {

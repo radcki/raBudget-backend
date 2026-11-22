@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
@@ -13,7 +13,7 @@ namespace raBudget.Application.Features.Dictionaries.Query
 {
     public class GetCurrencies
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
         }
 
@@ -45,7 +45,7 @@ namespace raBudget.Application.Features.Dictionaries.Query
             public string NativeName { get; private set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
 
@@ -54,7 +54,7 @@ namespace raBudget.Application.Features.Dictionaries.Query
                 _readDb = readDb;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var data = await _readDb.Currencies.ToCurrencyDtos().ToListAsync(cancellationToken);
                 return new Result()

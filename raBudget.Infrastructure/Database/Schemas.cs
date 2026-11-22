@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace raBudget.Infrastructure.Database
+﻿namespace raBudget.Infrastructure.Database
 {
     public static class Schemas
     {

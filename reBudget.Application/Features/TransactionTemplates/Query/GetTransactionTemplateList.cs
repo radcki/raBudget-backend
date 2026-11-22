@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
@@ -14,7 +14,7 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
 {
     public class GetTransactionTemplateList
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
             public eBudgetCategoryType? BudgetCategoryType { get; set; }
@@ -34,7 +34,7 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
             public string Description { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
@@ -45,7 +45,7 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                

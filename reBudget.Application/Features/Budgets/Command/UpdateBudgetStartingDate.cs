@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Exceptions;
@@ -15,7 +16,7 @@ namespace raBudget.Application.Features.Budget.Command
 {
     public class UpdateBudgetStartingDate
     {
-        public class Command : IRequest<Result>
+        public class Command : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
             public DateTime StartingDate { get; set; }
@@ -25,7 +26,7 @@ namespace raBudget.Application.Features.Budget.Command
         {
         }
 
-        public class Handler : IRequestHandler<Command, Result>
+        public class Handler : ICommandHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly IUserContext _userContext;
@@ -42,7 +43,7 @@ namespace raBudget.Application.Features.Budget.Command
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Command request, CancellationToken cancellationToken)
             {
                 if (!await _accessControlService.HasBudgetAccessAsync(request.BudgetId))
                 {

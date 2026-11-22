@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using raBudget.Common.Query;
+using raBudget.Application.Infrastructure;
 
 namespace raBudget.Api.Infrastructure
 {
@@ -13,7 +8,7 @@ namespace raBudget.Api.Infrastructure
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context.Metadata.ModelType.GetInterfaces().Contains(typeof(IBaseRequest)))
+            if (typeof(IApplicationRequest).IsAssignableFrom(context.Metadata.ModelType))
             {
                 return new BinderTypeModelBinder(typeof(RaBudgetModelBinder));
             }

@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Exceptions;
@@ -12,7 +13,7 @@ namespace raBudget.Application.Features.Budgets.Query
 {
     public class GetBudgetBalance
     {
-        public class Query : IRequest<Response>
+        public class Query : IApplicationRequest<Response>
         {
             public BudgetId BudgetId { get; set; }
         }
@@ -30,7 +31,7 @@ namespace raBudget.Application.Features.Budgets.Query
             public MoneyAmount SavingTotal { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Response>
+        public class Handler : ICommandHandler<Query, Response>
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
@@ -41,7 +42,7 @@ namespace raBudget.Application.Features.Budgets.Query
                 _balanceService = balanceService;
             }
 
-            public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Response> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 if (!await _accessControlService.HasBudgetAccessAsync(request.BudgetId))
                 {

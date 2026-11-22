@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RLib.Localization.Attributes;
+﻿using RLib.Localization.Attributes;
 
 namespace raBudget.Common.Resources
 {

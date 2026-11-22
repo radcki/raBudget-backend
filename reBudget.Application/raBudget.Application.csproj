@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="FastEndpoints.Messaging" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

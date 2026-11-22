@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -13,7 +14,7 @@ namespace raBudget.Application.Features.Allocations.Query
 {
     public class GetAllocationsDatesRange
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
         }
@@ -29,7 +30,7 @@ namespace raBudget.Application.Features.Allocations.Query
         }
 
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
@@ -40,7 +41,7 @@ namespace raBudget.Application.Features.Allocations.Query
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
                 var query = _readDb.Allocations.Where(x => budgetCategoryIds.Contains(x.TargetBudgetCategoryId));

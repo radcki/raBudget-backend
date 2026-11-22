@@ -1,5 +1,5 @@
 using System.Linq;
-using System.Reflection;
+using FastEndpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
+using raBudget.Application.Features.Transactions.Query;
+using raBudget.Application.Infrastructure;
 using raBudget.Common;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -29,9 +31,6 @@ namespace raBudget.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var apiAssembly = Assembly.Load("raBudget.Api");
-            var applicationAssembly = Assembly.Load("raBudget.Application");
-
             services.Configure<ApiConfiguration>(Configuration.GetSection("SystemConfiguration"));
             var mysqlConnectionString = Configuration.GetConnectionString("MySql");
             services.AddDbContext<IWriteDbContext, WriteDbContext>(options =>
@@ -51,12 +50,11 @@ namespace raBudget.Api
 
             services.AddIdentityServices(Configuration);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(applicationAssembly, apiAssembly));
+            services.AddMessaging(typeof(GetTransactionList).Assembly, typeof(Startup).Assembly);
+            services.AddScoped<PostCommitEventPublisher>();
             services.AddTransient<WriteDbContext>();
 
             services.AddSignalR();
-            services.AddTransient<TransactionNotificationsHub>();
-            services.AddTransient<BalanceNotificationsHub>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
                                                         {
@@ -79,6 +77,8 @@ namespace raBudget.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.ApplicationServices.UseMessaging(options => options.Warmup());
+
             var supportedCultures = KnownCulture.SupportedCultures().ToList();
             app.UseRequestLocalization(new RequestLocalizationOptions
                                        {

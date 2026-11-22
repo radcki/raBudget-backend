@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
@@ -16,7 +16,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetBudgetCategoryList
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
             public List<eBudgetCategoryType> BudgetCategoryTypes { get; set; }
@@ -49,7 +49,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             public MoneyAmount Amount { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
@@ -60,7 +60,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
 

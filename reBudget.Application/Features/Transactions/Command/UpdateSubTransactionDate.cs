@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Application.Features.Transactions.Notification;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -20,7 +18,7 @@ namespace raBudget.Application.Features.Transactions.Command
 {
     public class UpdateSubTransactionDate
     {
-        public class Command : IRequest<Result>
+        public class Command : IApplicationRequest<Result>
         {
             public SubTransactionId SubTransactionId { get; set; }
             public DateTime TransactionDate { get; set; }
@@ -30,7 +28,7 @@ namespace raBudget.Application.Features.Transactions.Command
         {
         }
 
-		public class Notification : INotification
+		public class Notification : UserNotification
 		{
 			public Transaction Transaction { get; set; }
 			public SubTransaction SubTransaction { get; set; }
@@ -38,20 +36,20 @@ namespace raBudget.Application.Features.Transactions.Command
 			public DateTime NewSubTransactionDate { get; set; }
 		}
 
-        public class Handler : IRequestHandler<Command, Result>
+        public class Handler : ICommandHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
-            private readonly IMediator _mediator;
+            private readonly PostCommitEventPublisher _eventPublisher;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, PostCommitEventPublisher eventPublisher)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
-                _mediator = mediator;
+                _eventPublisher = eventPublisher;
             }
 
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Command request, CancellationToken cancellationToken)
             {
                 var subTransaction = await _writeDbContext.Transactions
                                                        .Include(x => x.SubTransactions)
@@ -71,7 +69,7 @@ namespace raBudget.Application.Features.Transactions.Command
 
 				var transaction = _writeDbContext.Transactions.FirstOrDefault(x => x.TransactionId == subTransaction.ParentTransactionId);
 
-                _ = _mediator.Publish(new Notification()
+                _ = _eventPublisher.PublishAsync(new Notification()
                                       {
                                           OldSubTransactionDate = oldDate,
                                           NewSubTransactionDate = subTransaction.TransactionDate,

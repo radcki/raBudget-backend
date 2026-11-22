@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using raBudget.Common.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Domain.ReadModels

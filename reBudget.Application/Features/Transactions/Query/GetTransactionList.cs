@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Extensions;
 using raBudget.Common.Query;
@@ -18,7 +18,7 @@ namespace raBudget.Application.Features.Transactions.Query
 {
     public class GetTransactionList
     {
-        public class Query : GridQuery, IRequest<Result>
+        public class Query : GridQuery, IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
 
@@ -58,7 +58,7 @@ namespace raBudget.Application.Features.Transactions.Query
             public DateTime CreationDateTime { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
             private readonly AccessControlService _accessControlService;
@@ -69,7 +69,7 @@ namespace raBudget.Application.Features.Transactions.Query
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                 if (request.BudgetCategoryIds != null && request.BudgetCategoryIds.Any())

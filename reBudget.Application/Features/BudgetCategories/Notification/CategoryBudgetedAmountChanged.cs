@@ -1,131 +1,123 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.Extensions.DependencyInjection;
-using raBudget.Application.Features.Allocations.Command;
+using raBudget.Application.Infrastructure;
 using raBudget.Application.Features.BudgetCategories.Command;
 using raBudget.Application.Features.Budgets.Notification;
-using raBudget.Application.Features.Transactions.Notification;
-using raBudget.Common.Extensions;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
-using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Application.Features.BudgetCategories.Notification
 {
     public class CategoryBudgetedAmountChanged
     {
-        public class Listener : INotificationHandler<CreateBudgetCategory.Notification>,
-                                INotificationHandler<AddBudgetedAmount.Notification>,
-                                INotificationHandler<RemoveBudgetCategory.Notification>,
-                                INotificationHandler<RemoveBudgetedAmount.Notification>,
-                                INotificationHandler<UpdateBudgetedAmountAmount.Notification>,
-                                INotificationHandler<UpdateBudgetedAmountValidFrom.Notification>
+        public class Listener : IEventHandler<CreateBudgetCategory.Notification>,
+                                IEventHandler<AddBudgetedAmount.Notification>,
+                                IEventHandler<RemoveBudgetCategory.Notification>,
+                                IEventHandler<RemoveBudgetedAmount.Notification>,
+                                IEventHandler<UpdateBudgetedAmountAmount.Notification>,
+                                IEventHandler<UpdateBudgetedAmountValidFrom.Notification>
 
 
         {
-            private readonly IMediator _mediator;
-            private readonly IWriteDbContext _writeDbContext;
-
-            public Listener(IServiceScopeFactory serviceScopeFactory)
+            public async Task HandleAsync(CreateBudgetCategory.Notification notification, CancellationToken cancellationToken)
             {
-                var scope = serviceScopeFactory.CreateScope();
-                _writeDbContext = scope.ServiceProvider.GetService<IWriteDbContext>();
-                _mediator = scope.ServiceProvider.GetService<IMediator>();
-            }
-
-            public async Task Handle(CreateBudgetCategory.Notification notification, CancellationToken cancellationToken)
-            {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(AddBudgetedAmount.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(AddBudgetedAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(RemoveBudgetCategory.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveBudgetCategory.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(RemoveBudgetedAmount.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveBudgetedAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(UpdateBudgetedAmountAmount.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateBudgetedAmountAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(UpdateBudgetedAmountValidFrom.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateBudgetedAmountValidFrom.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new Notification()
+                await new Notification()
                                         {
+                                            UserId = notification.UserId,
                                             BudgetCategories = new List<BudgetCategory>() {notification.ReferenceBudgetCategory}
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
             }
 
-        public class Notification : INotification
+        public class Notification : UserNotification
         {
             public List<BudgetCategory> BudgetCategories { get; set; }
         }
 
-        public class Handler : INotificationHandler<Notification>
+        public class Handler : IEventHandler<Notification>
         {
-            private readonly BalanceService _balanceService;
-            private readonly IMediator _mediator;
+            private readonly IServiceScopeFactory _scopeFactory;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory)
+            public Handler(IServiceScopeFactory scopeFactory)
             {
-                var serviceScope = serviceScopeFactory.CreateScope();
-                _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
-                _mediator = serviceScope.ServiceProvider.GetService<IMediator>();
+                _scopeFactory = scopeFactory;
             }
 
 
             /// <inheritdoc />
-            public async Task Handle(Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(Notification notification, CancellationToken cancellationToken)
             {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var balanceService = scope.ServiceProvider.GetRequiredService<BalanceService>();
+
                 foreach (var budgetCategory in notification.BudgetCategories)
                 {
-                    await _balanceService.CalculateBudgetCategoryBalance(budgetCategory.BudgetCategoryId, cancellationToken);
-                    await _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
+                    await balanceService.CalculateBudgetCategoryBalance(budgetCategory.BudgetCategoryId, cancellationToken);
+                    await new BudgetCategoryBalanceChanged.Notification()
                                             {
+                                                UserId = notification.UserId,
                                                 BudgetCategoryId = budgetCategory.BudgetCategoryId
-                                            }, cancellationToken);
+                                            }.PublishAsync(cancellation: cancellationToken);
                 }
 
 
                 foreach (var budgetId in notification.BudgetCategories.Select(x => x.BudgetId).Distinct())
                 {
-                    await _balanceService.CalculateBudgetBalance(budgetId, cancellationToken);
-                    await _mediator.Publish(new BudgetBalanceChanged()
+                    await balanceService.CalculateBudgetBalance(budgetId, cancellationToken);
+                    await new BudgetBalanceChanged()
                                             {
+                                                UserId = notification.UserId,
                                                 BudgetId = budgetId
-                                            }, cancellationToken);
+                                            }.PublishAsync(cancellation: cancellationToken);
                 }
             }
         }
