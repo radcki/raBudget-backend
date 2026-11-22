@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Application.Features.Budget.Command
 {
     public class CreateBudget
     {
-        public class Command : IRequest<Result>
+        public class Command : IApplicationRequest<Result>
         {
             public string Name { get; set; }
             public DateTime StartingDate { get; set; }
@@ -26,7 +24,7 @@ namespace raBudget.Application.Features.Budget.Command
         {
         }
 
-        public class Handler : IRequestHandler<Command, Result>
+        public class Handler : ICommandHandler<Command, Result>
         {
             private readonly IUserContext _userContext;
             private readonly IWriteDbContext _writeDbContext;
@@ -37,7 +35,7 @@ namespace raBudget.Application.Features.Budget.Command
                 _writeDbContext = writeDbContext;
             }
 
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Command request, CancellationToken cancellationToken)
             {
                 var budget = Domain.Entities.Budget.Create(request.Name, request.StartingDate, Currency.Get(request.CurrencyCode));
                 budget.SetOwner(_userContext.UserId);

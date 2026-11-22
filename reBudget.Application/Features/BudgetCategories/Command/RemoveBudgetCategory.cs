@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
@@ -17,7 +17,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 {
     public class RemoveBudgetCategory
     {
-        public class Command : IRequest<Result>
+        public class Command : IApplicationRequest<Result>
         {
             public BudgetCategoryId BudgetCategoryId { get; set; }
         }
@@ -26,25 +26,25 @@ namespace raBudget.Application.Features.BudgetCategories.Command
         {
         }
         
-		public class Notification : INotification
+		public class Notification : UserNotification
 		{
 			public BudgetCategory ReferenceBudgetCategory { get; set; }
 		}
 
-        public class Handler : IRequestHandler<Command, Result>
+        public class Handler : ICommandHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
-			private readonly IMediator _mediator;
+			private readonly PostCommitEventPublisher _eventPublisher;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, PostCommitEventPublisher eventPublisher)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
-				_mediator = mediator;
+				_eventPublisher = eventPublisher;
 			}
 
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Command request, CancellationToken cancellationToken)
             {
                 if (!await _accessControlService.HasBudgetCategoryAccessAsync(request.BudgetCategoryId))
                 {
@@ -61,7 +61,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-				_ = _mediator.Publish(new Notification()
+				_ = _eventPublisher.PublishAsync(new Notification()
 				{
 					ReferenceBudgetCategory = budgetCategory,
 				}, cancellationToken);

@@ -1,8 +1,4 @@
 ﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using raBudget.Domain.Entities;
 using Allocation = raBudget.Domain.ReadModels.Allocation;
 using Budget = raBudget.Domain.ReadModels.Budget;

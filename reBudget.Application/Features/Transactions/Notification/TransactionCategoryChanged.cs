@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.Extensions.DependencyInjection;
+using raBudget.Application.Infrastructure;
 using raBudget.Application.Features.BudgetCategories.Notification;
 using raBudget.Application.Features.Transactions.Command;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
-using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
 using raBudget.Domain.ValueObjects;
 
@@ -18,69 +13,65 @@ namespace raBudget.Application.Features.Transactions.Notification
 {
     public class TransactionCategoryChanged
     {
-        public class Listener : INotificationHandler<UpdateTransactionCategory.Notification>
+        public class Listener : IEventHandler<UpdateTransactionCategory.Notification>
 		{
-			private readonly IMediator _mediator;
-
-			public Listener(IMediator mediator)
+			public async Task HandleAsync(UpdateTransactionCategory.Notification notification, CancellationToken cancellationToken)
 			{
-				_mediator = mediator;
-			}
-
-			public async Task Handle(UpdateTransactionCategory.Notification notification, CancellationToken cancellationToken)
-			{
-				await _mediator.Publish(new Notification()
+				await new Notification()
 				{
+					UserId = notification.UserId,
 					NewBudgetCategoryId = notification.NewBudgetCategoryId,
 					OldBudgetCategoryId = notification.OldBudgetCategoryId,
 					ReferenceTransaction = notification.Transaction
-				}, cancellationToken);
+				}.PublishAsync(cancellation: cancellationToken);
 			}
 		}
 
-        public class Notification : INotification
+        public class Notification : UserNotification
         {
             public Transaction ReferenceTransaction { get; set; }
             public BudgetCategoryId OldBudgetCategoryId { get; set; }
             public BudgetCategoryId NewBudgetCategoryId { get; set; }
         }
 
-        public class Handler : INotificationHandler<Notification>
+        public class Handler : IEventHandler<Notification>
         {
-            private readonly BalanceService _balanceService;
-			private readonly IMediator _mediator;
+            private readonly IServiceScopeFactory _scopeFactory;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory)
+            public Handler(IServiceScopeFactory scopeFactory)
             {
-				var serviceScope = serviceScopeFactory.CreateScope();
-                _mediator = serviceScope.ServiceProvider.GetService<IMediator>();
-                _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
+                _scopeFactory = scopeFactory;
             }
 
 
             /// <inheritdoc />
-            public async Task Handle(Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(Notification notification, CancellationToken cancellationToken)
             {
-                await _balanceService.CalculateBudgetCategoryBalance(notification.OldBudgetCategoryId,
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var balanceService = scope.ServiceProvider.GetRequiredService<BalanceService>();
+
+                await balanceService.CalculateBudgetCategoryBalance(notification.OldBudgetCategoryId,
                                                                        notification.ReferenceTransaction.TransactionDate.Year,
                                                                        notification.ReferenceTransaction.TransactionDate.Month,
                                                                        cancellationToken);
 
-                await _balanceService.CalculateBudgetCategoryBalance(notification.NewBudgetCategoryId,
+                await balanceService.CalculateBudgetCategoryBalance(notification.NewBudgetCategoryId,
 																	   notification.ReferenceTransaction.TransactionDate.Year,
 																	   notification.ReferenceTransaction.TransactionDate.Month,
 																	   cancellationToken);
 
 
-				_ = _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
+				await new BudgetCategoryBalanceChanged.Notification()
 				{
+					UserId = notification.UserId,
 					BudgetCategoryId = notification.OldBudgetCategoryId
-				}, cancellationToken);
+				}.PublishAsync(cancellation: cancellationToken);
 
-				_ = _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
+				await new BudgetCategoryBalanceChanged.Notification()
 				{
+					UserId = notification.UserId,
 					BudgetCategoryId = notification.NewBudgetCategoryId
-				}, cancellationToken);
+				}.PublishAsync(cancellation: cancellationToken);
 			}
 		}
     }

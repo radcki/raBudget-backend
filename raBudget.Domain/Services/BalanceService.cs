@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Extensions;
-using raBudget.Common.Resources;
 using raBudget.Domain.Enums;
-using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.ReadModels;
 using raBudget.Domain.ValueObjects;
-using RLib.Localization;
 using BudgetBalance = raBudget.Domain.Entities.BudgetBalance;
 using BudgetCategoryBalance = raBudget.Domain.Entities.BudgetCategoryBalance;
 

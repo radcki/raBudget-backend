@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.ValueObjects;

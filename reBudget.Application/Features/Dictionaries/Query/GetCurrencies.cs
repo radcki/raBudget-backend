@@ -1,15 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using raBudget.Common.Interfaces;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
@@ -19,7 +13,7 @@ namespace raBudget.Application.Features.Dictionaries.Query
 {
     public class GetCurrencies
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
         }
 
@@ -29,6 +23,20 @@ namespace raBudget.Application.Features.Dictionaries.Query
 
         public class CurrencyDto
         {
+            /// <summary>Creates a DTO using the currency's culture-derived display information.</summary>
+            internal static CurrencyDto CreateFrom(Currency currency)
+            {
+                return new CurrencyDto
+                {
+                    CurrencyCode = currency.CurrencyCode,
+                    Code = currency.Code,
+                    NumberFormat = currency.NumberFormat,
+                    Symbol = currency.Symbol,
+                    EnglishName = currency.EnglishName,
+                    NativeName = currency.NativeName
+                };
+            }
+
             public eCurrencyCode CurrencyCode { get; set; }
             public string Code { get; private set; }
             public NumberFormatInfo NumberFormat { get; set; }
@@ -37,35 +45,22 @@ namespace raBudget.Application.Features.Dictionaries.Query
             public string NativeName { get; private set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Currency, CurrencyDto>();
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly IMapper _mapper;
-            private readonly MapperConfiguration _mapperConfiguration;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, IMapper mapper)
+            public Handler(IReadDbContext readDb)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
-                _mapper = mapper;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
-                var currencies = await _readDb.Currencies.ToListAsync(cancellationToken);
-                var data = _mapper.Map<List<CurrencyDto>>(currencies).ToList();
+                var data = await _readDb.Currencies.ToCurrencyDtos().ToListAsync(cancellationToken);
                 return new Result()
                        {
                            Data = data,
-                           Total = data.Count()
+                           Total = data.Count
                        };
             }
         }

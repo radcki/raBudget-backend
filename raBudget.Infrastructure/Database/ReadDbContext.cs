@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
-using raBudget.Domain.ValueObjects;
 using Allocation = raBudget.Domain.ReadModels.Allocation;
 using Budget = raBudget.Domain.ReadModels.Budget;
 using BudgetBalance = raBudget.Domain.ReadModels.BudgetBalance;

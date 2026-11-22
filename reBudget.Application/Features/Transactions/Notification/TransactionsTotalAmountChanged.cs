@@ -1,112 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.Extensions.DependencyInjection;
+using raBudget.Application.Infrastructure;
 using raBudget.Application.Features.BudgetCategories.Notification;
 using raBudget.Application.Features.Budgets.Notification;
 using raBudget.Application.Features.Transactions.Command;
 using raBudget.Common.Extensions;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
-using raBudget.Domain.ValueObjects;
 
 namespace raBudget.Application.Features.Transactions.Notification
 {
     public class TransactionsTotalAmountChanged
     {
-        public class Listener : INotificationHandler<CreateTransaction.Notification>,
-                                INotificationHandler<RemoveTransaction.Notification>,
-                                INotificationHandler<AddSubTransaction.Notification>,
-                                INotificationHandler<RemoveSubTransaction.Notification>,
-                                INotificationHandler<UpdateSubTransactionAmount.Notification>,
-                                INotificationHandler<UpdateTransactionAmount.Notification>
+        public class Listener : IEventHandler<CreateTransaction.Notification>,
+                                IEventHandler<RemoveTransaction.Notification>,
+                                IEventHandler<AddSubTransaction.Notification>,
+                                IEventHandler<RemoveSubTransaction.Notification>,
+                                IEventHandler<UpdateSubTransactionAmount.Notification>,
+                                IEventHandler<UpdateTransactionAmount.Notification>
         {
-            private readonly IMediator _mediator;
-
-            public Listener(IMediator mediator)
+            public async Task HandleAsync(CreateTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                _mediator = mediator;
+                await new TransactionsTotalAmountChanged.Notification
+                                        {
+                                            UserId = notification.UserId,
+                                            ReferenceTransaction = notification.Transaction
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(CreateTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
+                await new TransactionsTotalAmountChanged.Notification
                                         {
+                                            UserId = notification.UserId,
                                             ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(AddSubTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
+                await new TransactionsTotalAmountChanged.Notification
                                         {
+                                            UserId = notification.UserId,
                                             ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(AddSubTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
+                await new TransactionsTotalAmountChanged.Notification
                                         {
+                                            UserId = notification.UserId,
                                             ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateSubTransactionAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
+                await new TransactionsTotalAmountChanged.Notification
                                         {
+                                            UserId = notification.UserId,
                                             ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
 
-            public async Task Handle(UpdateSubTransactionAmount.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateTransactionAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
+                await new TransactionsTotalAmountChanged.Notification
                                         {
+                                            UserId = notification.UserId,
                                             ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
-            }
-
-            public async Task Handle(UpdateTransactionAmount.Notification notification, CancellationToken cancellationToken)
-            {
-                await _mediator.Publish(new TransactionsTotalAmountChanged.Notification
-                                        {
-                                            ReferenceTransaction = notification.Transaction
-                                        }, cancellationToken);
+                                        }.PublishAsync(cancellation: cancellationToken);
             }
         }
 
-        public class Notification : INotification
+        public class Notification : UserNotification
         {
             public Transaction ReferenceTransaction { get; set; }
         }
 
-        public class Handler : INotificationHandler<Notification>
+        public class Handler : IEventHandler<Notification>
         {
-            private readonly BalanceService _balanceService;
-            private readonly IReadDbContext _readDb;
-            private readonly IMediator _mediator;
+            private readonly IServiceScopeFactory _scopeFactory;
 
-            public Handler(IServiceScopeFactory serviceScopeFactory)
+            public Handler(IServiceScopeFactory scopeFactory)
             {
-                var serviceScope = serviceScopeFactory.CreateScope();
-                _mediator = serviceScope.ServiceProvider.GetService<IMediator>();
-                _balanceService = serviceScope.ServiceProvider.GetService<BalanceService>();
-                _readDb = serviceScope.ServiceProvider.GetService<IReadDbContext>();
+                _scopeFactory = scopeFactory;
             }
 
 
             /// <inheritdoc />
-            public async Task Handle(Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(Notification notification, CancellationToken cancellationToken)
             {
-                var category = _readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.ReferenceTransaction.BudgetCategoryId);
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var readDb = scope.ServiceProvider.GetRequiredService<IReadDbContext>();
+                var balanceService = scope.ServiceProvider.GetRequiredService<BalanceService>();
+
+                var category = readDb.BudgetCategories.FirstOrDefault(x => x.BudgetCategoryId == notification.ReferenceTransaction.BudgetCategoryId);
                 if (category == null)
                 {
                     return;
@@ -124,23 +120,25 @@ namespace raBudget.Application.Features.Transactions.Notification
 
                 foreach (var dateTime in dates.Select(x => x.StartOfMonth()).Distinct())
                 {
-                    await _balanceService.CalculateBudgetCategoryBalance(category.BudgetCategoryId,
+                    await balanceService.CalculateBudgetCategoryBalance(category.BudgetCategoryId,
                                                                            dateTime.Year,
                                                                            dateTime.Month,
                                                                            cancellationToken);
                 }
 
-                await _mediator.Publish(new BudgetCategoryBalanceChanged.Notification()
+                await new BudgetCategoryBalanceChanged.Notification()
                                       {
+                                          UserId = notification.UserId,
                                           BudgetCategoryId = notification.ReferenceTransaction.BudgetCategoryId
-                                      }, cancellationToken);
+                                      }.PublishAsync(cancellation: cancellationToken);
                 
-                await _balanceService.CalculateBudgetBalance(category.BudgetId, cancellationToken);
+                await balanceService.CalculateBudgetBalance(category.BudgetId, cancellationToken);
 
-                await _mediator.Publish(new BudgetBalanceChanged()
+                await new BudgetBalanceChanged()
                                       {
+                                          UserId = notification.UserId,
                                           BudgetId = category.BudgetId
-                                      }, cancellationToken);
+                                      }.PublishAsync(cancellation: cancellationToken);
             }
         }
     }

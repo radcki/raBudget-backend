@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FluentAssertions;
-using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
+using Shouldly;
 using Xunit;
 
 namespace raBudget.Domain.UnitTests.Models
@@ -25,9 +21,10 @@ namespace raBudget.Domain.UnitTests.Models
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
 
             // Assert
-            budgetCategory.BudgetedAmounts.Should().HaveCount(1);
-            budgetCategory.BudgetedAmounts.FirstOrDefault().Amount.Should().Be(amount);
-            budgetCategory.BudgetedAmounts.FirstOrDefault().ValidFrom.Should().Be(DateTime.Today);
+
+            budgetCategory.BudgetedAmounts.ShouldHaveSingleItem();
+            budgetCategory.BudgetedAmounts.First().Amount.ShouldBe(amount);
+            budgetCategory.BudgetedAmounts.First().ValidFrom.ShouldBe(DateTime.Today);
         }
 
         [Fact]
@@ -42,7 +39,7 @@ namespace raBudget.Domain.UnitTests.Models
             Action act = () => budgetCategory.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
 
             // Assert
-            act.Should().Throw<BusinessException>();
+            act.ShouldThrow<BusinessException>();
         }
 
         [Fact]
@@ -54,12 +51,12 @@ namespace raBudget.Domain.UnitTests.Models
             var budgetCategory = RandomBudgetCategory(budget);
             var budgetCategory2 = RandomBudgetCategory(budget);
             var budgetedAmount = budgetCategory2.AddBudgetedAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()), DateTime.Today);
-           
+
             // Act
-            Action act = ()=> budgetCategory.RemoveBudgetedAmount(budgetedAmount);
+            Action act = () => budgetCategory.RemoveBudgetedAmount(budgetedAmount);
 
             // Assert
-            act.Should().Throw<BusinessException>();
+            act.ShouldThrow<BusinessException>();
         }
 
         [Fact]
@@ -72,13 +69,14 @@ namespace raBudget.Domain.UnitTests.Models
             var amount = new MoneyAmount(budget.Currency.CurrencyCode, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
             var amountToUpdate = budgetCategory.BudgetedAmounts.ToList().First();
-            amountToUpdate.SetAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()));;
+            amountToUpdate.SetAmount(new MoneyAmount(budget.Currency.CurrencyCode, RandomInt()));
+            ;
 
             // Act
             Action act = () => budgetCategory.UpdateBudgetedAmount(amountToUpdate);
 
             // Assert
-            budgetCategory.BudgetedAmounts.FirstOrDefault().Amount.Should().Be(amountToUpdate.Amount);
+            budgetCategory.BudgetedAmounts.First().Amount.ShouldBe(amountToUpdate.Amount);
         }
 
         [Fact]
@@ -91,13 +89,14 @@ namespace raBudget.Domain.UnitTests.Models
             var amount = new MoneyAmount(budget.Currency.CurrencyCode, RandomInt());
             budgetCategory.AddBudgetedAmount(amount, DateTime.Today);
             var amountToUpdate = budgetCategory.BudgetedAmounts.ToList().First();
-            amountToUpdate.SetValidFromDate(DateTime.Today.AddMonths(-1)); ;
+            amountToUpdate.SetValidFromDate(DateTime.Today.AddMonths(-1));
+            ;
 
             // Act
             Action act = () => budgetCategory.UpdateBudgetedAmount(amountToUpdate);
 
             // Assert
-            budgetCategory.BudgetedAmounts.FirstOrDefault().ValidFrom.Should().Be(amountToUpdate.ValidFrom);
+            budgetCategory.BudgetedAmounts.First().ValidFrom.ShouldBe(amountToUpdate.ValidFrom);
         }
 
         [Fact]
@@ -114,7 +113,7 @@ namespace raBudget.Domain.UnitTests.Models
             Action act = () => budgetCategory.UpdateBudgetedAmount(budgetedAmount);
 
             // Assert
-            act.Should().Throw<NotFoundException>();
+            act.ShouldThrow<NotFoundException>();
         }
     }
 }

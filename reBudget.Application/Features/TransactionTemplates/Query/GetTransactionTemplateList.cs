@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Common.Extensions;
-using raBudget.Common.Interfaces;
-using raBudget.Common.Query;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -20,7 +14,7 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
 {
     public class GetTransactionTemplateList
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
             public eBudgetCategoryType? BudgetCategoryType { get; set; }
@@ -40,28 +34,18 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
             public string Description { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.TransactionTemplate, TransactionTemplateDto>();
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                
@@ -69,7 +53,7 @@ namespace raBudget.Application.Features.TransactionTemplates.Query
 
                 var query = _readDb.TransactionTemplates.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId));
 
-                var data = await query.ProjectTo<TransactionTemplateDto>(_mapperConfiguration)
+                var data = await query.ToTransactionTemplateDtos()
                                       .OrderBy(x=>x.Description)
                                       .ToListAsync(cancellationToken);
                 return new Result()

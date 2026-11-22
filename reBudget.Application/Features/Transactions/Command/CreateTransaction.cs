@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using raBudget.Application.Features.Transactions.Notification;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -20,7 +17,7 @@ namespace raBudget.Application.Features.Transactions.Command
 {
     public class CreateTransaction
     {
-        public class Command : IRequest<Result>
+        public class Command : IApplicationRequest<Result>
         {
             public BudgetCategoryId BudgetCategoryId { get; set; }
             public MoneyAmount Amount { get; set; }
@@ -32,25 +29,25 @@ namespace raBudget.Application.Features.Transactions.Command
         {
         }
 
-		public class Notification : INotification
+		public class Notification : UserNotification
 		{
             public Transaction Transaction { get; set; }
 		}
 
-        public class Handler : IRequestHandler<Command, Result>
+        public class Handler : ICommandHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
-            private readonly IMediator _mediator;
+            private readonly PostCommitEventPublisher _eventPublisher;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, PostCommitEventPublisher eventPublisher)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
-                _mediator = mediator;
+                _eventPublisher = eventPublisher;
             }
 
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Command request, CancellationToken cancellationToken)
             {
                 var budgetCategoryId = request.BudgetCategoryId;
                 if (!await _accessControlService.HasBudgetCategoryAccessAsync(budgetCategoryId))
@@ -69,7 +66,7 @@ namespace raBudget.Application.Features.Transactions.Command
 
                 await _writeDbContext.SaveChangesAsync(cancellationToken);
 
-                _ = _mediator.Publish(new Notification() {
+                _ = _eventPublisher.PublishAsync(new Notification() {
                                           Transaction = transaction
                                       }, cancellationToken);
 

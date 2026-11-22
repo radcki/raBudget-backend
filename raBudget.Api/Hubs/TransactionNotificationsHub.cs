@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.AspNetCore.SignalR;
 using raBudget.Application.Features.BudgetCategories.Command;
-using raBudget.Application.Features.BudgetCategories.Notification;
-using raBudget.Application.Features.Budgets.Notification;
 using raBudget.Application.Features.Transactions.Command;
-using raBudget.Application.Features.Transactions.Notification;
-using raBudget.Domain.Interfaces;
+using raBudget.Application.Infrastructure;
 
 namespace raBudget.Api.Hubs
 {
@@ -23,96 +17,87 @@ namespace raBudget.Api.Hubs
 
     public class TransactionNotificationsHub : Hub
     {
-        private readonly IUserContext _userContext;
-        private readonly IHubContext<TransactionNotificationsHub> _hubContext;
-
-        public TransactionNotificationsHub(IUserContext userContext, IHubContext<TransactionNotificationsHub> hubContext)
+        public class Listener : IClientNotificationHandler,
+                                IEventHandler<CreateTransaction.Notification>,
+                                IEventHandler<RemoveTransaction.Notification>,
+                                IEventHandler<AddSubTransaction.Notification>,
+                                IEventHandler<UpdateSubTransactionAmount.Notification>,
+                                IEventHandler<UpdateSubTransactionDate.Notification>,
+                                IEventHandler<UpdateSubTransactionDescription.Notification>,
+                                IEventHandler<RemoveSubTransaction.Notification>,
+                                IEventHandler<UpdateTransactionDate.Notification>,
+                                IEventHandler<UpdateTransactionCategory.Notification>,
+                                IEventHandler<UpdateTransactionDescription.Notification>,
+                                IEventHandler<RemoveBudgetCategory.Notification>
         {
-            _userContext = userContext;
-            _hubContext = hubContext;
-        }
+            private readonly IHubContext<TransactionNotificationsHub> _hubContext;
 
-        public async Task Send(string eventKey, INotification payload)
-        {
-            await _hubContext.Clients.User(_userContext.UserId).SendAsync(eventKey, payload);
-        }
-
-
-        public class Listener : INotificationHandler<CreateTransaction.Notification>,
-                                INotificationHandler<RemoveTransaction.Notification>,
-                                INotificationHandler<AddSubTransaction.Notification>,
-                                INotificationHandler<UpdateSubTransactionAmount.Notification>,
-                                INotificationHandler<UpdateSubTransactionDate.Notification>,
-                                INotificationHandler<UpdateSubTransactionDescription.Notification>,
-                                INotificationHandler<RemoveSubTransaction.Notification>,
-                                INotificationHandler<UpdateTransactionDate.Notification>,
-                                INotificationHandler<UpdateTransactionCategory.Notification>,
-                                INotificationHandler<UpdateTransactionDescription.Notification>,
-                                INotificationHandler<RemoveBudgetCategory.Notification>
-                                {
-            private readonly TransactionNotificationsHub _transactionNotificationsHub;
-
-            public Listener(TransactionNotificationsHub transactionNotificationsHub)
+            public Listener(IHubContext<TransactionNotificationsHub> hubContext)
             {
-                _transactionNotificationsHub = transactionNotificationsHub;
+                _hubContext = hubContext;
             }
 
-            public async Task Handle(CreateTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(CreateTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionListChanged, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionListChanged, notification, cancellationToken);
             }
 
             /// <inheritdoc />
-            public async Task Handle(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionListChanged, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionListChanged, notification, cancellationToken);
             }
             /// <inheritdoc />
-            public async Task Handle(RemoveBudgetCategory.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveBudgetCategory.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionListChanged, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionListChanged, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateTransactionDescription.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateTransactionDescription.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(AddSubTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(AddSubTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateSubTransactionAmount.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateSubTransactionAmount.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateSubTransactionDate.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateSubTransactionDate.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateSubTransactionDescription.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateSubTransactionDescription.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateTransactionDate.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateTransactionDate.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(UpdateTransactionCategory.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(UpdateTransactionCategory.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
-            public async Task Handle(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
+            public async Task HandleAsync(RemoveSubTransaction.Notification notification, CancellationToken cancellationToken)
             {
-                await _transactionNotificationsHub.Send(TransactionNotificationEvents.TransactionUpdated, notification);
+                await SendAsync(TransactionNotificationEvents.TransactionUpdated, notification, cancellationToken);
             }
 
+
+            private Task SendAsync(string eventKey, UserNotification notification, CancellationToken cancellationToken)
+            {
+                return _hubContext.Clients.User(notification.UserId).SendAsync(eventKey, notification, cancellationToken);
+            }
         }
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Exceptions;
@@ -16,7 +17,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetCurrentBudgetCategorySummary
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public List<BudgetCategoryId> BudgetCategoryIds { get; set; }
         }
@@ -35,7 +36,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         }
 
 
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
@@ -48,7 +49,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 _readDbContext = readDb;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var hasBudgetCategoriesAccess = await _accessControlService.HasBudgetCategoriesAccessAsync(request.BudgetCategoryIds);
                 if (!hasBudgetCategoriesAccess)

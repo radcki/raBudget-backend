@@ -1,7 +1,6 @@
 ﻿using System;
 using raBudget.Common.Entities;
 using raBudget.Common.Resources;
-using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
 using RLib.Localization;

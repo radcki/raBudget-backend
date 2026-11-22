@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Extensions;
-using raBudget.Common.Interfaces;
 using raBudget.Common.Query;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -20,7 +18,7 @@ namespace raBudget.Application.Features.Transactions.Query
 {
     public class GetTransactionList
     {
-        public class Query : GridQuery, IRequest<Result>
+        public class Query : GridQuery, IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
 
@@ -60,29 +58,18 @@ namespace raBudget.Application.Features.Transactions.Query
             public DateTime CreationDateTime { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.SubTransaction, SubTransactionDto>();
-                configuration.CreateMap<Domain.ReadModels.Transaction, TransactionDto>();
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId, request.BudgetCategoryType);
                 if (request.BudgetCategoryIds != null && request.BudgetCategoryIds.Any())
@@ -119,10 +106,9 @@ namespace raBudget.Application.Features.Transactions.Query
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
 
-                var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
+                var data = await query.ToTransactionDtos()
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);
-                data.ForEach(transaction => transaction.SubTransactions = transaction.SubTransactions.OrderByDescending(x => x.TransactionDate).ToList());
 
                 return new Result()
                        {

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
-using raBudget.Common.Interfaces;
+using FastEndpoints;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -15,7 +13,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetBudgetedAmountsSummary
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
         }
@@ -40,14 +38,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
         }
 
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly AccessControlService _accessControlService;
             private readonly BalanceService _balanceService;
@@ -60,7 +51,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                 _readDb = readDb;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIdsQuery = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
                 var budgetCategories = _readDb.BudgetCategories.Where(x => budgetCategoryIdsQuery.Contains(x.BudgetCategoryId)).ToList();

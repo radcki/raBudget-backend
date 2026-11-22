@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Common.Interfaces;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
@@ -17,7 +15,7 @@ namespace raBudget.Application.Features.Budgets.Query
 {
     public class GetBudgetList
     {
-        public class Query : IRequest<Response>
+        public class Query : IApplicationRequest<Response>
         {
         }
 
@@ -33,34 +31,24 @@ namespace raBudget.Application.Features.Budgets.Query
             public string Name { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.Budget, BudgetDto>();
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Response>
+        public class Handler : ICommandHandler<Query, Response>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
             }
 
-            public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Response> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetIds = _accessControlService.GetAccessibleBudgetIds();
 
                 var data = _readDb.Budgets
                                   .Where(x => budgetIds.Contains(x.BudgetId))
-                                  .ProjectTo<BudgetDto>(_mapperConfiguration)
+                                  .ToBudgetDtos()
                                   .OrderBy(x => x.Name);
 
                 return new Response()

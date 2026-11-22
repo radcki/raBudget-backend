@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Common.Interfaces;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -18,7 +16,7 @@ namespace raBudget.Application.Features.BudgetCategories.Query
 {
     public class GetBudgetCategoryList
     {
-        public class Query : IRequest<Result>
+        public class Query : IApplicationRequest<Result>
         {
             public BudgetId BudgetId { get; set; }
             public List<eBudgetCategoryType> BudgetCategoryTypes { get; set; }
@@ -51,30 +49,18 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             public MoneyAmount Amount { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.BudgetCategory.BudgetedAmount, BudgetedAmountDto>();
-                configuration.CreateMap<Domain.ReadModels.BudgetCategory, BudgetCategoryDto>()
-                             .ForMember(dest => dest.BudgetedAmounts, opt => opt.MapFrom(src => src.BudgetedAmounts.OrderBy(x => x.ValidFrom)));
-            }
-        }
-
-        public class Handler : IRequestHandler<Query, Result>
+        public class Handler : ICommandHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly IMapper _mapper;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb,AccessControlService accessControlService, IMapper mapper)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
                 _accessControlService = accessControlService;
-                _mapper = mapper;
             }
 
-            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result> ExecuteAsync(Query request, CancellationToken cancellationToken)
             {
                 var budgetCategoryIds = _accessControlService.GetAccessibleBudgetCategoryIds(request.BudgetId);
 
@@ -91,20 +77,14 @@ namespace raBudget.Application.Features.BudgetCategories.Query
                     query = query.Where(x => x.Hidden != true);
                 }
 
-                var budgetCategories = await query.ToListAsync(cancellationToken: cancellationToken);
+                var data = await query.OrderBy(category => category.Order)
+                    .ToBudgetCategoryDtos()
+                    .ToListAsync(cancellationToken);
 
-                var dtos = _mapper.Map<List<BudgetCategoryDto>>(budgetCategories);
-
-                return new Result()
+                return new Result
                        {
-                           Data = dtos.Select(x =>
-                                              {
-                                                  x.BudgetedAmounts = x.BudgetedAmounts.OrderBy(s => s.ValidFrom).ToList();
-                                                  return x;
-                                              })
-                                      .OrderBy(x => x.Order)
-                                      .ToList(),
-                           Total = budgetCategories.Count()
+                           Data = data,
+                           Total = data.Count
                        };
             }
         }

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
+using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using raBudget.Application.Features.Budget.Command;
 using raBudget.Application.Features.Dictionaries.Query;
-using raBudget.Domain.Interfaces;
 
 namespace raBudget.Api.ApiControllers
 {
@@ -17,13 +13,6 @@ namespace raBudget.Api.ApiControllers
     [Authorize]
     public class DictionariesController : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public DictionariesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet("is-alive")]
         [AllowAnonymous]
         public string IsAlive()
@@ -31,7 +20,7 @@ namespace raBudget.Api.ApiControllers
             return DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
         }
 
-        [HttpGet("currencies")] public async Task<GetCurrencies.Result> GetCurrencies([FromQuery]GetCurrencies.Query query) => await _mediator.Send(query);
-        [HttpGet("category-icons")] public async Task<GetBudgetCategoryIcons.Result> GetBudgetCategoryIcons([FromQuery] GetBudgetCategoryIcons.Query query) => await _mediator.Send(query);
+        [HttpGet("currencies")] public async Task<GetCurrencies.Result> GetCurrencies([FromQuery]GetCurrencies.Query query) => await query.ExecuteAsync();
+        [HttpGet("category-icons")] public async Task<GetBudgetCategoryIcons.Result> GetBudgetCategoryIcons([FromQuery] GetBudgetCategoryIcons.Query query) => await query.ExecuteAsync();
     }
 }
