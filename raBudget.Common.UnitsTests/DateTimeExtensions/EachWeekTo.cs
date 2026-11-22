@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using FluentAssertions;
 using raBudget.Common.Extensions;
+using Shouldly;
 using Xunit;
 
 namespace raBudget.Common.UnitsTests.DateTimeExtensions
@@ -19,9 +19,9 @@ namespace raBudget.Common.UnitsTests.DateTimeExtensions
             var ranges = from.EachWeekTo(to, DayOfWeek.Monday).ToList();
 
             // ASSERT
-            ranges.Should().HaveCount(1);
-            ranges.First().Start.Should().Be(from);
-            ranges.First().End.Should().Be(to);
+            ranges.Count.ShouldBe(1);
+            ranges.First().Start.ShouldBe(from);
+            ranges.First().End.ShouldBe(to);
         }
 
         [Fact]
@@ -35,9 +35,9 @@ namespace raBudget.Common.UnitsTests.DateTimeExtensions
             var ranges = from.EachWeekTo(to, DayOfWeek.Monday).ToList();
 
             // ASSERT
-            ranges.Should().HaveCount(1);
-            ranges.First().Start.Should().Be(from);
-            ranges.First().End.Should().Be(to);
+            ranges.Count.ShouldBe(1);
+            ranges.First().Start.ShouldBe(from);
+            ranges.First().End.ShouldBe(to);
         }
 
         [Fact]
@@ -51,12 +51,12 @@ namespace raBudget.Common.UnitsTests.DateTimeExtensions
             var ranges = from.EachWeekTo(to, DayOfWeek.Monday).ToList();
 
             // ASSERT
-            ranges.Should().HaveCount(2);
-            ranges[0].Start.Should().Be(from);
-            ranges[0].End.Should().Be(DateTime.Parse("2021-04-12 00:00:00"));
+            ranges.Count.ShouldBe(2);
+            ranges[0].Start.ShouldBe(from);
+            ranges[0].End.ShouldBe(DateTime.Parse("2021-04-12 00:00:00"));
             
-            ranges[1].Start.Should().Be(DateTime.Parse("2021-04-12 00:00:00"));
-            ranges[1].End.Should().Be(to);
+            ranges[1].Start.ShouldBe(DateTime.Parse("2021-04-12 00:00:00"));
+            ranges[1].End.ShouldBe(to);
         }
 
         [Fact]
@@ -70,18 +70,18 @@ namespace raBudget.Common.UnitsTests.DateTimeExtensions
             var ranges = from.EachWeekTo(to, DayOfWeek.Monday).ToList();
 
             // ASSERT
-            ranges.Should().HaveCount(4);
-            ranges[0].Start.Should().Be(from);
-            ranges[0].End.Should().Be(DateTime.Parse("2021-04-12 00:00:00"));
+            ranges.Count.ShouldBe(4);
+            ranges[0].Start.ShouldBe(from);
+            ranges[0].End.ShouldBe(DateTime.Parse("2021-04-12 00:00:00"));
 
-            ranges[1].Start.Should().Be(DateTime.Parse("2021-04-12 00:00:00"));
-            ranges[1].End.Should().Be(DateTime.Parse("2021-04-19 00:00:00"));
+            ranges[1].Start.ShouldBe(DateTime.Parse("2021-04-12 00:00:00"));
+            ranges[1].End.ShouldBe(DateTime.Parse("2021-04-19 00:00:00"));
 
-            ranges[2].Start.Should().Be(DateTime.Parse("2021-04-19 00:00:00"));
-            ranges[2].End.Should().Be(DateTime.Parse("2021-04-26 00:00:00"));
+            ranges[2].Start.ShouldBe(DateTime.Parse("2021-04-19 00:00:00"));
+            ranges[2].End.ShouldBe(DateTime.Parse("2021-04-26 00:00:00"));
 
-            ranges[3].Start.Should().Be(DateTime.Parse("2021-04-26 00:00:00"));
-            ranges[3].End.Should().Be(to);
+            ranges[3].Start.ShouldBe(DateTime.Parse("2021-04-26 00:00:00"));
+            ranges[3].End.ShouldBe(to);
         }
 
 

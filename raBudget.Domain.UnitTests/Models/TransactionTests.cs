@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentAssertions;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Exceptions;
 using raBudget.Domain.ValueObjects;
+using Shouldly;
 using Xunit;
 
 namespace raBudget.Domain.UnitTests.Models
@@ -35,7 +33,7 @@ namespace raBudget.Domain.UnitTests.Models
             Action act = () => transaction.SetAmount(newAmount);
 
             // Assert
-            act.Should().Throw<BusinessException>();
+            act.ShouldThrow<BusinessException>();
         }
 
         [Fact]
@@ -61,7 +59,7 @@ namespace raBudget.Domain.UnitTests.Models
 
 
             // Assert
-            transaction.TransactionDate.Should().Be(DateTime.Today);
+            transaction.TransactionDate.ShouldBe(DateTime.Today);
         }
 
     }

@@ -1,26 +1,21 @@
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
 using raBudget.Application.Infrastructure;
 using raBudget.Common;
-using raBudget.Common.Query;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
-using raBudget.Domain.ValueObjects;
 using raBudget.Infrastructure.Database;
 
 namespace raBudget.Api
@@ -121,7 +116,7 @@ namespace raBudget.Api
                 app.UseSwagger(options =>
                                {
                                    options.RouteTemplate = "swagger/{documentName}/swagger.json";
-                                   options.SerializeAsV2 = true;
+                                   // options.SerializeAsV2 = true;
                                });
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
                 app.UseCors(builder => builder.WithOrigins("https://localhost:8080")

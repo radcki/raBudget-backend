@@ -19,7 +19,7 @@ namespace raBudget.Application.Features.Allocations.Command
 		public class Command : IRequest<Result>
 		{
 			public BudgetCategoryId TargetBudgetCategoryId { get; set; }
-			public BudgetCategoryId SourceBudgetCategoryId { get; set; }
+			public BudgetCategoryId? SourceBudgetCategoryId { get; set; }
 			public MoneyAmount Amount { get; set; }
 			public string Description { get; set; }
 			public DateTime AllocationDate { get; set; }
