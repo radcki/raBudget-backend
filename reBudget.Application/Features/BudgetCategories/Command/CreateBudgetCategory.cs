@@ -24,7 +24,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public string Name { get; set; }
             public BudgetCategoryIconId BudgetCategoryIconId { get; set; }
             public eBudgetCategoryType BudgetCategoryType { get; set; }
-            public List<BudgetedAmountDto> BudgetedAmounts { get; set; }
+            public IReadOnlyCollection<BudgetedAmountDto> BudgetedAmounts { get; set; } = [];
         }
 
         public class BudgetedAmountDto

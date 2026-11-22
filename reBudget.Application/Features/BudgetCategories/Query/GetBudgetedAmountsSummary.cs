@@ -2,9 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
-using raBudget.Common.Interfaces;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -39,13 +37,6 @@ namespace raBudget.Application.Features.BudgetCategories.Query
             public MoneyAmount TotalBudgetedAmount { get; set; }
         }
 
-
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-            }
-        }
 
         public class Handler : IRequestHandler<Query, Result>
         {

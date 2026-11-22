@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Application.Features.BudgetCategories.Query;
 using raBudget.Common.Extensions;
-using raBudget.Common.Interfaces;
 using raBudget.Common.Resources;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
@@ -45,6 +42,26 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public string Name { get; set; }
             public MoneyAmount CurrentBudgetedAmount { get; set; }
             public List<BudgetedAmountDto> BudgetedAmounts { get; set; }
+
+            /// <summary>Creates the category returned by this command.</summary>
+            internal static BudgetCategoryDto CreateFrom(BudgetCategory category)
+            {
+                return new BudgetCategoryDto
+                {
+                    BudgetCategoryId = category.BudgetCategoryId,
+                    BudgetCategoryIconKey = category.BudgetCategoryIcon?.IconKey,
+                    BudgetCategoryIconId = category.BudgetCategoryIconId,
+                    BudgetId = category.BudgetId,
+                    BudgetCategoryType = category.BudgetCategoryType,
+                    Order = category.Order,
+                    Name = category.Name,
+                    CurrentBudgetedAmount = category.CurrentBudgetedAmount,
+                    BudgetedAmounts = category.BudgetedAmounts
+                        .OrderBy(amount => amount.ValidFrom)
+                        .Select(BudgetedAmountDto.CreateFrom)
+                        .ToList()
+                };
+            }
         }
 
         public class BudgetedAmountDto
@@ -53,6 +70,18 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public DateTime ValidFrom { get; set; }
             public DateTime? ValidTo { get; set; }
             public MoneyAmount Amount { get; set; }
+
+            /// <summary>Creates a DTO for an amount in the category response.</summary>
+            internal static BudgetedAmountDto CreateFrom(BudgetCategory.BudgetedAmount amount)
+            {
+                return new BudgetedAmountDto
+                {
+                    BudgetedAmountId = amount.BudgetedAmountId,
+                    ValidFrom = amount.ValidFrom,
+                    ValidTo = amount.ValidTo,
+                    Amount = amount.Amount
+                };
+            }
         }
 
         public class Notification : INotification
@@ -61,29 +90,17 @@ namespace raBudget.Application.Features.BudgetCategories.Command
             public BudgetCategory.BudgetedAmount ReferenceBudgetedAmount { get; set; }
 		}
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<BudgetCategory.BudgetedAmount, BudgetedAmountDto>();
-                configuration.CreateMap<BudgetCategory, BudgetCategoryDto>()
-                             .ForMember(dest => dest.BudgetedAmounts, opt => opt.MapFrom(src => src.BudgetedAmounts.OrderBy(x => x.ValidFrom)));
-            }
-        }
-
         public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IWriteDbContext _writeDbContext;
             private readonly AccessControlService _accessControlService;
 			private readonly IMediator _mediator;
-            private readonly IMapper _mapper;
 
-            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator, IMapper mapper)
+            public Handler(IWriteDbContext writeDbContext, AccessControlService accessControlService, IMediator mediator)
             {
                 _writeDbContext = writeDbContext;
                 _accessControlService = accessControlService;
 				_mediator = mediator;
-                _mapper = mapper;
             }
 
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
@@ -109,7 +126,7 @@ namespace raBudget.Application.Features.BudgetCategories.Command
 
                 return new Result()
                        {
-                           Data = _mapper.Map<BudgetCategoryDto>(budgetCategory)
+                           Data = BudgetCategoryDto.CreateFrom(budgetCategory)
                        };
             }
         }

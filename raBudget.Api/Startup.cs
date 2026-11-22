@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Reflection;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -9,10 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using raBudget.Api.Hubs;
 using raBudget.Api.Infrastructure;
-using raBudget.Application.Infrastructure;
 using raBudget.Common;
 using raBudget.Domain.Interfaces;
 using raBudget.Domain.Services;
@@ -60,14 +58,6 @@ namespace raBudget.Api
             services.AddTransient<TransactionNotificationsHub>();
             services.AddTransient<BalanceNotificationsHub>();
 
-            services.AddAutoMapper(applicationAssembly, apiAssembly);
-            var config = new MapperConfiguration(cfg =>
-                                                 {
-                                                     cfg.AddProfile(new ApiAutoMapperProfile());
-                                                     cfg.AddProfile(new ApplicationAutoMapperProfile());
-                                                 });
-            services.AddSingleton(config);
-
             services.Configure<ForwardedHeadersOptions>(options =>
                                                         {
                                                             options.ForwardedHeaders =
@@ -104,7 +94,7 @@ namespace raBudget.Api
                                      RequireHeaderSymmetry = false
                                  };
 
-            forwardOptions.KnownNetworks.Clear();
+            forwardOptions.KnownIPNetworks.Clear();
             forwardOptions.KnownProxies.Clear();
 
             app.UseForwardedHeaders(forwardOptions);
@@ -116,7 +106,6 @@ namespace raBudget.Api
                 app.UseSwagger(options =>
                                {
                                    options.RouteTemplate = "swagger/{documentName}/swagger.json";
-                                   // options.SerializeAsV2 = true;
                                });
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "raBudgetApi"));
                 app.UseCors(builder => builder.WithOrigins("https://localhost:8080")

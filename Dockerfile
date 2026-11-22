@@ -1,13 +1,12 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 
 WORKDIR /app
 
-COPY *.sln .
 COPY . .
-RUN dotnet restore raBudget.sln
-RUN dotnet publish raBudget.sln -c Release -o /app/out
+RUN dotnet restore raBudget.Api/raBudget.Api.csproj
+RUN dotnet publish raBudget.Api/raBudget.Api.csproj -c Release -o /app/out --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
 ENTRYPOINT ["dotnet", "raBudget.Api.dll"]

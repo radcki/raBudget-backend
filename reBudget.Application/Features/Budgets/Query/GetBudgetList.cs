@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using raBudget.Common.Interfaces;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Entities;
 using raBudget.Domain.Interfaces;
@@ -33,24 +31,14 @@ namespace raBudget.Application.Features.Budgets.Query
             public string Name { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.Budget, BudgetDto>();
-            }
-        }
-
         public class Handler : IRequestHandler<Query, Response>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
             }
 
@@ -60,7 +48,7 @@ namespace raBudget.Application.Features.Budgets.Query
 
                 var data = _readDb.Budgets
                                   .Where(x => budgetIds.Contains(x.BudgetId))
-                                  .ProjectTo<BudgetDto>(_mapperConfiguration)
+                                  .ToBudgetDtos()
                                   .OrderBy(x => x.Name);
 
                 return new Response()

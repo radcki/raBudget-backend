@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using raBudget.Common.Extensions;
-using raBudget.Common.Interfaces;
 using raBudget.Common.Query;
+using raBudget.Application.Infrastructure;
 using raBudget.Common.Response;
 using raBudget.Domain.Enums;
 using raBudget.Domain.Interfaces;
@@ -60,25 +58,14 @@ namespace raBudget.Application.Features.Transactions.Query
             public DateTime CreationDateTime { get; set; }
         }
 
-        public class Mapper : IHaveCustomMapping
-        {
-            public void CreateMappings(Profile configuration)
-            {
-                configuration.CreateMap<Domain.ReadModels.SubTransaction, SubTransactionDto>();
-                configuration.CreateMap<Domain.ReadModels.Transaction, TransactionDto>();
-            }
-        }
-
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly IReadDbContext _readDb;
-            private readonly MapperConfiguration _mapperConfiguration;
             private readonly AccessControlService _accessControlService;
 
-            public Handler(IReadDbContext readDb, MapperConfiguration mapperConfiguration, AccessControlService accessControlService)
+            public Handler(IReadDbContext readDb, AccessControlService accessControlService)
             {
                 _readDb = readDb;
-                _mapperConfiguration = mapperConfiguration;
                 _accessControlService = accessControlService;
             }
 
@@ -119,10 +106,9 @@ namespace raBudget.Application.Features.Transactions.Query
                     query = query.Where(x => x.Amount.Amount <= request.MaxAmount);
                 }
 
-                var data = await query.ProjectTo<TransactionDto>(_mapperConfiguration)
+                var data = await query.ToTransactionDtos()
                                       .ApplyGridQueryOptions(request)
                                       .ToListAsync(cancellationToken);
-                data.ForEach(transaction => transaction.SubTransactions = transaction.SubTransactions.OrderByDescending(x => x.TransactionDate).ToList());
 
                 return new Result()
                        {
